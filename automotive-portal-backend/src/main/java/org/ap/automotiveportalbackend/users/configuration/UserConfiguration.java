@@ -5,7 +5,7 @@ import org.ap.automotiveportalbackend.users.service.UserService;
 import org.springframework.context.annotation.Bean;
 
 @org.springframework.context.annotation.Configuration
-public class Configuration {
+public class UserConfiguration {
 
     @Bean
     public UserService userService(UserRepository userRepository) {

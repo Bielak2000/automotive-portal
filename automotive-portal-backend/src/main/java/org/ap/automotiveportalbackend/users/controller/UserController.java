@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping
     public List<UserDTO> getAllUsers() {
-        log.info("Get all users");
+        log.info("Get all users ...");
         return userService.getUsers();
     }
 
