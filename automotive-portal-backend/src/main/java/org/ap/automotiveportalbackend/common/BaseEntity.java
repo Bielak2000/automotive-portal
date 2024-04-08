@@ -23,6 +23,8 @@ public abstract class BaseEntity {
     protected BaseEntity(UUID id) {
         this.id = id;
         this.deleted = false;
+        this.createdAt = LocalDateTime.now();
+        this.modifiedAt = LocalDateTime.now();
     }
 
     protected BaseEntity() {

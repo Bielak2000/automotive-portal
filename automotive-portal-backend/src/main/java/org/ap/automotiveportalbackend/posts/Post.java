@@ -3,12 +3,15 @@ package org.ap.automotiveportalbackend.posts;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.ap.automotiveportalbackend.common.BaseEntity;
-import org.ap.automotiveportalbackend.posts.dto.PostDTO;
+import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
+import org.ap.automotiveportalbackend.users.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -27,15 +30,17 @@ public class Post extends BaseEntity {
     private String content;
     private int appearance_number;
     private UUID vehicleId;
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public Post(PostDTO postDTO) {
+    public Post(PostFormDTO postFormDTO, User user) {
         super(UUID.randomUUID());
-        this.title = postDTO.title();
-        this.content = postDTO.content();
+        this.title = postFormDTO.title();
+        this.content = postFormDTO.content();
         this.appearance_number = 0;
-        this.vehicleId = postDTO.vehicleId();
-        this.userId = postDTO.userId();
+        this.vehicleId = postFormDTO.vehicleId();
+        this.user = user;
     }
 
 }
