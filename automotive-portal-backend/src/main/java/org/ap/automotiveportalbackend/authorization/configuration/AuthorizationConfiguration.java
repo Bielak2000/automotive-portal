@@ -5,7 +5,6 @@ import org.ap.automotiveportalbackend.authorization.service.CustomUserDetailsSer
 import org.ap.automotiveportalbackend.authorization.token.JwtAuthorizationFilter;
 import org.ap.automotiveportalbackend.authorization.token.JwtUtil;
 import org.ap.automotiveportalbackend.users.UserRepository;
-import org.ap.automotiveportalbackend.users.service.UserService;
 import org.springframework.context.annotation.Bean;
 
 @org.springframework.context.annotation.Configuration

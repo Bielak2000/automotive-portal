@@ -2,9 +2,11 @@ package org.ap.automotiveportalbackend.authorization.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ap.automotiveportalbackend.authorization.dto.RefreshTokenResponse;
 import org.ap.automotiveportalbackend.authorization.dto.AuthorizationRequestHeader;
 import org.ap.automotiveportalbackend.authorization.dto.AuthorizationResponseHeader;
 import org.ap.automotiveportalbackend.authorization.dto.ErrorResponse;
+import org.ap.automotiveportalbackend.authorization.dto.RefreshTokenRequest;
 import org.ap.automotiveportalbackend.authorization.token.JwtUtil;
 import org.ap.automotiveportalbackend.users.User;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +43,7 @@ public class AuthorizationController {
             User user = new User(email, "");
             String token = jwtUtil.createToken(user);
             AuthorizationResponseHeader authorizationResponseHeader = new AuthorizationResponseHeader(email, token);
+            log.info("User {} has been logged.", email);
             return ResponseEntity.ok(authorizationResponseHeader);
         } catch (BadCredentialsException e) {
             ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid username or password");
@@ -47,5 +52,11 @@ public class AuthorizationController {
             ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
+    }
+
+    @PostMapping("/refresh")
+    public RefreshTokenResponse refreshToken(@RequestHeader("Authorization") RefreshTokenRequest request) {
+        String token = jwtUtil.refreshToken(request.getOldToken());
+        return new RefreshTokenResponse(token);
     }
 }
