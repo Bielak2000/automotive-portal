@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,15 +37,15 @@ public class SecurityConfig {
     @SuppressWarnings("deprecation")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("XDDD: " + UserRole.USER_ROLE.getRole());
-
         http.csrf().disable()
+                .httpBasic().authenticationEntryPoint(new EntryPoint())
+                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**", "api/users/register").permitAll()
-                .requestMatchers("/api/**")
-                .hasRole(UserRole.USER_ROLE.getRole())//.anyRequest().authenticated()
+                .requestMatchers("/api/**").hasRole(UserRole.USER_ROLE.getRole())
                 .anyRequest().denyAll()
-                .and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .and()
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
