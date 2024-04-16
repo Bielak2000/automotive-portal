@@ -5,6 +5,7 @@ import Image from "next/image";
 import {useRouter} from "next/router";
 import {Button} from "primereact/button";
 import LoginDialog from "../../login/templates/LoginDialog";
+import Link from "next/link";
 
 type MainMenuProps = {
     title: string;
@@ -55,10 +56,10 @@ const MainMenu: React.FC<MainMenuProps> = ({title}) => {
     ]
 
     const start = <div className="main-menu-start">
-        <div style={{display: "flex", alignItems: "center"}}>
+        <Link href="/"><div style={{display: "flex", alignItems: "center"}}>
             <Image width={35} height={30} src="/ac-icon.png" alt="logo"/>
             <p className="menu-start-p">Portal motoryzacyjny</p>
-        </div>
+        </div></Link>
         {firstMobileView && <div className="menuitem-mobile"><Button
             className="button-without-background" label="Tablica" icon="pi pi-home"/></div>}
     </div>
