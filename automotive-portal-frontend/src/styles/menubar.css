@@ -1,0 +1,88 @@
+.main-menu {
+    border: none;
+    border-radius: 0;
+    height: 60px;
+    padding: 0 30px 0 30px;
+    background: var(--background);
+    color: var(--color);
+    box-shadow: 0 4px 8px -2px black;
+    justify-content: space-between;
+}
+
+.main-menu-start {
+    display: flex;
+    align-items: center;
+    width: 258px;
+}
+
+.main-menu > .p-menubar-end {
+    margin-left: 0;
+}
+
+.main-menu > .p-menubar-root-list {
+    width: 258px;
+}
+
+.main-menu > .p-menubar-root-list > li > .p-menuitem-content {
+    border-radius: 15px;
+}
+
+.main-menu > .p-menubar-root-list > li > div > a > span {
+    color: var(--color);
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.main-menu > .p-menubar-root-list > li > .p-menuitem-content:hover,
+.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content,
+.main-menu > .p-menubar-root-list > li > .p-menuitem-content.p-focus {
+    background: var(--background-hover);
+}
+
+.p-menubar-button {
+    display: none;
+}
+
+.menu-start-p {
+    font-weight: 600;
+    margin-left: 10px;
+    font-size: 21px;
+}
+
+.menuitem-mobile {
+    width: calc(100% - 258px);
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 960px) {
+    .main-menu-start {
+        width: calc(100svw - 202px);
+        justify-content: space-between;
+    }
+}
+
+@media screen and (max-width: 585px) {
+    .main-menu {
+        padding: 0 10px 0 10px;
+    }
+
+    .main-menu-start {
+        width: calc(100svw - 58px);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .menu-start-p {
+        font-size: 16px;
+    }
+
+    .main-menu-start {
+        /*width: 100%;*/
+        /*min-width: 370px;*/
+    }
+
+    .menuitem-mobile {
+        width: 100%;
+    }
+}
