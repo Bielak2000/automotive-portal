@@ -2,6 +2,7 @@ package org.ap.automotiveportalbackend.users.service;
 
 import lombok.AllArgsConstructor;
 import org.ap.automotiveportalbackend.common.exception.BadRequestException;
+import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.users.User;
 import org.ap.automotiveportalbackend.users.UserRepository;
 import org.ap.automotiveportalbackend.users.dto.UserDTO;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +37,10 @@ public class UserService {
         } else {
             throw new BadRequestException("Passwords are different.");
         }
+    }
+
+    public UserDTO getByEmail(String email) {
+        return UserDTO.create(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User %s not found", email))));
     }
 
 }

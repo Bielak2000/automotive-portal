@@ -7,6 +7,9 @@ import org.ap.automotiveportalbackend.users.dto.UserDTO;
 import org.ap.automotiveportalbackend.users.dto.UserFormDTO;
 import org.ap.automotiveportalbackend.users.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/api/users")
 @AllArgsConstructor
 @Slf4j
 public class UserController {
@@ -36,5 +39,13 @@ public class UserController {
     public void createUser(@RequestBody @Valid UserFormDTO userFormDTO) throws BadRequestException {
         userService.createUser(userFormDTO);
         log.info("Created new user {}", userFormDTO.email());
+    }
+
+    @GetMapping("/details")
+    public UserDTO getUserByEmail() {
+        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
+        String username = loggedInUser.getName();
+        log.info("Get user by email: {}", username);
+        return userService.getByEmail(username);
     }
 }

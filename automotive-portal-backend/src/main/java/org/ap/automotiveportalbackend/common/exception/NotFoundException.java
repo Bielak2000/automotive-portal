@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 @Slf4j
-public class BadRequestException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
     private String message;
 
-    public BadRequestException(String message) {
+    public NotFoundException(String message) {
         this.message = message;
         log.info(this.message);
     }

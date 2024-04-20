@@ -17,6 +17,8 @@
 
 .main-menu > .p-menubar-end {
     margin-left: 0;
+    align-items: center;
+    display: flex;
 }
 
 .main-menu > .p-menubar-root-list {
@@ -55,6 +57,48 @@
     justify-content: center;
 }
 
+.menu-bar-end-div {
+    display: flex;
+}
+
+.email-template-div {
+    display: flex;
+    align-items: center;
+    background: var(--background);
+    color: var(--color);
+}
+
+.p-menubar-end {
+    height: 90%;
+}
+
+.user-menu-bar {
+    background: var(--background);
+    border: none;
+    max-height: 100%;
+}
+
+.menu-bar-end-button.p-button.p-component.p-button-icon-only {
+    background: none;
+    border: none;
+}
+
+.menu-bar-end-button.p-button.p-component.p-button-icon-only:hover,
+.menu-bar-end-button.p-button.p-component.p-button-icon-only:focus {
+    background: none;
+    border: 1px solid #ffffff;
+}
+
+/*.p-menubar .p-menuitem.p-highlight.p-focus > .p-menuitem-content {*/
+/*    background: var(--background);*/
+/*}*/
+
+/*.menu-bar-end .p-menubar .p-menubar-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover,*/
+/*.menu-bar-end .p-menubar .p-menuitem.p-highlight > .p-menuitem-content {*/
+/*    background: var(--background);*/
+/*    color: var(--color);*/
+/*}*/
+
 @media screen and (max-width: 960px) {
     .main-menu-start {
         width: calc(100svw - 202px);
@@ -75,11 +119,6 @@
 @media screen and (max-width: 500px) {
     .menu-start-p {
         font-size: 16px;
-    }
-
-    .main-menu-start {
-        /*width: 100%;*/
-        /*min-width: 370px;*/
     }
 
     .menuitem-mobile {
