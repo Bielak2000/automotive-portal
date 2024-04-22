@@ -38,7 +38,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
             if(response.status === 401) {
                 toast.current?.show({
                     severity: "error",
-                    summary: "Błędne dane uwierzytlniające",
+                    summary: "Błędne dane uwierzytelniające",
                     detail: "Wprowadzony login lub hasło są nieprawidłowe.",
                     life: 5000
                 })
