@@ -62,14 +62,14 @@ const MainMenu: React.FC<MainMenuProps> = ({title}) => {
             label: 'Tablica',
             icon: 'pi pi-home',
             command: () => {
-                router.push("/")
+                router.push("/pojazdy")
             }
         }
     ]
 
     const start = <div className="main-menu-start">
         <Link href="/">
-            <div style={{display: "flex", alignItems: "center"}}>
+            <div className="header-title">
                 <Image width={35} height={30} src="/ac-icon.png" alt="logo"/>
                 <p className="menu-start-p">Portal motoryzacyjny</p>
             </div>
@@ -79,14 +79,15 @@ const MainMenu: React.FC<MainMenuProps> = ({title}) => {
     </div>
 
     const menuBarEnd = () => <>
-        {!token && token !== null && <Button icon="pi pi-sign-in" label={!secondMobileView ? 'Zaloguj się' : undefined}
+        {!token && token !== null && <Button icon="pi pi-sign-in" label={'Zaloguj się'}
+                                             className="login-button"
                                              onClick={() => setShowLoginDialog(true)}/>}
         {token && <UserMenu/>}
     </>
 
     return <>
         <LoginDialog showDialog={showLoginDialog} setShowDialog={setShowLoginDialog} setRefreshData={setRefreshData}/>
-        <Menubar className="main-menu" model={items} start={start} end={menuBarEnd}/>
+        <Menubar className="main-menu" model={!firstMobileView ? items : undefined} start={start} end={menuBarEnd}/>
     </>
 }
 
