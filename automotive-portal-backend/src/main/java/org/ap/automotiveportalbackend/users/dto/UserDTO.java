@@ -16,7 +16,7 @@ public record UserDTO(@NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") Loca
                       @NotEmpty(message = "Name can't be empty") String name,
                       @NotEmpty(message = "Surname can't be empty") String surname,
                       @NotEmpty(message = "Email can't be emtpy") String email,
-                      @Nullable UUID vehicleId) {
+                      @Nullable Long vehicleId) {
     public static UserDTO create(User user) {
         return UserDTO.builder()
                 .createdAt(user.getCreatedAt())

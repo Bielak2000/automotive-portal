@@ -3,11 +3,11 @@ import {Dialog} from "primereact/dialog";
 import {InputText} from "primereact/inputtext";
 import {useFormik} from "formik";
 import {LoginData, LoginDataValidation} from "../types";
-import {InputTextField} from "../../common/atoms/InputTextField";
+import {InputTextField} from "../../../common/atoms/InputTextField";
 import {Button} from "primereact/button";
 import Link from "next/link";
-import {login} from "../../../lib/api/user";
-import {PasswordTextField} from "../../common/atoms/PaswordTextField";
+import {login} from "../../../../lib/api/user";
+import {PasswordTextField} from "../../../common/atoms/PaswordTextField";
 import {Toast} from "primereact/toast";
 import {saveTokenInCookies, saveUserEmailInLocalStorage} from "../functions";
 
@@ -62,7 +62,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
         <Button label="Zaloguj" icon="pi pi-sign-in" type="submit"/>
         <div className="login-dialog-footer">
             <Link className="linkStyle" href="/">Zapomniałeś hasła?</Link>
-            <Link className="linkStyle" style={{marginTop: "5px"}} href="/">Nie masz jeszcze konta?</Link>
+            <Link className="linkStyle" style={{marginTop: "5px"}} href="/rejestracja">Nie masz jeszcze konta?</Link>
         </div>
     </div>
 

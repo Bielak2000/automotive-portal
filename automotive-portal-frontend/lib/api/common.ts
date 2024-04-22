@@ -1,4 +1,4 @@
-import {removeTokenFromCookies} from "../../components/login/functions";
+import {removeTokenFromCookies} from "../../components/user/login/functions";
 
 export function catchErrors(error: any) {
     console.log(error)

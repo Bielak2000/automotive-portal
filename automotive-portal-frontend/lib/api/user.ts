@@ -1,7 +1,7 @@
-import {LoginData} from "../../components/login/types";
+import {LoginData} from "../../components/user/login/types";
 import axios from "axios";
 import {catchErrors} from "./common";
-import {getTokenFromCookies} from "../../components/login/functions";
+import {getTokenFromCookies} from "../../components/user/login/functions";
 
 export const login = (loginData: LoginData) => {
     return axios({

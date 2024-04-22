@@ -1,37 +1,33 @@
 import {Menubar} from "primereact/menubar";
-import {MenuItem, MenuItemOptions} from "primereact/menuitem";
+import {MenuItem} from "primereact/menuitem";
 import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {useRouter} from "next/router";
 import {Button} from "primereact/button";
-import LoginDialog from "../../login/templates/LoginDialog";
+import LoginDialog from "../../user/login/templates/LoginDialog";
 import Link from "next/link";
-import {getTokenFromCookies, isLogged, removeTokenFromCookies} from "../../login/functions";
+import {getTokenFromCookies} from "../../user/login/functions";
 import {UserMenu} from "./UserMenu";
-import {logout} from "../../../lib/api/user";
 
 type MainMenuProps = {
     title: string;
+    showComponents: boolean;
 }
 
-const MainMenu: React.FC<MainMenuProps> = ({title}) => {
+const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     const router = useRouter();
     const [showLoginDialog, setShowLoginDialog] = useState<boolean>(false);
     const [firstMobileView, setFirstMobileView] = useState<boolean>(false);
-    const [secondMobileView, setSecondMobileView] = useState<boolean>(false);
     const [token, setToken] = useState<string | undefined | null>(null);
     const [refreshData, setRefreshData] = useState<boolean>(false);
+    const query = router.query;
 
     useEffect(() => {
         setToken(getTokenFromCookies());
         const firstMobileMediaQuery = window!.matchMedia('screen and (max-width: 960px)');
-        const secondMobileMediaQuery = window!.matchMedia('screen and (max-width: 585px)');
 
         if (firstMobileMediaQuery.matches) {
             setFirstMobileView(true);
-        }
-        if (secondMobileMediaQuery.matches) {
-            setSecondMobileView(true);
         }
 
         firstMobileMediaQuery.onchange = (ev) => {
@@ -41,23 +37,21 @@ const MainMenu: React.FC<MainMenuProps> = ({title}) => {
                 setFirstMobileView(false);
             }
         };
-
-        secondMobileMediaQuery.onchange = (ev) => {
-            if (ev.matches) {
-                setSecondMobileView(true);
-            } else {
-                setSecondMobileView(false);
-            }
-        };
     }, [])
 
     useEffect(() => {
-        if(refreshData) {
+        if (query.showLogin) {
+            setShowLoginDialog(true);
+        }
+    }, [query]);
+
+    useEffect(() => {
+        if (refreshData) {
             setToken(getTokenFromCookies());
         }
     }, [refreshData]);
 
-    const items: MenuItem[] = [
+    const items: MenuItem[] = showComponents ? [
         {
             label: 'Tablica',
             icon: 'pi pi-home',
@@ -65,7 +59,7 @@ const MainMenu: React.FC<MainMenuProps> = ({title}) => {
                 router.push("/pojazdy")
             }
         }
-    ]
+    ] : []
 
     const start = <div className="main-menu-start">
         <Link href="/">
@@ -74,20 +68,20 @@ const MainMenu: React.FC<MainMenuProps> = ({title}) => {
                 <p className="menu-start-p">Portal motoryzacyjny</p>
             </div>
         </Link>
-        {firstMobileView && <div className="menuitem-mobile"><Button
+        {firstMobileView && showComponents && <div className="menuitem-mobile"><Button
             className="button-without-background" label="Tablica" icon="pi pi-home"/></div>}
     </div>
 
     const menuBarEnd = () => <>
-        {!token && token !== null && <Button icon="pi pi-sign-in" label={'Zaloguj się'}
-                                             className="login-button"
-                                             onClick={() => setShowLoginDialog(true)}/>}
-        {token && <UserMenu/>}
+        {!token && token !== null && showComponents && <Button icon="pi pi-sign-in" label={'Zaloguj się'}
+                                                               className="login-button"
+                                                               onClick={() => setShowLoginDialog(true)}/>}
+        {token && showComponents && <UserMenu/>}
     </>
 
     return <>
         <LoginDialog showDialog={showLoginDialog} setShowDialog={setShowLoginDialog} setRefreshData={setRefreshData}/>
-        <Menubar className="main-menu" model={!firstMobileView ? items : undefined} start={start} end={menuBarEnd}/>
+        <Menubar style={!showComponents ? {height: "60px"} : undefined} className="main-menu" model={!firstMobileView ? items : undefined} start={start} end={menuBarEnd}/>
     </>
 }
 

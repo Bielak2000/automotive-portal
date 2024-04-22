@@ -6,3 +6,8 @@ export type UserDTO = {
     lastActivityAt: Date;
     vehicleId: string | null;
 }
+
+export interface DropDownType {
+    name: string;
+    code: string;
+}

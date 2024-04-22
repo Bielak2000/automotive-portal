@@ -13,5 +13,5 @@ CREATE TABLE ap.users
     surname          VARCHAR(100) NOT NULL,
     email            VARCHAR(100) NOT NULL,
     phone_number     VARCHAR(12),
-    vehicle_id       uuid
+    vehicle_id       bigint
 );

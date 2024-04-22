@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import "@/styles/menubar.css";
-import "@/styles/login.css";
+import "@/styles/user/login.css";
+import "@/styles/user/register.css";
 import type {AppProps} from "next/app";
 import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.min.css';

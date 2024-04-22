@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {getTokenFromCookies, getUserEmailFromLocalStorage, removeTokenFromCookies} from "../../login/functions";
-import {MenuItem, MenuItemOptions} from "primereact/menuitem";
+import {getTokenFromCookies, getUserEmailFromLocalStorage, removeTokenFromCookies} from "../../user/login/functions";
+import {MenuItem} from "primereact/menuitem";
 import {Menubar} from "primereact/menubar";
 import {Button} from "primereact/button";
 import {getUserByEmail, logout} from "../../../lib/api/user";
@@ -10,14 +10,11 @@ import Image from "next/image";
 
 export const UserMenu: React.FC = () => {
     const router = useRouter();
-    // const mobileMediaQuery = window.matchMedia('screen and (max-width: 960px)');
     const [user, setUser] = useState<UserDTO>();
-    // const [showChangePasswordDialog, setShowChangePasswordDialog] = useState<boolean>(false);
     const [token, setToken] = useState<string | undefined>(getTokenFromCookies());
     const [userEmail, setUserEmail] = useState<string | null>(getUserEmailFromLocalStorage());
 
     useEffect(() => {
-        console.log("eeeeeeeeee")
         updateUserData();
     }, []);
 
@@ -73,14 +70,7 @@ export const UserMenu: React.FC = () => {
         </div>
     </div>
 
-    // const menuMobileStartTemplate = () => {
-    //     return <div style={{display: "flex", alignItems: "center"}}>
-    //         {emailTemplate}
-    //     </div>
-    // }
-
-    const startTemplate = (item: MenuItem, options: MenuItemOptions) => {
-        // subMenuOptions = options;
+    const startTemplate = () => {
         return <div className="menu-bar-end-div">
             {emailTemplate}
             <Button className='menu-bar-end-button' type="button"
@@ -90,18 +80,14 @@ export const UserMenu: React.FC = () => {
 
     const desktopMenuUser: MenuItem[] = [
         {
-            template: (item, options) => startTemplate(item, options),
+            template: () => startTemplate(),
             className: 'user-menu',
             items: mobileMenuUser
         }
     ]
 
-    // let menuUser: MenuItem[] = mobileMediaQuery.matches ? mobileMenuUser : desktopMenuUser;
-    let menuUser: MenuItem[] = desktopMenuUser;
-
     return <>
         <Menubar id='menu-bar-user' menuIcon={'pi pi-chevron-down'}
-            // start={mobileMediaQuery.matches ? menuMobileStartTemplate : null}
                  className="user-menu-bar"
                  model={desktopMenuUser}
         />

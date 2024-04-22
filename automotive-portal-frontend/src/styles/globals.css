@@ -156,3 +156,38 @@ a {
 .linkStyle {
     text-decoration: underline;
 }
+
+.cancel-button {
+    background: #2a2a2a;
+    border: none;
+}
+
+.cancel-button:hover {
+    background: #181818;
+    border: none;
+}
+
+.confirm-button {
+    background: green;
+    border: none;
+}
+
+.confirm-button:hover {
+    background: #026402;
+    border: none;
+}
+
+.dropdown-field {
+    width: 100%;
+    color: #2a2a2a;
+    font-size: 18px;
+}
+
+.p-dropdown-panel.p-component.p-ripple-disabled.p-connected-overlay-enter-done {
+    border-radius: 10px;
+}
+
+.p-dropdown-panel .p-dropdown-header {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}

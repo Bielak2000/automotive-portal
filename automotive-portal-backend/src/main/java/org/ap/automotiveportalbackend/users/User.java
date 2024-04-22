@@ -40,7 +40,7 @@ public class User extends BaseEntity {
     private UserRole role;
     private String password;
     private String phoneNumber;
-    private UUID vehicleId;
+    private Long vehicleId;
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
 
