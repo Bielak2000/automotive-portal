@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useFormik} from "formik";
 import {InputTextField} from "../../../common/atoms/InputTextField";
 import {Button} from "primereact/button";
@@ -12,8 +12,10 @@ import {useRouter} from "next/router";
 const RegisterPage: React.FC = () => {
     const router = useRouter();
     const toast = useRef<Toast>(null);
-    const [vehicleValues, setVehicleValues] = useState<DropDownType[]>([{name: "audi", code: "1"}]);
-    const [selectedVehicle, setSelectedVehicle] = useState<DropDownType | null>(null)
+    const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([{name: "audi", code: "audi"}]);
+    const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([{name: "a5", code: "1"}]);
+    const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
+    const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
     const formik = useFormik<UserForm>({
         initialValues: {
             email: "",
@@ -27,13 +29,30 @@ const RegisterPage: React.FC = () => {
         validationSchema: UserFormValidation,
         validateOnChange: false,
         onSubmit: (data) => {
-            if (data.password === data.confirmationPassword) {
+            if (selectedVehicleBrand && !selectedVehicleModel) {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Model pojazdu jest wymagany",
+                    detail: "Sama marka pojazdu nie jest wystarczająca, wymagany jest model.",
+                    life: 8000
+                })
+            } else if (data.password === data.confirmationPassword) {
                 handleRegister(data);
             } else {
                 formik.setFieldError("confirmationPassword", "Hasła nie są takie same.");
             }
         }
     });
+
+    useEffect(() => {
+        if (!selectedVehicleBrand) {
+            setSelectedVehicleModel(null);
+        }
+    }, [selectedVehicleBrand]);
+
+    useEffect(() => {
+        formik.setFieldValue('vehicleId', !selectedVehicleModel ? null : Number(selectedVehicleModel.code));
+    }, [selectedVehicleModel]);
 
     const handleRegister = (data: UserForm) => {
         console.log(data)
@@ -61,9 +80,12 @@ const RegisterPage: React.FC = () => {
         // })
     }
 
-    const chooseVehicle = (value: DropDownType) => {
-        formik.setFieldValue('vehicleId', !value ? null : Number(value.code));
-        setSelectedVehicle(value);
+    const chooseVehicleBrand = (value: DropDownType) => {
+        setSelectedVehicleBrand(value);
+    }
+
+    const chooseVehicleModel = (value: DropDownType) => {
+        setSelectedVehicleModel(value);
     }
 
     const footer = <div className="register-page-footer">
@@ -72,7 +94,7 @@ const RegisterPage: React.FC = () => {
                     pathname: "/",
                     query: {showLogin: true}
                 })}/>
-        <Button className="register-form-button confirm-button" label="Zaloguj" icon="pi pi-check" type="submit"/>
+        <Button className="register-form-button confirm-button" label="Zarejestruj" icon="pi pi-check" type="submit"/>
     </div>
 
     return <>
@@ -93,8 +115,13 @@ const RegisterPage: React.FC = () => {
                     <InputTextField className="inputTextFieldForm register-input-text-field"
                                     classNameInput="inputTextField"
                                     formik={formik} fieldName={'phoneNumber'} label={'Numer telefonu'}/>
-                    <DropDownField description="Wybierz pojazd" values={vehicleValues} selectedValue={selectedVehicle}
-                                   setSelectedValue={chooseVehicle}/>
+                    <DropDownField description="Wybierz pojazd" values={vehicleBrandValues}
+                                   selectedValue={selectedVehicleBrand}
+                                   setSelectedValue={chooseVehicleBrand}/>
+                    <DropDownField description="Wybierz model" values={vehicleModelValues}
+                                   selectedValue={selectedVehicleModel}
+                                   setSelectedValue={chooseVehicleModel}
+                                   disabled={!selectedVehicleBrand}/>
                     <PasswordTextField className="inputTextFieldForm register-input-text-field"
                                        classNameInput="inputTextField"
                                        formik={formik} fieldName={'password'} label={'Hasło*'}/>
