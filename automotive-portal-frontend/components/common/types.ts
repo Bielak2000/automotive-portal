@@ -1,10 +1,12 @@
 export type UserDTO = {
     name: string;
     surname: string;
-    email: string
+    email: string;
+    phoneNumber: string | null;
     createdAt: Date;
     lastActivityAt: Date;
-    vehicleId: string | null;
+    vehicleBrand: string | null;
+    vehicleModel: string | null;
 }
 
 export interface DropDownType {

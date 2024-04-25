@@ -1,4 +1,4 @@
-.register-main-div {
+.user-main-div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,12 +7,12 @@
     max-width: 700px;
 }
 
-.register-form {
+.user-form {
     width: 100%;
     max-width: 400px;
 }
 
-.register-form-div {
+.user-form-div {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -20,27 +20,27 @@
     margin-top: 5px;
 }
 
-.register-input-text-field {
+.user-input-text-field {
     width: 100%;
 }
 
-.register-page-footer {
+.user-page-footer {
     display: flex;
     justify-content: space-between;
 }
 
-.register-form-button {
+.user-form-button {
     width: 45%;
 }
 
 @media screen and (max-width: 670px) {
-    .register-main-div {
+    .user-main-div {
         margin-top: 0;
     }
 }
 
 @media screen and (max-width: 450px) {
-    .register-form {
+    .user-form {
         width: 90%;
     }
 }

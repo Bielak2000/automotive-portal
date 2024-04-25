@@ -68,6 +68,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
         <Toast ref={toast}/>
         <Dialog visible={showDialog} onHide={() => setShowDialog(false)}
                 className="dialog"
+                style={{maxWidth: "80%"}}
                 header={"Zaloguj się"} headerClassName="dialogHeader">
             <form onSubmit={formik.handleSubmit}>
                 <div style={{marginTop: "5px"}}>

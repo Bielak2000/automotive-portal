@@ -11,15 +11,16 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.ap.automotiveportalbackend.common.BaseEntity;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.users.dto.UserFormDTO;
+import org.ap.automotiveportalbackend.users.dto.UserUpdateDTO;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,11 +34,13 @@ import java.util.UUID;
 public class User extends BaseEntity {
 
     private String name;
+    @Setter
     private LocalDateTime lastActivityAt;
     private String surname;
     private String email;
     @Enumerated(EnumType.STRING)
     private UserRole role;
+    @Setter
     private String password;
     private String phoneNumber;
     private String vehicleBrand;
@@ -63,4 +66,14 @@ public class User extends BaseEntity {
         this.email = email;
         this.password = password;
     }
+
+    public void update(UserUpdateDTO userUpdateDTO) {
+        this.name = userUpdateDTO.name();
+        this.surname = userUpdateDTO.surname();
+        this.email = userUpdateDTO.email();
+        this.phoneNumber = userUpdateDTO.phoneNumber();
+        this.vehicleBrand = userUpdateDTO.vehicleBrand();
+        this.vehicleModel = userUpdateDTO.vehicleModel();
+    }
+
 }

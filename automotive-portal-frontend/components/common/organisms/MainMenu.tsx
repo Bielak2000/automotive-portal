@@ -57,6 +57,7 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     }, [refreshData]);
 
     const closeRegisterDialog = () => {
+        router.replace('/', undefined, { shallow: true });
         setShowRegisteredDialogInfo(false);
         setShowLoginDialog(true);
     }

@@ -5,17 +5,21 @@ import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.users.User;
 import org.ap.automotiveportalbackend.users.UserRepository;
+import org.ap.automotiveportalbackend.users.dto.ChangePasswordDTO;
 import org.ap.automotiveportalbackend.users.dto.UserDTO;
 import org.ap.automotiveportalbackend.users.dto.UserFormDTO;
+import org.ap.automotiveportalbackend.users.dto.UserUpdateDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class UserService {
 
-    PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     public List<UserDTO> getUsers() {
@@ -33,6 +37,45 @@ public class UserService {
 
         } else {
             throw new BadRequestException("Passwords are different.");
+        }
+    }
+
+    public void updateLastActivityUser(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            user.get().setLastActivityAt(LocalDateTime.now());
+            userRepository.save(user.get());
+        } else {
+            throw new BadRequestException("User with this email just exists.");
+        }
+    }
+
+    public void updateUser(String email, UserUpdateDTO userUpdateDTO) throws BadRequestException {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            user.get().update(userUpdateDTO);
+            userRepository.save(user.get());
+        } else {
+            throw new BadRequestException("User with this email just exists.");
+        }
+    }
+
+    public void changeUserPassword(String email, ChangePasswordDTO changePasswordDTO) throws BadRequestException {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            if(passwordEncoder.matches(changePasswordDTO.oldPassword(), user.get().getPassword())) {
+                if (changePasswordDTO.newPassword().equals(changePasswordDTO.confirmationPassword())) {
+                    user.get().setPassword(passwordEncoder.encode(changePasswordDTO.newPassword()));
+                    userRepository.save(user.get());
+                } else {
+                    throw new BadRequestException("The password are not the same.");
+                }
+            } else {
+                throw new BadRequestException("The wrong old password.");
+            }
+
+        } else {
+            throw new BadRequestException("User with this email just exists.");
         }
     }
 

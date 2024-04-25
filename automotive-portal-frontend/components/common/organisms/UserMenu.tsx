@@ -38,7 +38,7 @@ export const UserMenu: React.FC = () => {
         {
             label: "ustawienia",
             command() {
-
+                router.push("/ustawienia")
             }
         },
         {

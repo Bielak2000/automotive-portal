@@ -8,14 +8,14 @@ import {UserForm, UserFormValidation} from "../types";
 import DropDownField from "../../../common/atoms/DropDownField";
 import {DropDownType} from "../../../common/types";
 import {useRouter} from "next/router";
-import {getAllBrands, getModelsByBrand} from "../../../../lib/api/vehicle/vehicle";
 import {register} from "../../../../lib/api/user";
+import {getBrands, getModels} from "../../../common/organisms/VehicleFunctions";
 
 const RegisterPage: React.FC = () => {
     const router = useRouter();
     const toast = useRef<Toast>(null);
     const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
-    const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([{name: "a5", code: "1"}]);
+    const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([]);
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
     const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
     const formik = useFormik<UserForm>({
@@ -48,22 +48,7 @@ const RegisterPage: React.FC = () => {
     });
 
     useEffect(() => {
-        getAllBrands().then(response => {
-            if (response.status === 200) {
-                const brandArrayTemp: DropDownType[] = [];
-                response.data.forEach((brand: any) => {
-                    brandArrayTemp.push({name: brand.make, code: brand.make});
-                })
-                setVehicleBrandValues(brandArrayTemp);
-            } else {
-                toast.current?.show({
-                    severity: "error",
-                    summary: "Błąd pobierania danych",
-                    detail: "Brak możliwości pobrania pojazdów, spróbuj ponownie za chwilę.",
-                    life: 8000
-                })
-            }
-        })
+        getBrands(toast, setVehicleBrandValues);
     }, []);
 
     useEffect(() => {
@@ -71,22 +56,7 @@ const RegisterPage: React.FC = () => {
             setSelectedVehicleModel(null);
             setVehicleModelValues([]);
         } else {
-            getModelsByBrand(selectedVehicleBrand.code).then(response => {
-                if (response.status === 200) {
-                    const modelsArrayTemp: DropDownType[] = [];
-                    response.data.forEach((res: any) => {
-                        modelsArrayTemp.push({name: res.model, code: res.model});
-                    })
-                    setVehicleModelValues(modelsArrayTemp);
-                } else {
-                    toast.current?.show({
-                        severity: "error",
-                        summary: "Błąd pobierania danych",
-                        detail: "Brak możliwości pobrania modelów, spróbuj ponownie za chwilę.",
-                        life: 8000
-                    })
-                }
-            })
+            getModels(toast, selectedVehicleBrand, setVehicleModelValues);
         }
     }, [selectedVehicleBrand]);
 
@@ -117,52 +87,44 @@ const RegisterPage: React.FC = () => {
         })
     }
 
-    const chooseVehicleBrand = (value: DropDownType) => {
-        setSelectedVehicleBrand(value);
-    }
-
-    const chooseVehicleModel = (value: DropDownType) => {
-        setSelectedVehicleModel(value);
-    }
-
-    const footer = <div className="register-page-footer">
-        <Button className="register-form-button cancel-button" label="Wyjdź" icon="pi pi-times" type="button"
+    const footer = <div className="user-page-footer">
+        <Button className="user-form-button cancel-button" label="Wyjdź" icon="pi pi-times" type="button"
                 onClick={() => router.push({
                     pathname: "/",
                     query: {showLogin: true}
                 })}/>
-        <Button className="register-form-button confirm-button" label="Zarejestruj" icon="pi pi-check" type="submit"/>
+        <Button className="user-form-button confirm-button" label="Zarejestruj" icon="pi pi-check" type="submit"/>
     </div>
 
     return <>
         <Toast ref={toast}/>
-        <div className="register-main-div">
+        <div className="user-main-div">
             <h2 style={{textAlign: "center", fontSize: "28px"}}>Załóż konto</h2>
-            <form onSubmit={formik.handleSubmit} className="register-form">
-                <div className="register-form-div">
-                    <InputTextField className="inputTextFieldForm register-input-text-field"
+            <form onSubmit={formik.handleSubmit} className="user-form">
+                <div className="user-form-div">
+                    <InputTextField className="inputTextFieldForm user-input-text-field"
                                     classNameInput="inputTextField"
                                     formik={formik} fieldName={'email'} label={'Adres e-mail*'}/>
-                    <InputTextField className="inputTextFieldForm register-input-text-field"
+                    <InputTextField className="inputTextFieldForm user-input-text-field"
                                     classNameInput="inputTextField"
                                     formik={formik} fieldName={'name'} label={'Imię*'}/>
-                    <InputTextField className="inputTextFieldForm register-input-text-field"
+                    <InputTextField className="inputTextFieldForm user-input-text-field"
                                     classNameInput="inputTextField"
                                     formik={formik} fieldName={'surname'} label={'Nazwisko*'}/>
-                    <InputTextField className="inputTextFieldForm register-input-text-field"
+                    <InputTextField className="inputTextFieldForm user-input-text-field"
                                     classNameInput="inputTextField"
                                     formik={formik} fieldName={'phoneNumber'} label={'Numer telefonu'}/>
                     <DropDownField description="Wybierz pojazd" values={vehicleBrandValues}
                                    selectedValue={selectedVehicleBrand}
-                                   setSelectedValue={chooseVehicleBrand}/>
+                                   setSelectedValue={(val) => setSelectedVehicleBrand(val)}/>
                     <DropDownField description="Wybierz model" values={vehicleModelValues}
                                    selectedValue={selectedVehicleModel}
-                                   setSelectedValue={chooseVehicleModel}
+                                   setSelectedValue={(val) => setSelectedVehicleModel(val)}
                                    disabled={!selectedVehicleBrand}/>
-                    <PasswordTextField className="inputTextFieldForm register-input-text-field"
+                    <PasswordTextField className="inputTextFieldForm user-input-text-field"
                                        classNameInput="inputTextField"
                                        formik={formik} fieldName={'password'} label={'Hasło*'}/>
-                    <PasswordTextField className="inputTextFieldForm register-input-text-field"
+                    <PasswordTextField className="inputTextFieldForm user-input-text-field"
                                        classNameInput="inputTextField"
                                        formik={formik} fieldName={'confirmationPassword'} label={'Potwierdź hasło*'}/>
                 </div>

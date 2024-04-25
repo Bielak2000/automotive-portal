@@ -2,13 +2,14 @@ package org.ap.automotiveportalbackend.authorization.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ap.automotiveportalbackend.authorization.dto.RefreshTokenResponse;
 import org.ap.automotiveportalbackend.authorization.dto.AuthorizationRequestHeader;
 import org.ap.automotiveportalbackend.authorization.dto.AuthorizationResponseHeader;
 import org.ap.automotiveportalbackend.authorization.dto.ErrorResponse;
 import org.ap.automotiveportalbackend.authorization.dto.RefreshTokenRequest;
+import org.ap.automotiveportalbackend.authorization.dto.RefreshTokenResponse;
 import org.ap.automotiveportalbackend.authorization.token.JwtUtil;
 import org.ap.automotiveportalbackend.users.User;
+import org.ap.automotiveportalbackend.users.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthorizationController {
 
     private final AuthenticationManager authenticationManager;
-    private JwtUtil jwtUtil;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -42,6 +44,7 @@ public class AuthorizationController {
             String email = authentication.getName();
             User user = new User(email, "");
             String token = jwtUtil.createToken(user);
+            userService.updateLastActivityUser(email);
             AuthorizationResponseHeader authorizationResponseHeader = new AuthorizationResponseHeader(email, token);
             log.info("User {} has been logged.", email);
             return ResponseEntity.ok(authorizationResponseHeader);

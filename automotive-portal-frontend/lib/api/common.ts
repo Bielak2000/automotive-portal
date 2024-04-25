@@ -4,6 +4,7 @@ export function catchErrors(error: any) {
     console.log(error)
     if (error.response.status === 401) {
         removeTokenFromCookies();
+        window.location.replace("/");
     }
     return error.response;
 }

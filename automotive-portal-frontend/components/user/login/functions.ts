@@ -15,11 +15,6 @@ export const removeTokenFromCookies = () => {
     return new Cookies().remove(cookiesName);
 }
 
-export const isLogged = () => {
-    console.log(getTokenFromCookies() !== undefined)
-    return getTokenFromCookies() !== undefined;
-}
-
 export const saveUserEmailInLocalStorage = (userId: string) => {
     window.localStorage.setItem(localStorageUserEmail, JSON.stringify(userId));
 }
