@@ -153,6 +153,7 @@ a {
 
 .dialog {
     min-width: 350px;
+    z-index: 1200;
 }
 
 .dialog-footer-div {
@@ -197,4 +198,32 @@ a {
 .p-dropdown-panel .p-dropdown-header {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+}
+
+.p-password .p-password-show-icon, .p-password .p-password-hide-icon {
+    right: 15px;
+}
+
+.dialog-info {
+    max-width: 530px;
+    text-align: justify;
+}
+
+.dialog-info-button {
+    display: flex;
+    justify-content: right;
+    margin-top: 25px;
+}
+
+.dialog-info-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 30px;
+}
+
+@media screen and (max-width: 580px) {
+    .dialog-info {
+        width: 90%;
+    }
 }

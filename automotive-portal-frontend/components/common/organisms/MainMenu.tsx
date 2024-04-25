@@ -8,6 +8,7 @@ import LoginDialog from "../../user/login/templates/LoginDialog";
 import Link from "next/link";
 import {getTokenFromCookies} from "../../user/login/functions";
 import {UserMenu} from "./UserMenu";
+import DialogInfo from "../atoms/DialogInfo";
 
 type MainMenuProps = {
     title: string;
@@ -20,6 +21,7 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     const [firstMobileView, setFirstMobileView] = useState<boolean>(false);
     const [token, setToken] = useState<string | undefined | null>(null);
     const [refreshData, setRefreshData] = useState<boolean>(false);
+    const [showRegisteredDialogInfo, setShowRegisteredDialogInfo] = useState<boolean>(false);
     const query = router.query;
 
     useEffect(() => {
@@ -40,7 +42,10 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     }, [])
 
     useEffect(() => {
-        if (query.showLogin) {
+        if (query.registered) {
+            // TODO: show info dialog
+            setShowRegisteredDialogInfo(true);
+        } else if (query.showLogin) {
             setShowLoginDialog(true);
         }
     }, [query]);
@@ -50,6 +55,11 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
             setToken(getTokenFromCookies());
         }
     }, [refreshData]);
+
+    const closeRegisterDialog = () => {
+        setShowRegisteredDialogInfo(false);
+        setShowLoginDialog(true);
+    }
 
     const items: MenuItem[] = showComponents ? [
         {
@@ -80,8 +90,12 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     </>
 
     return <>
+        <DialogInfo info={"Twoje konto zostało zarejesetrowane w systemie. Możesz zalogować się do portalu."}
+                    header={"Konto zarejestrowane"} showDialog={showRegisteredDialogInfo}
+                    closeDialog={closeRegisterDialog}/>
         <LoginDialog showDialog={showLoginDialog} setShowDialog={setShowLoginDialog} setRefreshData={setRefreshData}/>
-        <Menubar style={!showComponents ? {height: "60px"} : undefined} className="main-menu" model={!firstMobileView ? items : undefined} start={start} end={menuBarEnd}/>
+        <Menubar style={!showComponents ? {height: "60px"} : undefined} className="main-menu"
+                 model={!firstMobileView ? items : undefined} start={start} end={menuBarEnd}/>
     </>
 }
 

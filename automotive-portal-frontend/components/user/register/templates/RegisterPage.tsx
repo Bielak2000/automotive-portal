@@ -8,11 +8,13 @@ import {UserForm, UserFormValidation} from "../types";
 import DropDownField from "../../../common/atoms/DropDownField";
 import {DropDownType} from "../../../common/types";
 import {useRouter} from "next/router";
+import {getAllBrands, getModelsByBrand} from "../../../../lib/api/vehicle/vehicle";
+import {register} from "../../../../lib/api/user";
 
 const RegisterPage: React.FC = () => {
     const router = useRouter();
     const toast = useRef<Toast>(null);
-    const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([{name: "audi", code: "audi"}]);
+    const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
     const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([{name: "a5", code: "1"}]);
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
     const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
@@ -24,7 +26,8 @@ const RegisterPage: React.FC = () => {
             name: "",
             surname: "",
             phoneNumber: "",
-            vehicleId: null
+            vehicleBrand: null,
+            vehicleModel: null
         },
         validationSchema: UserFormValidation,
         validateOnChange: false,
@@ -45,39 +48,73 @@ const RegisterPage: React.FC = () => {
     });
 
     useEffect(() => {
+        getAllBrands().then(response => {
+            if (response.status === 200) {
+                const brandArrayTemp: DropDownType[] = [];
+                response.data.forEach((brand: any) => {
+                    brandArrayTemp.push({name: brand.make, code: brand.make});
+                })
+                setVehicleBrandValues(brandArrayTemp);
+            } else {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Błąd pobierania danych",
+                    detail: "Brak możliwości pobrania pojazdów, spróbuj ponownie za chwilę.",
+                    life: 8000
+                })
+            }
+        })
+    }, []);
+
+    useEffect(() => {
         if (!selectedVehicleBrand) {
             setSelectedVehicleModel(null);
+            setVehicleModelValues([]);
+        } else {
+            getModelsByBrand(selectedVehicleBrand.code).then(response => {
+                if (response.status === 200) {
+                    const modelsArrayTemp: DropDownType[] = [];
+                    response.data.forEach((res: any) => {
+                        modelsArrayTemp.push({name: res.model, code: res.model});
+                    })
+                    setVehicleModelValues(modelsArrayTemp);
+                } else {
+                    toast.current?.show({
+                        severity: "error",
+                        summary: "Błąd pobierania danych",
+                        detail: "Brak możliwości pobrania modelów, spróbuj ponownie za chwilę.",
+                        life: 8000
+                    })
+                }
+            })
         }
     }, [selectedVehicleBrand]);
 
     useEffect(() => {
-        formik.setFieldValue('vehicleId', !selectedVehicleModel ? null : Number(selectedVehicleModel.code));
+        formik.setFieldValue('vehicleModel', !selectedVehicleModel ? null : selectedVehicleModel.code);
     }, [selectedVehicleModel]);
 
+    useEffect(() => {
+        formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
+    }, [selectedVehicleBrand]);
+
     const handleRegister = (data: UserForm) => {
-        console.log(data)
-        // login(data).then((response) => {
-        //     if (response.status === 401) {
-        //         toast.current?.show({
-        //             severity: "error",
-        //             summary: "Błędne dane uwierzytlniające",
-        //             detail: "Wprowadzony login lub hasło są nieprawidłowe.",
-        //             life: 5000
-        //         })
-        //     } else {
-        //         toast.current?.show({
-        //             severity: "success",
-        //             summary: "Zalogowano",
-        //             detail: "Zostałeś zalogowany do systemu.",
-        //             life: 3000
-        //         })
-        //         console.log("true")
-        //         setRefreshData(true);
-        //         saveTokenInCookies(response.data.token);
-        //         saveUserEmailInLocalStorage(response.data.email);
-        //         setShowDialog(false);
-        //     }
-        // })
+        register(data).then((response) => {
+            if (response.status !== 201) {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Wystąpił błąd",
+                    detail: "Wystąpił błąd. Spróbuj ponownie za chwilę.",
+                    life: 5000
+                })
+            } else {
+                formik.resetForm();
+                router.push({
+                    pathname: "/",
+                    query: {registered: true}
+                })
+            }
+        })
     }
 
     const chooseVehicleBrand = (value: DropDownType) => {

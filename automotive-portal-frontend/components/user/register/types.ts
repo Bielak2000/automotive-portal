@@ -8,7 +8,8 @@ export type UserForm = {
     surname: string;
     email: string;
     phoneNumber: string | null;
-    vehicleId: number | null;
+    vehicleBrand: string | null;
+    vehicleModel: string | null;
 }
 
 // @ts-ignore
@@ -19,5 +20,6 @@ export const UserFormValidation: Yup.SchemaOf<UserForm> = Yup.object().shape({
     confirmationPassword: Yup.string().required("Pole wymagane"),
     email: Yup.string().required("Pole wymagane").matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, "Adres e-mail jest niepoprawny."),
     phoneNumber: Yup.string().notRequired().matches(/^[0-9]{9}$/, "Numer kontaktowy jest błędny."),
-    vehicleId: Yup.number().nullable().notRequired()
+    vehicleBrand: Yup.string().nullable().notRequired(),
+    vehicleModel: Yup.string().nullable().notRequired()
 });

@@ -21,7 +21,7 @@ export const PasswordTextField = ({
                                    classNameInput
                                }: PasswordTextFieldProps<any>) => {
     return <FormField formik={formik} fieldName={fieldName} className={className} label={label}>
-        <Password id={fieldName} name={fieldName}
+        <Password id={fieldName} name={fieldName} toggleMask
                    value={formik.values[fieldName]} onChange={formik.handleChange} feedback={false}
                    className={classNames('block', 'w-full', classNameInput, {'p-invalid': isFormFieldInvalid(formik, fieldName)})}
         />

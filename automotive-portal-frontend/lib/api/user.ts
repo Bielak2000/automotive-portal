@@ -2,12 +2,25 @@ import {LoginData} from "../../components/user/login/types";
 import axios from "axios";
 import {catchErrors} from "./common";
 import {getTokenFromCookies} from "../../components/user/login/functions";
+import {UserForm} from "../../components/user/register/types";
 
 export const login = (loginData: LoginData) => {
     return axios({
         url: process.env.NEXT_PUBLIC_API_URL + '/auth/login',
         method: "post",
         data: loginData
+    }).then((response) => {
+        return response;
+    }).catch((error) => {
+        return catchErrors(error);
+    })
+}
+
+export const register = (UserData: UserForm) => {
+    return axios({
+        url: process.env.NEXT_PUBLIC_API_URL + '/api/users/register',
+        method: "post",
+        data: UserData
     }).then((response) => {
         return response;
     }).catch((error) => {

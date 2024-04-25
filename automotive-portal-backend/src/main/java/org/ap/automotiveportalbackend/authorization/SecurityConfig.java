@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .httpBasic().authenticationEntryPoint(new EntryPoint())
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**", "api/users/register").permitAll()
+                .requestMatchers("/auth/**", "api/users/register", "api/vehicle/**").permitAll()
                 .requestMatchers("/api/**").hasRole(UserRole.USER_ROLE.getRole())
                 .anyRequest().denyAll()
                 .and()

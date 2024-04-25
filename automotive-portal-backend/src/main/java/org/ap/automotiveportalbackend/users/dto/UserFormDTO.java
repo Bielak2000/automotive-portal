@@ -14,5 +14,6 @@ public record UserFormDTO(@NotEmpty(message = "Name can't be empty") String name
                           @NotEmpty(message = "Email can't be emtpy") @Email String email,
 
                           @Nullable @Pattern(regexp = "^[0-9]{9}|$") String phoneNumber,
-                          @Nullable Long vehicleId) {
+                          @Nullable String vehicleBrand,
+                          @Nullable String vehicleModel) {
 }

@@ -8,13 +8,10 @@ import org.ap.automotiveportalbackend.users.UserRepository;
 import org.ap.automotiveportalbackend.users.dto.UserDTO;
 import org.ap.automotiveportalbackend.users.dto.UserFormDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
 @AllArgsConstructor
 public class UserService {
 

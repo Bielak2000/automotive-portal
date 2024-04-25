@@ -40,7 +40,8 @@ public class User extends BaseEntity {
     private UserRole role;
     private String password;
     private String phoneNumber;
-    private Long vehicleId;
+    private String vehicleBrand;
+    private String vehicleModel;
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
 
@@ -53,7 +54,8 @@ public class User extends BaseEntity {
         this.surname = userFormDTO.surname();
         this.email = userFormDTO.email();
         this.phoneNumber = userFormDTO.phoneNumber();
-        this.vehicleId = userFormDTO.vehicleId();
+        this.vehicleBrand = userFormDTO.vehicleBrand();
+        this.vehicleModel = userFormDTO.vehicleModel();
         this.posts = new ArrayList<>();
     }
 

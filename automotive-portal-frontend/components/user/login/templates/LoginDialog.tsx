@@ -1,6 +1,5 @@
-import React, {useRef, useState} from "react";
+import React, {useRef} from "react";
 import {Dialog} from "primereact/dialog";
-import {InputText} from "primereact/inputtext";
 import {useFormik} from "formik";
 import {LoginData, LoginDataValidation} from "../types";
 import {InputTextField} from "../../../common/atoms/InputTextField";
@@ -35,7 +34,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
 
     const handleLogin = (data: LoginData) => {
         login(data).then((response) => {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 toast.current?.show({
                     severity: "error",
                     summary: "Błędne dane uwierzytelniające",
@@ -49,7 +48,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
                     detail: "Zostałeś zalogowany do systemu.",
                     life: 3000
                 })
-                console.log("true")
                 setRefreshData(true);
                 saveTokenInCookies(response.data.token);
                 saveUserEmailInLocalStorage(response.data.email);
