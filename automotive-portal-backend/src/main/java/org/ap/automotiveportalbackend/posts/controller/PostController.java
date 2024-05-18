@@ -1,5 +1,6 @@
 package org.ap.automotiveportalbackend.posts.controller;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ap.automotiveportalbackend.images.service.ImageService;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -62,14 +65,16 @@ public class PostController {
         return postService.getAllPostsByVehicleModel(requestPostVehicleModelDTO.model());
     }
 
-    // TODO: save files - images
     @PostMapping
-    public void createPost(@RequestBody @Valid PostFormDTO postFormDTO) {
+    public void createPost(@RequestBody @Valid PostFormDTO postFormDTO,
+                           @Nullable @RequestParam("images") MultipartFile[] images) {
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         String username = loggedInUser.getName();
         Post post = postService.createPost(postFormDTO, username);
-        imageService.createImage("temp", post);
-        log.info("Created new post by {}", username);
+        for (MultipartFile image : images) {
+            imageService.createImage(image, post);
+        }
+        log.info("Created new post by {} with {} images", username, images.length);
     }
 
 }

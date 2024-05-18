@@ -53,4 +53,8 @@ public class Post extends BaseEntity {
         this.user = user;
     }
 
+    public void addImage(Image image) {
+        this.images.add(image);
+    }
+
 }

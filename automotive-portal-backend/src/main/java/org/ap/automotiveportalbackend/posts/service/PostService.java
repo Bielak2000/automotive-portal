@@ -1,6 +1,7 @@
 package org.ap.automotiveportalbackend.posts.service;
 
 import lombok.AllArgsConstructor;
+import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostRepository;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
@@ -53,6 +54,12 @@ public class PostService {
         Post post = new Post(postFormDTO, user);
         postRepository.save(post);
         return post;
+    }
+
+    @Transactional
+    public void addImageToPost(Post post, Image image) {
+        post.addImage(image);
+        postRepository.save(post);
     }
 
 }
