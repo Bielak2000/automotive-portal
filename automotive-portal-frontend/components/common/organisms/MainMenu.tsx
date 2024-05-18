@@ -9,13 +9,17 @@ import Link from "next/link";
 import {getTokenFromCookies} from "../../user/login/functions";
 import {UserMenu} from "./UserMenu";
 import DialogInfo from "../atoms/DialogInfo";
+import {UserDTO} from "../types";
 
 type MainMenuProps = {
     title: string;
     showComponents: boolean;
+    user?: UserDTO;
+
+    setUser?: (val: UserDTO) => void;
 }
 
-const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
+const MainMenu: React.FC<MainMenuProps> = ({title, showComponents, user, setUser}) => {
     const router = useRouter();
     const [showLoginDialog, setShowLoginDialog] = useState<boolean>(false);
     const [firstMobileView, setFirstMobileView] = useState<boolean>(false);
@@ -42,11 +46,9 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     }, [])
 
     useEffect(() => {
-        if (query.registered) {
-            // TODO: show info dialog
-            setShowRegisteredDialogInfo(true);
-        } else if (query.showLogin) {
+        if (query.showLogin) {
             setShowLoginDialog(true);
+            router.replace('/', undefined, {shallow: true});
         }
     }, [query]);
 
@@ -57,7 +59,7 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
     }, [refreshData]);
 
     const closeRegisterDialog = () => {
-        router.replace('/', undefined, { shallow: true });
+        router.replace('/', undefined, {shallow: true});
         setShowRegisteredDialogInfo(false);
         setShowLoginDialog(true);
     }
@@ -67,7 +69,7 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
             label: 'Tablica',
             icon: 'pi pi-home',
             command: () => {
-                router.push("/pojazdy")
+                router.push("/")
             }
         }
     ] : []
@@ -87,7 +89,7 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents}) => {
         {!token && token !== null && showComponents && <Button icon="pi pi-sign-in" label={'Zaloguj się'}
                                                                className="login-button"
                                                                onClick={() => setShowLoginDialog(true)}/>}
-        {token && showComponents && <UserMenu/>}
+        {token && showComponents && <UserMenu user={user} setUser={setUser}/>}
     </>
 
     return <>

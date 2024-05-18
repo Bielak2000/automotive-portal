@@ -1,5 +1,6 @@
 package org.ap.automotiveportalbackend.posts.dto;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.users.dto.UserDTO;
@@ -11,13 +12,15 @@ import java.util.UUID;
 @Builder
 public record PostDTO(@NotEmpty(message = "Title can't be empty") String title,
                       @NotEmpty(message = "Content can't be empty") String content,
-                      @NotNull(message = "VehicleId can't be null") UUID vehicleId,
+                      @NotNull(message = "VehicleId can't be null") String vehicleBrand,
+                      @Nullable String vehicleModel,
                       @NotNull(message = "User can't be null") UserDTO userDTO) {
     public static PostDTO create(Post post) {
         return PostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
-                .vehicleId(post.getVehicleId())
+                .vehicleBrand(post.getVehicleBrand())
+                .vehicleModel(post.getVehicleModel())
                 .userDTO(UserDTO.create(post.getUser()))
                 .build();
     }

@@ -1,0 +1,28 @@
+.main-app-content-div-start-web {
+    justify-content: left;
+}
+
+.left-panel-main-div {
+    width: 300px;
+    padding: 10px;
+    background: #ffffff;
+    min-height: calc(100svh - 60px);
+    z-index: 1;
+    box-shadow: 4px 0 6px 0 #888;
+}
+
+.left-panel-filter-div {
+    text-align: center;
+}
+
+@media screen and (max-width: 675px) {
+    .left-panel-main-div {
+        width: 200px;
+    }
+}
+
+@media screen and (max-width: 675px) {
+    .left-panel-main-div {
+        min-height: calc(100svh - 160px);
+    }
+}

@@ -39,7 +39,7 @@ const Settings: NextPage = () => {
         })
     }
 
-    return <Layout title="Ustawienia" showComponents={true}>
+    return <Layout title="Ustawienia" showComponents={true} user={user} setUser={setUser}>
         <Toast ref={toast}/>
         {user && <SettingsPage user={user} setUpdateData={setUpdateData}/>}
     </Layout>

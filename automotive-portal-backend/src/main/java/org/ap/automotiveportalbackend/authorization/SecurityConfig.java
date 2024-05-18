@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -51,6 +52,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**", "api/users/register", "api/vehicle/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
                 .requestMatchers("/api/**").hasRole(UserRole.USER_ROLE.getRole())
                 .anyRequest().denyAll()
                 .and()

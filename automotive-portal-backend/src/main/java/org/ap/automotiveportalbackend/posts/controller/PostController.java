@@ -2,12 +2,25 @@ package org.ap.automotiveportalbackend.posts.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ap.automotiveportalbackend.images.service.ImageService;
+import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
+import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
+import org.ap.automotiveportalbackend.posts.dto.RequestPostVehicleBrandDTO;
+import org.ap.automotiveportalbackend.posts.dto.RequestPostVehicleModelDTO;
 import org.ap.automotiveportalbackend.posts.service.PostService;
+import org.ap.automotiveportalbackend.vehicle.dto.VehicleBrandDTO;
+import org.ap.automotiveportalbackend.vehicle.dto.VehicleModelDTO;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -17,11 +30,46 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final ImageService imageService;
 
     @GetMapping
     public List<PostDTO> getAllPosts() {
         log.info("Get all posts ...");
         return postService.getAllPosts();
+    }
+
+    @GetMapping("/brands")
+    public List<VehicleBrandDTO> getAllPostVehicleBrands() {
+        log.info("Get all post vehicles ...");
+        return postService.getAllPostVehicleBrands();
+    }
+
+    @GetMapping("/models")
+    public List<VehicleModelDTO> getAllPostVehicleModels() {
+        log.info("Get all post models ...");
+        return postService.getAllPostVehicleModels();
+    }
+
+    @GetMapping("/brand")
+    public List<PostDTO> getAllPostByVehicleBrand(@RequestBody @Valid RequestPostVehicleBrandDTO requestPostVehicleBrandDTO) {
+        log.info("Get all posts by brand ...");
+        return postService.getAllPostsByVehicleBrand(requestPostVehicleBrandDTO.brand());
+    }
+
+    @GetMapping("/model")
+    public List<PostDTO> getAllPostByVehicleModel(@RequestBody @Valid RequestPostVehicleModelDTO requestPostVehicleModelDTO) {
+        log.info("Get all posts by model ...");
+        return postService.getAllPostsByVehicleModel(requestPostVehicleModelDTO.model());
+    }
+
+    // TODO: save files - images
+    @PostMapping
+    public void createPost(@RequestBody @Valid PostFormDTO postFormDTO) {
+        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
+        String username = loggedInUser.getName();
+        Post post = postService.createPost(postFormDTO, username);
+        imageService.createImage("temp", post);
+        log.info("Created new post by {}", username);
     }
 
 }

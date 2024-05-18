@@ -83,4 +83,8 @@ public class UserService {
         return UserDTO.create(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User %s not found", email))));
     }
 
+    public User getByUsername(String username) {
+        return userRepository.findByEmail(username).orElseThrow(()->new NotFoundException(String.format("User %s not found", username)));
+    }
+
 }

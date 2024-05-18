@@ -5,8 +5,10 @@
     padding: 0 30px 0 30px;
     background: var(--background);
     color: var(--color);
-    box-shadow: 0 4px 8px -2px black;
+    box-shadow: 0 -3px 15px 3px black;
     justify-content: space-between;
+    z-index: 10;
+    position: relative;
 }
 
 .main-menu-start {
@@ -19,6 +21,8 @@
     margin-left: 0;
     align-items: center;
     display: flex;
+    justify-content: right;
+    width: 258px;
 }
 
 .main-menu > .p-menubar-root-list {

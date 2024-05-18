@@ -8,9 +8,14 @@ import {getUserByEmail, logout} from "../../../lib/api/user";
 import {UserDTO} from "../types";
 import Image from "next/image";
 
-export const UserMenu: React.FC = () => {
+interface UserMenuProps {
+    user?: UserDTO;
+
+    setUser?: (val: UserDTO) => void;
+}
+
+export const UserMenu: React.FC<UserMenuProps> = ({user, setUser}) => {
     const router = useRouter();
-    const [user, setUser] = useState<UserDTO>();
     const [token, setToken] = useState<string | undefined>(getTokenFromCookies());
     const [userEmail, setUserEmail] = useState<string | null>(getUserEmailFromLocalStorage());
 
@@ -21,7 +26,7 @@ export const UserMenu: React.FC = () => {
     useEffect(() => {
         if (token !== undefined && userEmail !== null) {
             getUserByEmail(token).then(response => {
-                if (response.status === 200) {
+                if (response.status === 200 && setUser) {
                     setUser(response.data);
                 }
             })
