@@ -7,12 +7,29 @@
     padding: 10px;
     background: #ffffff;
     min-height: calc(100svh - 60px);
-    z-index: 1;
+    z-index: 2;
     box-shadow: 4px 0 6px 0 #888;
+    transition: 0.8s;
 }
 
 .left-panel-filter-div {
     text-align: center;
+}
+
+@media screen and (max-width: 1089px) {
+    .left-panel-main-div {
+        width: 100svw;
+        position: absolute;
+    }
+
+    .panel-header.left-panel {
+        justify-content: space-between;
+    }
+
+    .left-panel-filter-div{
+        padding-right: 60px;
+        padding-left: 40%;
+    }
 }
 
 @media screen and (max-width: 675px) {

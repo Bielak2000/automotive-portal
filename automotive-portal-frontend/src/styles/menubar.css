@@ -183,6 +183,7 @@
     .header-title, .main-menu > .p-menubar-end {
         width: 100%;
         justify-content: center;
+        max-height: 70px;
     }
 
     .menuitem-mobile {

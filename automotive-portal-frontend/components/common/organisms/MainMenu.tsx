@@ -50,6 +50,9 @@ const MainMenu: React.FC<MainMenuProps> = ({title, showComponents, user, setUser
             setShowLoginDialog(true);
             router.replace('/', undefined, {shallow: true});
         }
+        if(query.registered) {
+            setShowRegisteredDialogInfo(true);
+        }
     }, [query]);
 
     useEffect(() => {

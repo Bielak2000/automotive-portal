@@ -3,6 +3,8 @@ import "@/styles/menubar.css";
 import "@/styles/user/login.css";
 import "@/styles/user/register.css";
 import "@/styles/main/left-panel.css";
+import "@/styles/main/right-panel.css";
+import "@/styles/main/main-view.css";
 import type {AppProps} from "next/app";
 import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.min.css';
