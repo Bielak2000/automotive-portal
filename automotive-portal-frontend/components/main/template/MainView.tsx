@@ -1,6 +1,8 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {Button} from "primereact/button";
 import {InputText} from "primereact/inputtext";
+import {getTokenFromCookies} from "../../user/login/functions";
+import {Toast} from "primereact/toast";
 
 interface MainViewProps {
     showRightPanel: boolean;
@@ -12,9 +14,25 @@ interface MainViewProps {
 }
 
 const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNotification, setShowRightPanel, setShowLeftPanel}) => {
+    const toast = useRef<Toast>(null);
+    const token = getTokenFromCookies();
     const [searchValue, setSearchValue] = useState<string>("");
 
+    const addPost = () => {
+        if(token) {
+
+        } else {
+            toast.current?.show({
+                severity: "warn",
+                summary: "Operacja niedostępna",
+                detail: "Dodawanie postów jest tylko dostępna dla użytkowników zalogowanych.",
+                life: 5000
+            })
+        }
+    }
+
     return <div className="main-div">
+        <Toast ref={toast}/>
         <div className="main-content-div">
             <div className="main-view-menu">
                 <div className="flex">
@@ -30,7 +48,7 @@ const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNot
                         <Button icon="pi pi-bell" onClick={() => setShowRightPanel(true)} style={{marginRight: "5px"}}
                                 tooltipOptions={{position: "left"}} className={isNotification ? "active-bell-button" : ""}
                                 tooltip="Włącz powiadomienia"/>}
-                    <Button icon="pi pi-plus" onClick={() => console.log("xd")} label="Dodaj post"/>
+                    <Button icon="pi pi-plus" onClick={addPost} label="Dodaj post"/>
                 </div>
 
             </div>

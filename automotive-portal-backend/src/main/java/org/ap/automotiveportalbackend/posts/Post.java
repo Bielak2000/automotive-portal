@@ -3,12 +3,13 @@ package org.ap.automotiveportalbackend.posts;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.ap.automotiveportalbackend.common.BaseEntity;
@@ -36,6 +37,8 @@ public class Post extends BaseEntity {
     private int appearance_number;
     private String vehicleBrand;
     private String vehicleModel;
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -48,6 +51,7 @@ public class Post extends BaseEntity {
         this.title = postFormDTO.title();
         this.content = postFormDTO.content();
         this.appearance_number = 0;
+        this.postType = postFormDTO.postType();
         this.vehicleBrand = postFormDTO.vehicleBrand();
         this.vehicleModel = postFormDTO.vehicleModel();
         this.user = user;
