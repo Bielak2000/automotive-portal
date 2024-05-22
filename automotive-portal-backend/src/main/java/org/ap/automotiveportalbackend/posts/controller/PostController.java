@@ -12,6 +12,7 @@ import org.ap.automotiveportalbackend.posts.dto.RequestPostVehicleModelDTO;
 import org.ap.automotiveportalbackend.posts.service.PostService;
 import org.ap.automotiveportalbackend.vehicle.dto.VehicleBrandDTO;
 import org.ap.automotiveportalbackend.vehicle.dto.VehicleModelDTO;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/posts")
+@RequestMapping("/api/posts")
 @AllArgsConstructor
 @Slf4j
 public class PostController {
@@ -66,9 +68,9 @@ public class PostController {
         return postService.getAllPostsByVehicleModel(requestPostVehicleModelDTO.model());
     }
 
-    @PostMapping
-    public void createPost(@RequestBody @Valid PostFormDTO postFormDTO,
-                           @Nullable @RequestParam("images") MultipartFile[] images) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void createPost(@RequestPart @Valid PostFormDTO postFormDTO,
+                           @Nullable @RequestPart(name = "images") MultipartFile[] images) {
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         String username = loggedInUser.getName();
         UUID postId = UUID.randomUUID();
@@ -79,7 +81,7 @@ public class PostController {
             }
         }
         postService.createPost(postFormDTO, username, images1, postId);
-        log.info("Created new post by {} with {} images", username, images.length);
+        log.info("Created new post by {} with {} images", username, images == null ? "0" : images.length);
     }
 
 }

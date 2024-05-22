@@ -6,9 +6,11 @@ import {UserDTO} from "../../components/common/types";
 import MainView from "../../components/main/template/MainView";
 import RightPanel from "../../components/main/template/RightPanel";
 import {Toast} from "primereact/toast";
+import {useRouter} from "next/router";
 
 const App: NextPage = () => {
     const toast = useRef<Toast>(null);
+    const router = useRouter();
     const [user, setUser] = useState<UserDTO>();
     const [showRightPanel, setShowRightPanel] = useState<boolean>(false);
     const [showLeftPanel, setShowLeftPanel] = useState<boolean>(false);
@@ -24,6 +26,17 @@ const App: NextPage = () => {
             })
         }
     }, [isNotification]);
+
+    useEffect(() => {
+        if(router.query.state === "tokenexpiration") {
+            toast.current?.show({
+                severity: "warn",
+                summary: "Zostałeś wylogowany",
+                detail: "Twój token wygasł, zaloguj się ponownie.",
+                life: 8000
+            })
+        }
+    }, [router.query]);
 
     return <Layout title="Tablica" showComponents={true} className="main-app-content-div-start-web" user={user}
                    setUser={setUser}>

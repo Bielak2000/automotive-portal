@@ -17,6 +17,7 @@ import {
 import {Tooltip} from "primereact/tooltip";
 import {ProgressBar} from "primereact/progressbar";
 import {InputTextarea} from "primereact/inputtextarea";
+import {addPostWithImages} from "../../../lib/api/post";
 
 type AddPostDialogProps = {
     showDialog: boolean;
@@ -31,8 +32,8 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     const [imagesNumber, setImagesNumber] = useState<number>(0);
     const postTypeValues: DropDownType[] = [{
         name: "usterka",
-        code: "fault"
-    }, {name: "kupie", code: "buy"}, {name: "sprzedam", code: "sell"}, {name: "ogólny", code: "question"}];
+        code: "FAULT"
+    }, {name: "kupie", code: "BUY"}, {name: "sprzedam", code: "SELL"}, {name: "ogólny", code: "QUESTION"}];
     const [selectedPostType, setSelectedPostType] = useState<DropDownType>();
     const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
     const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([]);
@@ -55,19 +56,8 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
         validationSchema: PostDataValidation,
         validateOnChange: false,
         onSubmit: (data) => {
-            console.log(data);
-            console.log(fileUploadRef.current.getFiles())
-            console.log(selectedVehicleBrand)
-            // if (!selectedVehicleBrand) {
-            //     toast.current?.show({
-            //         severity: "error",
-            //         summary: "Błędne dane",
-            //         detail: "Marka pojazdu jest wymagana.",
-            //         life: 8000
-            //     })
-            // }
-            // handleLogin(data);
-            // formik.resetForm();
+            addPost(data);
+            // console.log(formik.errors);
         }
     });
 
@@ -101,40 +91,51 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
                 detail: "Zbyt dużo wgranych zdjęć.",
                 life: 5000
             });
-            // document.getElementById('.custom-cancel-btn')!.click();
             setImagesNumber(0);
             fileUploadRef.current?.clear();
         }
     }, [imagesNumber]);
 
-    // const handleLogin = (data: LoginData) => {
-    //     login(data).then((response) => {
-    //         if (response.status === 401) {
-    //             toast.current?.show({
-    //                 severity: "error",
-    //                 summary: "Błędne dane uwierzytelniające",
-    //                 detail: "Wprowadzony login lub hasło są nieprawidłowe.",
-    //                 life: 5000
-    //             })
-    //         } else {
-    //             toast.current?.show({
-    //                 severity: "success",
-    //                 summary: "Zalogowano",
-    //                 detail: "Zostałeś zalogowany do systemu.",
-    //                 life: 3000
-    //             })
-    //             setRefreshData(true);
-    //             saveTokenInCookies(response.data.token);
-    //             saveUserEmailInLocalStorage(response.data.email);
-    //             setShowDialog(false);
-    //         }
-    //     })
-    // }
+    const addPost = (data: PostFormDTO) => {
+        addPostWithImages(data, fileUploadRef.current!.getFiles()).then((response) => {
+            if (response.status === 401) {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Błędne dane uwierzytelniające",
+                    detail: "Wprowadzony login lub hasło są nieprawidłowe.",
+                    life: 5000
+                });
+            } else {
+                toast.current?.show({
+                    severity: "success",
+                    summary: "Dodano post",
+                    detail: "Post został zapisany i opublikowany.",
+                    life: 5000
+                })
+                cancel();
+            }
+        })
+    }
 
     const cancel = () => {
         setShowDialog(false);
         setSelectedPostType(undefined);
-        setSelectedVehicleBrand(null);
+        if(user.vehicleBrand) {
+            setSelectedVehicleBrand({
+                name: user.vehicleBrand,
+                code: user.vehicleBrand
+            })
+        } else {
+            setSelectedVehicleBrand(null);
+        }
+        if(user.vehicleModel) {
+            setSelectedVehicleModel({
+                name: user.vehicleModel,
+                code: user.vehicleModel
+            })
+        } else {
+            setSelectedVehicleModel(null);
+        }
         setImagesNumber(0);
         formik.resetForm();
     }

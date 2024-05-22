@@ -1,4 +1,4 @@
-import {getAllBrands, getModelsByBrand} from "../../../lib/api/vehicle/vehicle";
+import {getAllBrands, getModelsByBrand} from "../../../lib/api/vehicle";
 import {DropDownType} from "../types";
 import {Toast} from "primereact/toast";
 import {RefObject} from "react";

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {catchErrors} from "../common";
+import {catchErrors} from "./common";
 
 export const getAllBrands = () => {
     return axios({

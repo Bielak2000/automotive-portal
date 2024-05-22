@@ -29,7 +29,7 @@ const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNot
             toast.current?.show({
                 severity: "warn",
                 summary: "Operacja niedostępna",
-                detail: "Dodawanie postów jest tylko dostępna dla użytkowników zalogowanych.",
+                detail: "Dodawanie postów jest tylko dostępne dla użytkowników zalogowanych.",
                 life: 5000
             })
         }
