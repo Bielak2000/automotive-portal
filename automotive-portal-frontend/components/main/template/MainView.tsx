@@ -3,24 +3,28 @@ import {Button} from "primereact/button";
 import {InputText} from "primereact/inputtext";
 import {getTokenFromCookies} from "../../user/login/functions";
 import {Toast} from "primereact/toast";
+import AddPostDialog from "../../post/templates/AddPostDialog";
+import {UserDTO} from "../../common/types";
 
 interface MainViewProps {
     showRightPanel: boolean;
     showLeftPanel: boolean;
     isNotification: boolean;
+    user?: UserDTO;
 
     setShowRightPanel: (val: boolean) => void;
     setShowLeftPanel: (val: boolean) => void;
 }
 
-const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNotification, setShowRightPanel, setShowLeftPanel}) => {
+const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNotification, user, setShowRightPanel, setShowLeftPanel}) => {
     const toast = useRef<Toast>(null);
     const token = getTokenFromCookies();
     const [searchValue, setSearchValue] = useState<string>("");
+    const [showAddPostDialog, setShowAddPostDialog] = useState<boolean>(false);
 
     const addPost = () => {
         if(token) {
-
+            setShowAddPostDialog(true);
         } else {
             toast.current?.show({
                 severity: "warn",
@@ -33,6 +37,7 @@ const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNot
 
     return <div className="main-div">
         <Toast ref={toast}/>
+        {user && <AddPostDialog showDialog={showAddPostDialog} user={user} setShowDialog={setShowAddPostDialog}/>}
         <div className="main-content-div">
             <div className="main-view-menu">
                 <div className="flex">

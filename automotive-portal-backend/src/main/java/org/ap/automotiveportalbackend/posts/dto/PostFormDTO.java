@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public record PostFormDTO(@NotEmpty(message = "Title can't be empty") String title,
                           @NotEmpty(message = "Content can't be empty") String content,
-                          @NotNull(message = "VehicleBrand can't be null") String vehicleBrand,
+                          @NotEmpty(message = "VehicleBrand can't be null") String vehicleBrand,
                           @NotNull(message = "PostType can't be null") PostType postType,
                           @Nullable String vehicleModel) {
 }

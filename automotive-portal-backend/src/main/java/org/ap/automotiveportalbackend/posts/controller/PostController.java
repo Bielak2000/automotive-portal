@@ -73,8 +73,10 @@ public class PostController {
         String username = loggedInUser.getName();
         UUID postId = UUID.randomUUID();
         List<Image> images1 = new ArrayList<>();
-        for (MultipartFile image : images) {
-            images1.add(imageService.createImage(image, postId));
+        if (images != null) {
+            for (MultipartFile image : images) {
+                images1.add(imageService.createImage(image, postId));
+            }
         }
         postService.createPost(postFormDTO, username, images1, postId);
         log.info("Created new post by {} with {} images", username, images.length);

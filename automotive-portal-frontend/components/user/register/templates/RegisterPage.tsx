@@ -115,10 +115,10 @@ const RegisterPage: React.FC = () => {
                                     classNameInput="inputTextField"
                                     formik={formik} fieldName={'phoneNumber'} label={'Numer telefonu'}/>
                     <DropDownField description="Wybierz pojazd" values={vehicleBrandValues}
-                                   selectedValue={selectedVehicleBrand}
+                                   selectedValue={selectedVehicleBrand} filter={true}
                                    setSelectedValue={(val) => setSelectedVehicleBrand(val)}/>
                     <DropDownField description="Wybierz model" values={vehicleModelValues}
-                                   selectedValue={selectedVehicleModel}
+                                   selectedValue={selectedVehicleModel} filter={true}
                                    setSelectedValue={(val) => setSelectedVehicleModel(val)}
                                    disabled={!selectedVehicleBrand}/>
                     <PasswordTextField className="inputTextFieldForm user-input-text-field"

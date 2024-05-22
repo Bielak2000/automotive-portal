@@ -78,6 +78,7 @@ const SettingsPage: React.FC<RegisterPageProps> = ({user, setUpdateData}) => {
     }, []);
 
     useEffect(() => {
+        formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
         if (!selectedVehicleBrand) {
             setSelectedVehicleModel(null);
             setVehicleModelValues([]);
@@ -89,10 +90,6 @@ const SettingsPage: React.FC<RegisterPageProps> = ({user, setUpdateData}) => {
     useEffect(() => {
         formik.setFieldValue('vehicleModel', !selectedVehicleModel ? null : selectedVehicleModel.code);
     }, [selectedVehicleModel]);
-
-    useEffect(() => {
-        formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
-    }, [selectedVehicleBrand]);
 
     const handleChangeUserData = (data: UserUpdateDTO) => {
         update(data).then((response) => {
@@ -165,18 +162,12 @@ const SettingsPage: React.FC<RegisterPageProps> = ({user, setUpdateData}) => {
                                     formik={formik} fieldName={'phoneNumber'} label={'Numer telefonu'}/>
                     <DropDownField description="Wybierz pojazd" values={vehicleBrandValues}
                                    disabled={!editData}
-                                   selectedValue={selectedVehicleBrand}
+                                   selectedValue={selectedVehicleBrand} filter={true}
                                    setSelectedValue={(val) => setSelectedVehicleBrand(val)}/>
                     <DropDownField description="Wybierz model" values={vehicleModelValues}
-                                   selectedValue={selectedVehicleModel}
+                                   selectedValue={selectedVehicleModel} filter={true}
                                    setSelectedValue={(val) => setSelectedVehicleModel(val)}
                                    disabled={!selectedVehicleBrand || !editData}/>
-                    {/*<PasswordTextField className="inputTextFieldForm register-input-text-field"*/}
-                    {/*                   classNameInput="inputTextField"*/}
-                    {/*                   formik={formik} fieldName={'password'} label={'Hasło*'}/>*/}
-                    {/*<PasswordTextField className="inputTextFieldForm register-input-text-field"*/}
-                    {/*                   classNameInput="inputTextField"*/}
-                    {/*                   formik={formik} fieldName={'confirmationPassword'} label={'Potwierdź hasło*'}/>*/}
                 </div>
                 <p style={{width: "100%", textAlign: "center"}}>* - pole wymagane</p>
                 {!editData && notEditDataFooter}

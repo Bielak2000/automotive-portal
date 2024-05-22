@@ -29,7 +29,7 @@ const App: NextPage = () => {
                    setUser={setUser}>
         <Toast ref={toast}/>
         <LeftPanel user={user} showLeftPanel={showLeftPanel} setShowLeftPanel={setShowLeftPanel}/>
-        <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification}
+        <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification} user={user}
                   setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel}/>
         <RightPanel showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel}/>
     </Layout>
