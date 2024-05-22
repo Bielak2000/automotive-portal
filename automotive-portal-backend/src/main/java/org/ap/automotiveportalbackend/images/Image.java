@@ -30,9 +30,8 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public Image(String url, Post post, UUID id) {
+    public Image(String url, UUID id) {
         super(id);
         this.url = url;
-        this.post = post;
     }
 }

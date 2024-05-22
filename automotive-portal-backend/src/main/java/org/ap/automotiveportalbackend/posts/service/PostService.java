@@ -7,14 +7,13 @@ import org.ap.automotiveportalbackend.posts.PostRepository;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
 import org.ap.automotiveportalbackend.users.User;
-import org.ap.automotiveportalbackend.users.UserRepository;
-import org.ap.automotiveportalbackend.users.dto.UserDTO;
 import org.ap.automotiveportalbackend.users.service.UserService;
 import org.ap.automotiveportalbackend.vehicle.dto.VehicleBrandDTO;
 import org.ap.automotiveportalbackend.vehicle.dto.VehicleModelDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -49,16 +48,9 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(PostFormDTO postFormDTO, String username) {
+    public void createPost(PostFormDTO postFormDTO, String username, List<Image> images, UUID postId) {
         User user = userService.getByUsername(username);
-        Post post = new Post(postFormDTO, user);
-        postRepository.save(post);
-        return post;
-    }
-
-    @Transactional
-    public void addImageToPost(Post post, Image image) {
-        post.addImage(image);
+        Post post = new Post(postFormDTO, user, images, postId);
         postRepository.save(post);
     }
 

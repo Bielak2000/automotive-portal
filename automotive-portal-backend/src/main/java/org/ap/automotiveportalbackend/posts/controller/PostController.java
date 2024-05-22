@@ -3,8 +3,8 @@ package org.ap.automotiveportalbackend.posts.controller;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.images.service.ImageService;
-import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
 import org.ap.automotiveportalbackend.posts.dto.RequestPostVehicleBrandDTO;
@@ -23,8 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/posts")
@@ -70,10 +71,12 @@ public class PostController {
                            @Nullable @RequestParam("images") MultipartFile[] images) {
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         String username = loggedInUser.getName();
-        Post post = postService.createPost(postFormDTO, username);
+        UUID postId = UUID.randomUUID();
+        List<Image> images1 = new ArrayList<>();
         for (MultipartFile image : images) {
-            imageService.createImage(image, post);
+            images1.add(imageService.createImage(image, postId));
         }
+        postService.createPost(postFormDTO, username, images1, postId);
         log.info("Created new post by {} with {} images", username, images.length);
     }
 

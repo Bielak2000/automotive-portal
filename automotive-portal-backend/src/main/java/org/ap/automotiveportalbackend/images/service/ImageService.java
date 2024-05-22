@@ -30,16 +30,13 @@ public class ImageService {
         return imageRepository.findAllByPost(post).stream().map(image -> new ImageDTO(image.getUrl())).collect(Collectors.toList());
     }
 
-    @Transactional
-    public void createImage(MultipartFile imageFile, Post post) {
+    public Image createImage(MultipartFile imageFile, UUID postId) {
         UUID imageId = UUID.randomUUID();
         try {
-            String imageUrl = saveImageFile(post.getId().toString(), imageId.toString(), imageFile);
-            Image image = new Image(imageUrl, post, imageId);
-            imageRepository.save(image);
-            postService.addImageToPost(post, image);
+            String imageUrl = saveImageFile(postId.toString(), imageId.toString(), imageFile);
+            return new Image(imageUrl, imageId);
         } catch (IOException ex) {
-            throw new NotFoundException(String.format("Can't create directory for %s post", post.getId().toString()));
+            throw new NotFoundException(String.format("Can't create directory for %s post", postId.toString()));
         }
     }
 

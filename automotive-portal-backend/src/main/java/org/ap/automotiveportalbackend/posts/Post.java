@@ -2,6 +2,7 @@ package org.ap.automotiveportalbackend.posts;
 
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,7 +20,6 @@ import org.ap.automotiveportalbackend.users.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,12 +42,12 @@ public class Post extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Image> images;
 
-    public Post(PostFormDTO postFormDTO, User user) {
-        super(UUID.randomUUID());
-        this.images = new ArrayList<>();
+    public Post(PostFormDTO postFormDTO, User user, List<Image> images, UUID postId) {
+        super(postId);
+        this.images = images;
         this.title = postFormDTO.title();
         this.content = postFormDTO.content();
         this.appearance_number = 0;
@@ -55,10 +55,6 @@ public class Post extends BaseEntity {
         this.vehicleBrand = postFormDTO.vehicleBrand();
         this.vehicleModel = postFormDTO.vehicleModel();
         this.user = user;
-    }
-
-    public void addImage(Image image) {
-        this.images.add(image);
     }
 
 }
