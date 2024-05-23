@@ -84,6 +84,9 @@ const SettingsPage: React.FC<RegisterPageProps> = ({user, setUpdateData}) => {
             setVehicleModelValues([]);
         } else {
             getModels(toast, selectedVehicleBrand, setVehicleModelValues);
+            if(selectedVehicleBrand?.code !== user.vehicleBrand) {
+                setSelectedVehicleModel(null);
+            }
         }
     }, [selectedVehicleBrand]);
 

@@ -51,6 +51,9 @@ public class PostService {
     public void createPost(PostFormDTO postFormDTO, String username, List<Image> images, UUID postId) {
         User user = userService.getByUsername(username);
         Post post = new Post(postFormDTO, user, images, postId);
+        for(Image image : images) {
+            image.setPost(post);
+        }
         postRepository.save(post);
     }
 

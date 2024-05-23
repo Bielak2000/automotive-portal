@@ -71,18 +71,18 @@ public class PostController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void createPost(@RequestPart @Valid PostFormDTO postFormDTO,
-                           @RequestPart(value = "images") MultipartFile[] images) {
+                           @RequestPart(value = "images", required = false) MultipartFile[] images) {
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         String username = loggedInUser.getName();
         UUID postId = UUID.randomUUID();
         List<Image> images1 = new ArrayList<>();
         if (images != null) {
-//            for (MultipartFile image : images) {
-//                images1.add(imageService.createImage(image, postId));
-//            }
+            for (MultipartFile image : images) {
+                images1.add(imageService.createImage(image, postId));
+            }
         }
         postService.createPost(postFormDTO, username, images1, postId);
-//        log.info("Created new post by {} with {} images", username, images == null ? "0" : images.length);
+        log.info("Created new post by {} with {} images", username, images == null ? "0" : images.length);
     }
 
 }

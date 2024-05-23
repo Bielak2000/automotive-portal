@@ -68,10 +68,12 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     useEffect(() => {
         formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
         if (!selectedVehicleBrand) {
-            setSelectedVehicleModel(null);
             setVehicleModelValues([]);
         } else {
             getModels(toast, selectedVehicleBrand, setVehicleModelValues);
+            if(selectedVehicleBrand?.code !== user.vehicleBrand) {
+                setSelectedVehicleModel(null);
+            }
         }
     }, [selectedVehicleBrand]);
 
