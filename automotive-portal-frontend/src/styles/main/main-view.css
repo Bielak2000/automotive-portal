@@ -38,6 +38,15 @@
     background: #a90202;
 }
 
+.main-view-data-scroller-div {
+    display: flex;
+    margin-top: 15px;
+    border-radius: 10px;
+    align-items: center;
+    /*padding-left: 15px;*/
+    /*padding-right: 15px;*/
+}
+
 @media screen and (max-width: 1380px) {
     .main-div {
         width: calc(100svw - 300px);

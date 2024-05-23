@@ -7,6 +7,7 @@ import org.ap.automotiveportalbackend.images.ImageRepository;
 import org.ap.automotiveportalbackend.images.dto.ImageDTO;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.service.PostService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 

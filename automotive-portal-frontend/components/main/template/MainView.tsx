@@ -1,10 +1,12 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button} from "primereact/button";
 import {InputText} from "primereact/inputtext";
 import {getTokenFromCookies} from "../../user/login/functions";
 import {Toast} from "primereact/toast";
 import AddPostDialog from "../../post/templates/AddPostDialog";
 import {UserDTO} from "../../common/types";
+import PostScroller from "../../post/templates/PostScroller";
+import {getPageablePosts} from "../../../lib/api/post";
 
 interface MainViewProps {
     showRightPanel: boolean;
@@ -55,7 +57,9 @@ const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNot
                                 tooltip="Włącz powiadomienia"/>}
                     <Button icon="pi pi-plus" onClick={addPost} label="Dodaj post"/>
                 </div>
-
+            </div>
+            <div className="main-view-data-scroller-div">
+                <PostScroller/>
             </div>
         </div>
     </div>

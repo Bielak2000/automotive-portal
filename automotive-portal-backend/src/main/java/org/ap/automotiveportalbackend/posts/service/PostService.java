@@ -1,17 +1,23 @@
 package org.ap.automotiveportalbackend.posts.service;
 
 import lombok.AllArgsConstructor;
+import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.images.Image;
+import org.ap.automotiveportalbackend.images.service.ImageService;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostRepository;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
+import org.ap.automotiveportalbackend.posts.dto.PostPageDTO;
 import org.ap.automotiveportalbackend.users.User;
 import org.ap.automotiveportalbackend.users.service.UserService;
 import org.ap.automotiveportalbackend.vehicle.dto.VehicleBrandDTO;
 import org.ap.automotiveportalbackend.vehicle.dto.VehicleModelDTO;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,12 +25,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostService {
 
+    private final String uploadImageDirectory;
     private final PostRepository postRepository;
     private final UserService userService;
 
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts() {
-        return postRepository.findAll().stream().map(PostDTO::create).collect(Collectors.toList());
+    public List<PostDTO> getAllPostsByPage(PostPageDTO postPageDTO) {
+        Pageable pageable = PageRequest.of(postPageDTO.page(), postPageDTO.size());
+        return postRepository.findByOrderByCreatedAtDesc(pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -37,24 +45,32 @@ public class PostService {
         return postRepository.findAll().stream().map(p -> new VehicleModelDTO(p.getVehicleModel())).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<PostDTO> getAllPostsByVehicleBrand(String brand) {
-        return postRepository.findAllByVehicleBrandOrderByCreatedAt(brand).stream().map(PostDTO::create).collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<PostDTO> getAllPostsByVehicleModel(String model) {
-        return postRepository.findAllByVehicleModelOrderByCreatedAt(model).stream().map(PostDTO::create).collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<PostDTO> getAllPostsByVehicleBrand(String brand) {
+//        return postRepository.findAllByVehicleBrandOrderByCreatedAt(brand).stream().map(PostDTO::create).collect(Collectors.toList());
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public List<PostDTO> getAllPostsByVehicleModel(String model) {
+//        return postRepository.findAllByVehicleModelOrderByCreatedAt(model).stream().map(PostDTO::create).collect(Collectors.toList());
+//    }
 
     @Transactional
     public void createPost(PostFormDTO postFormDTO, String username, List<Image> images, UUID postId) {
         User user = userService.getByUsername(username);
         Post post = new Post(postFormDTO, user, images, postId);
-        for(Image image : images) {
+        for (Image image : images) {
             image.setPost(post);
         }
         postRepository.save(post);
+    }
+
+    private PostDTO toPostDTO(Post post) {
+        List<String> images = new ArrayList<>();
+        for(Image image : post.getImages()) {
+            images.add(uploadImageDirectory + post.getId().toString() + "/" + image.getUrl());
+        }
+        return PostDTO.create(post, images);
     }
 
 }

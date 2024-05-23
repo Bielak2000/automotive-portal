@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({title, showComponents, user, setUser, cl
             <title>Portal motoryzacyjny</title>
             <link rel="icon" href="/ac-icon.png"/>
         </Head>
-        <main style={{minWidth: "100vw", minHeight: "100vh"}}>
+        <main style={{minWidth: "100svw", minHeight: "100svh", maxHeight: "100svh"}}>
             <MainMenu title={title} showComponents={showComponents} user={user} setUser={setUser}/>
             <div className={className ? "main-app-content-div " + className : "main-app-content-div"}>
                 {children}

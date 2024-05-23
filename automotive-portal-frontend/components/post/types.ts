@@ -1,5 +1,6 @@
 import * as Yup from "yup";
 import {LoginData} from "../user/login/types";
+import {UserDTO} from "../common/types";
 
 export interface PostFormDTO {
     title: string;
@@ -7,6 +8,21 @@ export interface PostFormDTO {
     vehicleBrand: string;
     postType: string | null;
     vehicleModel?: string | null;
+}
+
+export interface PostDTO {
+    title: string;
+    content: string;
+    vehicleBrand: string;
+    postType: string | null;
+    vehicleModel?: string | null;
+    userDTO: UserDTO;
+    images: string[];
+}
+
+export interface PostPageDTO {
+    page: number;
+    size: number;
 }
 
 export const PostDataValidation: Yup.SchemaOf<PostFormDTO> = Yup.object().shape({
