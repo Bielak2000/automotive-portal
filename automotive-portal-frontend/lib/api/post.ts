@@ -9,7 +9,7 @@ export function addPostWithImages(postFormDTO: PostFormDTO, files: File[]) {
 
     // @ts-ignore
     files.forEach((file, index) => {
-        formData.append(`images[${index}]`, file);
+        formData.append(`images`, file);
     });
     formData.append('postFormDTO', new Blob([JSON.stringify(postFormDTO)], {
         type: "application/json"
