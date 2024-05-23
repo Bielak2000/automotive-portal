@@ -16,7 +16,7 @@ export function addPostWithImages(postFormDTO: PostFormDTO, files: File[]) {
     }));
 
     console.log(formData.get("images[0]"))
-
+    // @ts-ignore
     return fetch(process.env.NEXT_PUBLIC_API_URL! + "/api/posts", {
         method: 'POST',
         body: formData,

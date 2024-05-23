@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,18 +71,18 @@ public class PostController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void createPost(@RequestPart @Valid PostFormDTO postFormDTO,
-                           @Nullable @RequestPart(name = "images") MultipartFile[] images) {
+                           @RequestPart(value = "images") MultipartFile[] images) {
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         String username = loggedInUser.getName();
         UUID postId = UUID.randomUUID();
         List<Image> images1 = new ArrayList<>();
         if (images != null) {
-            for (MultipartFile image : images) {
-                images1.add(imageService.createImage(image, postId));
-            }
+//            for (MultipartFile image : images) {
+//                images1.add(imageService.createImage(image, postId));
+//            }
         }
         postService.createPost(postFormDTO, username, images1, postId);
-        log.info("Created new post by {} with {} images", username, images == null ? "0" : images.length);
+//        log.info("Created new post by {} with {} images", username, images == null ? "0" : images.length);
     }
 
 }
