@@ -4,17 +4,15 @@ import React, {PropsWithChildren} from "react";
 interface BaseFormFieldProps<T> {
     className?: string,
     label: string,
-    help?: string,
     isInvalid: any,
     errorMsg: JSX.Element,
     id: string
 }
 
-export const BaseFormField = <T, >({
+export const BaseField = <T, >({
                                        id,
                                        className,
                                        label,
-                                       help,
                                        errorMsg,
                                        isInvalid,
                                        children
@@ -24,7 +22,6 @@ export const BaseFormField = <T, >({
             {label}
         </label>}
         {children}
-        {help && <small id={id + "-help"} className="block">{help}</small>}
         {errorMsg}
     </div>
 }

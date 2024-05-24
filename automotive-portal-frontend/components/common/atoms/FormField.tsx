@@ -1,6 +1,6 @@
 import React, {PropsWithChildren} from "react";
 import {Formik, getFormErrorMessage, isFormFieldInvalid} from "./Formik";
-import {BaseFormField} from "./BaseFormField";
+import {BaseField} from "./BaseField";
 
 type FormFieldProps<T> = {
     className?: string,
@@ -11,17 +11,16 @@ type FormFieldProps<T> = {
 }
 
 export const FormField = <T, >(props: PropsWithChildren<FormFieldProps<T>>) => {
-    let id = props.fieldName;
-    let label, errorMsg, isInvalid;
-    label = props.label;
-    errorMsg = getFormErrorMessage(props.formik, props.fieldName);
-    isInvalid = props.isFormInvalid !== undefined ? props.isFormInvalid : isFormFieldInvalid(props.formik, props.fieldName);
+    const id = props.fieldName;
+    const label = props.label;
+    const errorMsg = getFormErrorMessage(props.formik, props.fieldName);
+    const isInvalid = props.isFormInvalid !== undefined ? props.isFormInvalid : isFormFieldInvalid(props.formik, props.fieldName);
 
-    return <BaseFormField id={id} className={props.className}
-                          label={label}
-                          errorMsg={errorMsg}
-                          isInvalid={isInvalid}>
+    return <BaseField id={id} className={props.className}
+                      label={label}
+                      errorMsg={errorMsg}
+                      isInvalid={isInvalid}>
         {props.children}
-    </BaseFormField>
+    </BaseField>
 
 }
