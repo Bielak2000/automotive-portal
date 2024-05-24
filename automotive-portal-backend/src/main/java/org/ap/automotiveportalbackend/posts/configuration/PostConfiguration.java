@@ -1,6 +1,7 @@
 package org.ap.automotiveportalbackend.posts.configuration;
 
 import org.ap.automotiveportalbackend.posts.PostRepository;
+import org.ap.automotiveportalbackend.posts.appearance.service.AppearanceService;
 import org.ap.automotiveportalbackend.posts.service.PostService;
 import org.ap.automotiveportalbackend.users.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +13,8 @@ import org.springframework.web.multipart.support.MultipartFilter;
 public class PostConfiguration {
 
     @Bean
-    public PostService postService(PostRepository postRepository, UserService userService) {
-        return new PostService(postRepository, userService);
+    public PostService postService(PostRepository postRepository, UserService userService, AppearanceService appearanceService) {
+        return new PostService(postRepository, userService, appearanceService);
     }
 
 }

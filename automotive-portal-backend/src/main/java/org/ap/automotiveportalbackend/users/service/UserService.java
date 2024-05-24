@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -47,6 +48,15 @@ public class UserService {
             userRepository.save(user.get());
         } else {
             throw new BadRequestException("User with this email just exists.");
+        }
+    }
+
+    public UUID getUserIdByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            return user.get().getId();
+        } else {
+            throw new NotFoundException("User with this email not found.");
         }
     }
 

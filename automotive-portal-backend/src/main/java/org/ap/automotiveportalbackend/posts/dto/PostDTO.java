@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
@@ -19,8 +20,10 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                       @NotNull(message = "VehicleId can't be null") String vehicleBrand,
                       @NotNull(message = "PostType can't be null") PostType postType,
                       @Nullable String vehicleModel,
+                      @NotNull(message = "AppearanceNumber can't be null") Integer appearanceNumber,
                       @NotNull @JsonFormat(pattern = "HH:mm dd-MM-yyyy") LocalDateTime createdAt,
                       @NotNull(message = "User can't be null") UserDTO userDTO,
+                      List<String> appearanceUserIds,
                       @Nullable List<String> images) {
     public static PostDTO create(Post post, List<String> images) {
         return PostDTO.builder()
@@ -30,8 +33,11 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                 .postType(post.getPostType())
                 .vehicleBrand(post.getVehicleBrand())
                 .vehicleModel(post.getVehicleModel())
+                .appearanceNumber(post.getAppearanceNumber())
                 .createdAt(post.getCreatedAt())
                 .userDTO(UserDTO.create(post.getUser()))
+                .appearanceUserIds(
+                        post.getBoostingUsers().stream().map(user -> user.getId().toString()).collect(Collectors.toList()))
                 .images(images)
                 .build();
     }

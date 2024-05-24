@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {UserDTO} from "../../common/types";
-import DropDownField from "../../common/atoms/DropDownField";
 import {Button} from "primereact/button";
 
 interface RightPanelProps {
@@ -22,7 +20,7 @@ const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, setShowRightPane
         if (!firstMobileMediaQuery.matches) {
             setShowRightPanel(true);
         }
-        if(secondMobileMediaQuery.matches) {
+        if (secondMobileMediaQuery.matches) {
             setFullPanel(true);
         }
 
@@ -49,9 +47,9 @@ const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, setShowRightPane
         firstMobileMediaQuery = window!.matchMedia('screen and (max-width: 1380px)');
         secondMobileMediaQuery = window!.matchMedia('screen and (max-width: 1089px)');
         if (showRightPanel) {
-            if(fullPanel) {
+            if (fullPanel) {
                 rightPanel!.style.width = "100svw";
-            } else if(showCloseButton){
+            } else if (showCloseButton) {
                 rightPanel!.style.width = "calc(100svw - 300px)";
             } else {
                 rightPanel!.style.width = "300px";
@@ -62,15 +60,15 @@ const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, setShowRightPane
             rightPanel!.style.padding = "0";
             rightPanel!.style.overflow = "hidden";
         }
-    }, [showRightPanel, showCloseButton]);
+    }, [showRightPanel, showCloseButton, fullPanel]);
 
     return <div id="right-panel" className="right-panel-main-div">
         <div className="right-panel-content-div">
             <div className="panel-header right-panel">
                 <h2>Powiadomienia</h2>
                 {showCloseButton && <Button icon="pi pi-times" className="close-right-panel-button" tooltip="zamknij"
-                                           onClick={() => setShowRightPanel(false)}
-                                           tooltipOptions={{position: "left"}}/>}
+                                            onClick={() => setShowRightPanel(false)}
+                                            tooltipOptions={{position: "left"}}/>}
             </div>
         </div>
 

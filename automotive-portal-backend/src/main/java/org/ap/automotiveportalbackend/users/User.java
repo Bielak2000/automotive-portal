@@ -6,6 +6,9 @@ import jakarta.persistence.AccessType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -21,7 +24,9 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +52,13 @@ public class User extends BaseEntity {
     private String vehicleModel;
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
+    @ManyToMany
+    @JoinTable(
+            schema = "ap",
+            name = "appearance",
+            joinColumns = @JoinColumn(name = "appearance_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "appearance_post_id"))
+    Set<Post> boostedPosts;
 
     public User(UserFormDTO userFormDTO, String password) {
         super(UUID.randomUUID());
@@ -60,6 +72,7 @@ public class User extends BaseEntity {
         this.vehicleBrand = userFormDTO.vehicleBrand();
         this.vehicleModel = userFormDTO.vehicleModel();
         this.posts = new ArrayList<>();
+        this.boostedPosts = new HashSet<>();
     }
 
     public User(String email, String password) {

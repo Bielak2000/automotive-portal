@@ -17,6 +17,8 @@ export interface PostDTO {
     vehicleBrand: string;
     postType: string | null;
     vehicleModel?: string | null;
+    appearanceNumber: number;
+    appearanceUserIds: string[];
     userDTO: UserDTO;
     images: string[];
 }
@@ -33,3 +35,24 @@ export const PostDataValidation: Yup.SchemaOf<PostFormDTO> = Yup.object().shape(
     postType: Yup.string().nullable().required("Pole wymagane"),
     vehicleModel: Yup.string().nullable().notRequired()
 });
+
+export function typeTranslate(postType: string | null) {
+    switch (postType) {
+        case "SELL":
+            return "sprzedam";
+        case "BUY":
+            return "kupię";
+        case "QUESTION":
+            return "pytanie";
+        case "FAULT":
+            return "usterka";
+        default:
+            return "brak";
+    }
+}
+
+export interface BoostPostDTO {
+    postId: string;
+    userId: string;
+    boost: boolean;
+}

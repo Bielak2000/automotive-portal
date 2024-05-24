@@ -8,7 +8,7 @@ import Link from "next/link";
 import {login} from "../../../../lib/api/user";
 import {PasswordTextField} from "../../../common/atoms/PaswordTextField";
 import {Toast} from "primereact/toast";
-import {saveTokenInCookies, saveUserEmailInLocalStorage} from "../functions";
+import {saveTokenInCookies, saveUserEmailInLocalStorage, saveUserIdInLocalStorage} from "../functions";
 
 type LoginDialogProps = {
     showDialog: boolean;
@@ -51,6 +51,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
                 setRefreshData(true);
                 saveTokenInCookies(response.data.token);
                 saveUserEmailInLocalStorage(response.data.email);
+                saveUserIdInLocalStorage(response.data.userId);
                 setShowDialog(false);
             }
         })

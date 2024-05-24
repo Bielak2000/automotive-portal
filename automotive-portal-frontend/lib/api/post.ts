@@ -1,4 +1,4 @@
-import {PostFormDTO, PostPageDTO} from "../../components/post/types";
+import {BoostPostDTO, PostFormDTO, PostPageDTO} from "../../components/post/types";
 import {getTokenFromCookies} from "../../components/user/login/functions";
 import axios from "axios";
 import {catchErrors} from "./common";
@@ -38,4 +38,29 @@ export function getPageablePosts(postPageDTO: PostPageDTO) {
     }).catch((error) => {
         return catchErrors(error);
     })
+}
+
+export function boostPostApi(boostPostDTO: BoostPostDTO) {
+    const token = getTokenFromCookies();
+    return axios({
+        url: process.env.NEXT_PUBLIC_API_URL + '/api/posts/boost',
+        method: "put",
+        data: boostPostDTO,
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then((response) => {
+        return response;
+    }).catch((error) => {
+        return catchErrors(error);
+    })
+}
+
+export function getPostById(postId: string) {
+    return axios.get(process.env.NEXT_PUBLIC_API_URL + `/api/posts/${postId}`)
+        .then((response) => {
+            return response;
+        }).catch((error) => {
+            return catchErrors(error);
+        })
 }

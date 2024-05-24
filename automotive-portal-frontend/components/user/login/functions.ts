@@ -2,6 +2,7 @@ import Cookies from "universal-cookie";
 
 const cookiesName = 'automotive-portal-token';
 const localStorageUserEmail = "automotive-portal-useremail";
+const localStorageUserId = "user_id";
 
 export const saveTokenInCookies = (token: string) => {
     new Cookies().set(cookiesName, token);
@@ -21,4 +22,12 @@ export const saveUserEmailInLocalStorage = (userId: string) => {
 
 export const getUserEmailFromLocalStorage = () => {
     return window.localStorage.getItem(localStorageUserEmail);
+}
+
+export const saveUserIdInLocalStorage = (userId: string) => {
+    window.localStorage.setItem(localStorageUserId, JSON.stringify(userId));
+}
+
+export const getUserIdFromLocalStorage = () => {
+    return window.localStorage.getItem(localStorageUserId);
 }

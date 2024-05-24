@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
@@ -45,7 +47,8 @@ public class AuthorizationController {
             User user = new User(email, "");
             String token = jwtUtil.createToken(user);
             userService.updateLastActivityUser(email);
-            AuthorizationResponseHeader authorizationResponseHeader = new AuthorizationResponseHeader(email, token);
+            UUID userId = userService.getUserIdByEmail(email);
+            AuthorizationResponseHeader authorizationResponseHeader = new AuthorizationResponseHeader(email, token, userId);
             log.info("User {} has been logged.", email);
             return ResponseEntity.ok(authorizationResponseHeader);
         } catch (BadCredentialsException e) {

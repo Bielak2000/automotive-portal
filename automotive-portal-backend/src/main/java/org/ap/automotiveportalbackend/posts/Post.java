@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -20,7 +21,9 @@ import org.ap.automotiveportalbackend.users.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -34,7 +37,7 @@ public class Post extends BaseEntity {
 
     private String title;
     private String content;
-    private int appearance_number;
+    private int appearanceNumber;
     private String vehicleBrand;
     private String vehicleModel;
     @Enumerated(EnumType.STRING)
@@ -44,17 +47,28 @@ public class Post extends BaseEntity {
     private User user;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Image> images;
+    @ManyToMany(mappedBy = "boostedPosts")
+    Set<User> boostingUsers;
 
     public Post(PostFormDTO postFormDTO, User user, List<Image> images, UUID postId) {
         super(postId);
         this.images = images;
         this.title = postFormDTO.title();
         this.content = postFormDTO.content();
-        this.appearance_number = 0;
+        this.appearanceNumber = 0;
         this.postType = postFormDTO.postType();
         this.vehicleBrand = postFormDTO.vehicleBrand();
         this.vehicleModel = postFormDTO.vehicleModel();
         this.user = user;
+        this.boostingUsers = new HashSet<>();
+    }
+
+    public void addAppearanceNumber() {
+        this.appearanceNumber += 1;
+    }
+
+    public void removeAppearanceNumber() {
+        this.appearanceNumber -= 1;
     }
 
 }

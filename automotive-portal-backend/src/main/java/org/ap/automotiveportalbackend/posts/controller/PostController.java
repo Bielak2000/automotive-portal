@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.images.service.ImageService;
+import org.ap.automotiveportalbackend.posts.dto.BoostPostDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostPageDTO;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -77,6 +79,22 @@ public class PostController {
             log.error("Could not find the file on the file system. Path: {}", path.toAbsolutePath());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PutMapping("/boost")
+    public void boostPost(@RequestBody BoostPostDTO boostPostDTO) {
+        postService.boostPost(boostPostDTO);
+        if (boostPostDTO.boost()) {
+            log.info("Boosted for {} by {}", boostPostDTO.postId().toString(), boostPostDTO.userId().toString());
+        } else {
+            log.info("Delete boosted for {} by {}", boostPostDTO.postId().toString(), boostPostDTO.userId().toString());
+        }
+    }
+
+    @GetMapping("/{postId}")
+    public PostDTO getPostById(@PathVariable("postId") UUID postId) {
+        log.info("Download post with {} id", postId.toString());
+        return postService.getPostById(postId);
     }
 
 //    @GetMapping("/brand")
