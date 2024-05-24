@@ -56,8 +56,22 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
         validationSchema: PostDataValidation,
         validateOnChange: false,
         onSubmit: (data) => {
-            addPost(data);
-            // console.log(formik.errors);
+            let correctFilesType = true;
+            fileUploadRef.current.getFiles().forEach((file) => {
+                if (file.type !== "image/png" && file.type !== "image/jpg" && file.type !== "image/jpeg") {
+                    correctFilesType = false;
+                }
+            })
+            if (correctFilesType) {
+                addPost(data);
+            } else {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Błędne dane",
+                    detail: "Typ plików jest błędny.",
+                    life: 5000
+                });
+            }
         }
     });
 
@@ -71,7 +85,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
             setVehicleModelValues([]);
         } else {
             getModels(toast, selectedVehicleBrand, setVehicleModelValues);
-            if(selectedVehicleBrand?.code !== user.vehicleBrand) {
+            if (selectedVehicleBrand?.code !== user.vehicleBrand) {
                 setSelectedVehicleModel(null);
             }
         }
@@ -122,7 +136,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     const cancel = () => {
         setShowDialog(false);
         setSelectedPostType(undefined);
-        if(user.vehicleBrand) {
+        if (user.vehicleBrand) {
             setSelectedVehicleBrand({
                 name: user.vehicleBrand,
                 code: user.vehicleBrand
@@ -130,7 +144,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
         } else {
             setSelectedVehicleBrand(null);
         }
-        if(user.vehicleModel) {
+        if (user.vehicleModel) {
             setSelectedVehicleModel({
                 name: user.vehicleModel,
                 code: user.vehicleModel
