@@ -38,3 +38,9 @@
     text-align: justify;
     display: block;
 }
+
+.galleria-post-view-div {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}

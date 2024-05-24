@@ -11,6 +11,7 @@ export interface PostFormDTO {
 }
 
 export interface PostDTO {
+    postId: string;
     title: string;
     content: string;
     vehicleBrand: string;

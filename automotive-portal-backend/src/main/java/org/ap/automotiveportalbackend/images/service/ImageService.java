@@ -7,7 +7,7 @@ import org.ap.automotiveportalbackend.images.ImageRepository;
 import org.ap.automotiveportalbackend.images.dto.ImageDTO;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.service.PostService;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +38,20 @@ public class ImageService {
             return new Image(imageUrl, imageId);
         } catch (IOException ex) {
             throw new NotFoundException(String.format("Can't create directory for %s post", postId.toString()));
+        }
+    }
+
+    public Path createPathToImage(String postId, String imageUrl) {
+        return Path.of(uploadDirectory + postId + "/" + imageUrl);
+    }
+
+    public MediaType determineFileType(String extension) {
+        switch (extension) {
+            case "jpg":
+            case "jpeg":
+                return MediaType.IMAGE_JPEG;
+            default:
+                return MediaType.IMAGE_PNG;
         }
     }
 

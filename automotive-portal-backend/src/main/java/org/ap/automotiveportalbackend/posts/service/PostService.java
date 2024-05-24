@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostService {
 
-    private final String uploadImageDirectory;
     private final PostRepository postRepository;
     private final UserService userService;
 
@@ -68,7 +67,7 @@ public class PostService {
     private PostDTO toPostDTO(Post post) {
         List<String> images = new ArrayList<>();
         for(Image image : post.getImages()) {
-            images.add(uploadImageDirectory + post.getId().toString() + "/" + image.getUrl());
+            images.add(image.getUrl());
         }
         return PostDTO.create(post, images);
     }

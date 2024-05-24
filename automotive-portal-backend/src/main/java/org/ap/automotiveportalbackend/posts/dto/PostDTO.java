@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-public record PostDTO(@NotEmpty(message = "Title can't be empty") String title,
+public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
+                      @NotEmpty(message = "Title can't be empty") String title,
                       @NotEmpty(message = "Content can't be empty") String content,
                       @NotNull(message = "VehicleId can't be null") String vehicleBrand,
                       @NotNull(message = "PostType can't be null") PostType postType,
@@ -23,6 +24,7 @@ public record PostDTO(@NotEmpty(message = "Title can't be empty") String title,
                       @Nullable List<String> images) {
     public static PostDTO create(Post post, List<String> images) {
         return PostDTO.builder()
+                .postId(post.getId().toString())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .postType(post.getPostType())

@@ -11,12 +11,9 @@ import org.springframework.web.multipart.support.MultipartFilter;
 @org.springframework.context.annotation.Configuration
 public class PostConfiguration {
 
-    @Value("${ac.upload.image.directory}")
-    private String uploadDirectory;
-
     @Bean
     public PostService postService(PostRepository postRepository, UserService userService) {
-        return new PostService(uploadDirectory, postRepository, userService);
+        return new PostService(postRepository, userService);
     }
 
 }
