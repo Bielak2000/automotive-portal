@@ -101,6 +101,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .arrow-button {
