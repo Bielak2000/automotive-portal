@@ -2,19 +2,25 @@ import React, {useEffect, useRef, useState} from 'react';
 import {PostDTO} from "../types";
 import {getPageablePosts} from "../../../lib/api/post";
 import PostView from "../molecules/PostView";
+import {getUserIdFromLocalStorage} from "../../user/login/functions";
+import {UserDTO} from "../../common/types";
 
 interface PostScrollerProps {
+    user?: UserDTO;
     searchValue: string;
     searchPosts: boolean;
     sortPostsByAppearanceNumber: boolean;
+    showMyPosts: boolean;
 
     setSearchPosts: (val: boolean) => void;
 }
 
 const PostScroller: React.VFC<PostScrollerProps> = ({
+                                                        user,
                                                         searchPosts,
                                                         searchValue,
                                                         sortPostsByAppearanceNumber,
+                                                        showMyPosts,
                                                         setSearchPosts
                                                     }) => {
     const [posts, setPosts] = useState<PostDTO[]>([]);
@@ -26,16 +32,22 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     const [disabledLoadNewPost, setDisabledLoadNewPost] = useState<boolean>(false);
     const oldPageValue = useRef<number>(-1);
     const [firstSortValue, setFirstSortValue] = useState<boolean>(true);
+    const [firstMyPosts, setFirstMyPosts] = useState<boolean>(true);
 
     const loadPosts = async (requirePage: number) => {
         const newPosts = await getPageablePosts({
             page: requirePage,
             size: 5,
             searchValue: searchValue === "" ? null : searchValue,
-            sortByAppearanceNumber: sortPostsByAppearanceNumber
-        }, searchValue);
+            sortByAppearanceNumber: sortPostsByAppearanceNumber,
+            userId: showMyPosts ? (user ? user.id.slice(0, user.id.length) : null) : null
+        });
         return newPosts.data;
     };
+
+    // useEffect(() => {
+    //     console.log(user.id.slice(1, user.id.length - 1))
+    // }, []);
 
     useEffect(() => {
         execAndHandlerLoadPosts(false);
@@ -93,6 +105,21 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
             prepareDataWhenChangeFilersSortingSearching();
         }
     }, [sortPostsByAppearanceNumber]);
+
+    useEffect(() => {
+        if (!firstMyPosts) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [firstMyPosts]);
+
+    useEffect(() => {
+        if (showMyPosts) {
+            setFirstMyPosts(false);
+        }
+        if (!firstMyPosts) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [showMyPosts]);
 
     const prepareDataWhenChangeFilersSortingSearching = () => {
         setPosts([]);

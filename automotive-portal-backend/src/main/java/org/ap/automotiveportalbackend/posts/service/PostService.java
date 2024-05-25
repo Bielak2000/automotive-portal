@@ -1,6 +1,7 @@
 package org.ap.automotiveportalbackend.posts.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.posts.Post;
@@ -24,26 +25,32 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
+@Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
     private final AppearanceService appearanceService;
 
+    // TODO: function require refactoring
     @Transactional(readOnly = true)
     public List<PostDTO> getAllPostsByPageAndSearch(PostPageDTO postPageDTO) {
         Pageable pageable = PageRequest.of(postPageDTO.page(), postPageDTO.size());
         if (postPageDTO.searchValue() != null) {
-            if(postPageDTO.sortByAppearanceNumber()) {
-                return postRepository.findAllByTitleContainingOrderByAppearanceNumberDesc(postPageDTO.searchValue(), pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            if (postPageDTO.sortByAppearanceNumber()) {
+                log.info("Get all posts from {} page with {} records by searchValue and sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
+                return checkUserIdIsCurrentAndSort(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDesc(postPageDTO.searchValue(), pageable), postPageDTO);
             } else {
-                return postRepository.findAllByTitleContainingOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+                log.info("Get all posts from {} page with {} records by searchValue", postPageDTO.page(), postPageDTO.size());
+                return checkUserIdIsCurrentAndSort(postRepository.findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
             }
         } else {
-            if(postPageDTO.sortByAppearanceNumber()) {
-                return postRepository.findByOrderByAppearanceNumberDesc(pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            if (postPageDTO.sortByAppearanceNumber()) {
+                log.info("Get all posts from {} page with {} records sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
+                return checkUserIdIsCurrentAndSort(postRepository.findByOrderByAppearanceNumberDesc(pageable), postPageDTO);
             } else {
-                return postRepository.findByOrderByCreatedAtDesc(pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+                log.info("Get all posts from {} page with {} records", postPageDTO.page(), postPageDTO.size());
+                return checkUserIdIsCurrentAndSort(postRepository.findByOrderByCreatedAtDesc(pageable), postPageDTO);
             }
         }
     }
@@ -96,6 +103,15 @@ public class PostService {
     public PostDTO getPostById(UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException(String.format("Post %s not found", postId.toString())));
         return toPostDTO(post);
+    }
+
+    private List<PostDTO> checkUserIdIsCurrentAndSort(List<Post> posts, PostPageDTO postPageDTO) {
+        if (postPageDTO.userId() != null) {
+            log.info("Get posts for user with id {}", postPageDTO.userId());
+            return posts.stream().filter(post -> post.getUser().getId().toString().equals(postPageDTO.userId())).map(this::toPostDTO).collect(Collectors.toList());
+        } else {
+            return posts.stream().map(this::toPostDTO).collect(Collectors.toList());
+        }
     }
 
     private PostDTO toPostDTO(Post post) {

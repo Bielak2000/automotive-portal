@@ -27,6 +27,7 @@
 .left-panel-checkbox-div {
     display: flex;
     align-items: center;
+    height: 30px;
 }
 
 @media screen and (max-width: 1089px) {

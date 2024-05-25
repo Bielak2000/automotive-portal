@@ -16,6 +16,7 @@ const App: NextPage = () => {
     const [showLeftPanel, setShowLeftPanel] = useState<boolean>(false);
     const [isNotification, setIsNotification] = useState<boolean>(false);
     const [sortPostsByAppearanceNumber, setSortPostsByAppearanceNumber] = useState<boolean>(false);
+    const [showMyPosts, setShowMyPosts] = useState<boolean>(false);
 
     useEffect(() => {
         if (isNotification) {
@@ -43,9 +44,11 @@ const App: NextPage = () => {
                    setUser={setUser}>
         <Toast ref={toast}/>
         <LeftPanel user={user} showLeftPanel={showLeftPanel} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
-                   setShowLeftPanel={setShowLeftPanel} setSortPostsByAppearanceNumber={setSortPostsByAppearanceNumber}/>
+                   showMyPosts={showMyPosts}
+                   setShowLeftPanel={setShowLeftPanel} setSortPostsByAppearanceNumber={setSortPostsByAppearanceNumber}
+                   setShowMyPosts={setShowMyPosts}/>
         <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification}
-                  user={user} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
+                  user={user} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber} showMyPosts={showMyPosts}
                   setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel}/>
         <RightPanel showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel}/>
     </Layout>

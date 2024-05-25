@@ -1,4 +1,5 @@
 import {
+    getTokenFromCookies,
     removeTokenFromCookies,
     removeUserEmailFromLocalStorage,
     removeUserIdFromLocalStorage
@@ -6,7 +7,7 @@ import {
 
 export function catchErrors(error: any) {
     console.log(error)
-    if (error.response.status === 401) {
+    if (error.response.status === 401 && getTokenFromCookies() != null) {
         removeTokenFromCookies();
         removeUserEmailFromLocalStorage();
         removeUserIdFromLocalStorage();

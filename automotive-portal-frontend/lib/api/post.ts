@@ -28,7 +28,7 @@ export function addPostWithImages(postFormDTO: PostFormDTO, files: File[]) {
     )
 }
 
-export function getPageablePosts(postPageDTO: PostPageDTO, searchValue: string) {
+export function getPageablePosts(postPageDTO: PostPageDTO) {
     return axios.post(process.env.NEXT_PUBLIC_API_URL + `/api/posts/pageable`,
         postPageDTO
     ).then((response) => {

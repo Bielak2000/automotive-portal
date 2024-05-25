@@ -13,9 +13,9 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
     public List<Post> findByOrderByCreatedAtDesc(Pageable pageable);
 
-    public List<Post> findAllByTitleContainingOrderByCreatedAtDesc(String content, Pageable pageable);
+    public List<Post> findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(String content, Pageable pageable);
 
     public List<Post> findByOrderByAppearanceNumberDesc(Pageable pageable);
 
-    public List<Post> findAllByTitleContainingOrderByAppearanceNumberDesc(String content, Pageable pageable);
+    public List<Post> findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDesc(String content, Pageable pageable);
 }

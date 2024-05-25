@@ -7,17 +7,21 @@ interface LeftPanelProps {
     user?: UserDTO;
     showLeftPanel: boolean;
     sortPostsByAppearanceNumber: boolean;
+    showMyPosts: boolean;
 
     setShowLeftPanel: (val: boolean) => void;
     setSortPostsByAppearanceNumber: (val: boolean) => void;
+    setShowMyPosts: (val: boolean) => void;
 }
 
 const LeftPanel: React.FC<LeftPanelProps> = ({
                                                  user,
                                                  showLeftPanel,
                                                  sortPostsByAppearanceNumber,
+                                                 showMyPosts,
                                                  setShowLeftPanel,
-                                                 setSortPostsByAppearanceNumber
+                                                 setSortPostsByAppearanceNumber,
+                                                 setShowMyPosts
                                              }) => {
     const [fullPanel, setFullPanel] = useState<boolean>(false);
 
@@ -71,6 +75,11 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                               checked={sortPostsByAppearanceNumber}></Checkbox>
                     <p style={{marginLeft: "10px"}}>sortuj po liczbie podbić</p>
                 </div>
+                {user && <div className="left-panel-checkbox-div">
+                    <Checkbox onChange={e => setShowMyPosts(e.checked ? e.checked : false)}
+                              checked={showMyPosts}></Checkbox>
+                    <p style={{marginLeft: "10px"}}>moje posty</p>
+                </div>}
             </div>
         </div>
 

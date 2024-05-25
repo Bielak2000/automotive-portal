@@ -70,7 +70,14 @@ const RegisterPage: React.FC = () => {
 
     const handleRegister = (data: UserForm) => {
         register(data).then((response) => {
-            if (response.status !== 201) {
+            if (response.status === 400) {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Błędne dane",
+                    detail: "Dane są nieprawidłowe lub użytkownik o takim adresie email już istnieje.",
+                    life: 5000
+                })
+            } else if (response.status !== 201) {
                 toast.current?.show({
                     severity: "error",
                     summary: "Wystąpił błąd",
