@@ -51,7 +51,7 @@ public class PostController {
     @PostMapping("/pageable")
     public List<PostDTO> getPosts(@RequestBody @Valid PostPageDTO postPageDTO) {
         log.info("Get all posts from {} page with {} records", postPageDTO.page(), postPageDTO.size());
-        return postService.getAllPostsByPage(postPageDTO);
+        return postService.getAllPostsByPageAndSearch(postPageDTO);
     }
 
     @GetMapping("/brands")

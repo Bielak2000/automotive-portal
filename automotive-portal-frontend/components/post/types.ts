@@ -26,6 +26,7 @@ export interface PostDTO {
 export interface PostPageDTO {
     page: number;
     size: number;
+    searchValue: string | null;
 }
 
 export const PostDataValidation: Yup.SchemaOf<PostFormDTO> = Yup.object().shape({

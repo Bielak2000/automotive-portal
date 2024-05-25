@@ -2,8 +2,6 @@ import {BoostPostDTO, PostFormDTO, PostPageDTO} from "../../components/post/type
 import {getTokenFromCookies} from "../../components/user/login/functions";
 import axios from "axios";
 import {catchErrors} from "./common";
-import {refreshToken} from "./user";
-import {json} from "node:stream/consumers";
 
 export function addPostWithImages(postFormDTO: PostFormDTO, files: File[]) {
     const token = getTokenFromCookies();
@@ -30,7 +28,7 @@ export function addPostWithImages(postFormDTO: PostFormDTO, files: File[]) {
     )
 }
 
-export function getPageablePosts(postPageDTO: PostPageDTO) {
+export function getPageablePosts(postPageDTO: PostPageDTO, searchValue: string) {
     return axios.post(process.env.NEXT_PUBLIC_API_URL + `/api/posts/pageable`,
         postPageDTO
     ).then((response) => {

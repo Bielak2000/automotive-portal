@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Button} from "primereact/button";
 import {InputText} from "primereact/inputtext";
 import {getTokenFromCookies} from "../../user/login/functions";
@@ -6,7 +6,6 @@ import {Toast} from "primereact/toast";
 import AddPostDialog from "../../post/templates/AddPostDialog";
 import {UserDTO} from "../../common/types";
 import PostScroller from "../../post/templates/PostScroller";
-import {getPageablePosts} from "../../../lib/api/post";
 
 interface MainViewProps {
     showRightPanel: boolean;
@@ -18,14 +17,22 @@ interface MainViewProps {
     setShowLeftPanel: (val: boolean) => void;
 }
 
-const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNotification, user, setShowRightPanel, setShowLeftPanel}) => {
+const MainView: React.FC<MainViewProps> = ({
+                                               showRightPanel,
+                                               showLeftPanel,
+                                               isNotification,
+                                               user,
+                                               setShowRightPanel,
+                                               setShowLeftPanel
+                                           }) => {
     const toast = useRef<Toast>(null);
     const token = getTokenFromCookies();
     const [searchValue, setSearchValue] = useState<string>("");
     const [showAddPostDialog, setShowAddPostDialog] = useState<boolean>(false);
+    const [searchPosts, setSearchPosts] = useState<boolean>(false);
 
     const addPost = () => {
-        if(token) {
+        if (token) {
             setShowAddPostDialog(true);
         } else {
             toast.current?.show({
@@ -45,21 +52,23 @@ const MainView: React.FC<MainViewProps> = ({showRightPanel, showLeftPanel, isNot
                 <div className="flex">
                     <InputText value={searchValue} onChange={(val) => setSearchValue(val.target.value)}
                                className="search-input" placeholder="Szukaj"/>
-                    <Button icon="pi pi-search" onClick={() => console.log("xd")} className="search-button"
+                    <Button icon="pi pi-search" onClick={() => setSearchPosts(true)} className="search-button"
                             tooltip="wyszukaj"/>
-                    {!showLeftPanel && <Button icon="pi pi-filter" onClick={() => setShowLeftPanel(true)} className="search-button"
-                                               tooltip="Pokaż filtry"/>}
+                    {!showLeftPanel &&
+                        <Button icon="pi pi-filter" onClick={() => setShowLeftPanel(true)} className="search-button"
+                                tooltip="Pokaż filtry"/>}
                 </div>
                 <div className="right-buttons">
                     {!showRightPanel &&
                         <Button icon="pi pi-bell" onClick={() => setShowRightPanel(true)} style={{marginRight: "5px"}}
-                                tooltipOptions={{position: "left"}} className={isNotification ? "active-bell-button" : ""}
+                                tooltipOptions={{position: "left"}}
+                                className={isNotification ? "active-bell-button" : ""}
                                 tooltip="Włącz powiadomienia"/>}
                     <Button icon="pi pi-plus" onClick={addPost} label="Dodaj post"/>
                 </div>
             </div>
             <div className="main-view-data-scroller-div">
-                <PostScroller/>
+                <PostScroller searchPosts={searchPosts} searchValue={searchValue} setSearchPosts={setSearchPosts}/>
             </div>
         </div>
     </div>
