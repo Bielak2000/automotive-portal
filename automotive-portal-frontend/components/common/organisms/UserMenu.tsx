@@ -1,6 +1,12 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {getTokenFromCookies, getUserEmailFromLocalStorage, removeTokenFromCookies} from "../../user/login/functions";
+import {
+    getTokenFromCookies,
+    getUserEmailFromLocalStorage,
+    removeTokenFromCookies,
+    removeUserEmailFromLocalStorage,
+    removeUserIdFromLocalStorage
+} from "../../user/login/functions";
 import {MenuItem} from "primereact/menuitem";
 import {Menubar} from "primereact/menubar";
 import {Button} from "primereact/button";
@@ -49,7 +55,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({user, setUser}) => {
         {
             label: "pomoc",
             command() {
-
+                window.location.href = 'mailto:kacperbielak123@o2.pl?subject=Pomoc - portal motoryzacyjny';
             }
         },
         {
@@ -60,6 +66,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({user, setUser}) => {
                     logout().then((response: any) => {
                         if (response.status === 204) {
                             removeTokenFromCookies();
+                            removeUserEmailFromLocalStorage();
+                            removeUserIdFromLocalStorage();
                             window.location.reload();
                         }
                     })

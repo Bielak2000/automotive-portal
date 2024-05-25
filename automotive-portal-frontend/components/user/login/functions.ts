@@ -24,10 +24,18 @@ export const getUserEmailFromLocalStorage = () => {
     return window.localStorage.getItem(localStorageUserEmail);
 }
 
+export const removeUserEmailFromLocalStorage = () => {
+    window.localStorage.removeItem(localStorageUserEmail);
+}
+
 export const saveUserIdInLocalStorage = (userId: string) => {
     window.localStorage.setItem(localStorageUserId, JSON.stringify(userId));
 }
 
 export const getUserIdFromLocalStorage = () => {
     return window.localStorage.getItem(localStorageUserId);
+}
+
+export const removeUserIdFromLocalStorage = () => {
+    window.localStorage.removeItem(localStorageUserId);
 }

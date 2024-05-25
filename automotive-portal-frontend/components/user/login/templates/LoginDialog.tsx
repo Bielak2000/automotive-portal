@@ -60,7 +60,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({showDialog, setShowDialog, set
     const footer = <div className="dialog-footer-div">
         <Button label="Zaloguj" icon="pi pi-sign-in" type="submit"/>
         <div className="login-dialog-footer">
-            <Link className="linkStyle" href="/">Zapomniałeś hasła?</Link>
+            <Link className="linkStyle" href='mailto:kacperbielak123@o2.pl?subject=Przypomnienie hasła - portal motoryzacyjny'>Zapomniałeś hasła?</Link>
             <Link className="linkStyle" style={{marginTop: "5px"}} href="/rejestracja">Nie masz jeszcze konta?</Link>
         </div>
     </div>
