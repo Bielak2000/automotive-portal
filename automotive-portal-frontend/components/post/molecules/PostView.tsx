@@ -5,17 +5,22 @@ import Image from "next/image";
 import {getTokenFromCookies, getUserIdFromLocalStorage} from "../../user/login/functions";
 import React, {useRef, useState} from "react";
 import {Toast} from "primereact/toast";
-import {boostPostApi, getPostById} from "../../../lib/api/post";
+import {boostPostApi, deletePostById, getPostById} from "../../../lib/api/post";
+import ConfirmationDeleteDialog from "../../common/organisms/ConfirmationDeleteDialog";
 
 interface PostViewProps {
     post: PostDTO;
+    index: number;
+
+    onDeletedPost: (index: number) => void;
 }
 
-const PostView: React.VFC<PostViewProps> = ({post}) => {
+const PostView: React.VFC<PostViewProps> = ({post, index, onDeletedPost}) => {
     const token = getTokenFromCookies();
     const userId = getUserIdFromLocalStorage();
     const toast = useRef<Toast>(null);
     const [postState, setPostState] = useState<PostDTO>(post);
+    const [showConfirmationDeleteDialog, setShowConfirmationDeleteDialog] = useState<boolean>(false);
 
     const itemTemplate = (item: string) => {
         return <img src={`http://localhost:8080/api/posts/${postState.postId}/${item}`} alt="image"
@@ -79,8 +84,28 @@ const PostView: React.VFC<PostViewProps> = ({post}) => {
         }
     }
 
+    const confirmDeletePost = () => {
+        deletePostById(userId!.slice(1, userId!.length - 1), postState.postId).then((response) => {
+            if (response.status === 200) {
+                onDeletedPost(index);
+            } else {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Wystąpił błąd",
+                    detail: "Wystąpił błąd w trakcie usuwania postu, spróbuj ponownie później.",
+                    life: 5000
+                })
+            }
+            setShowConfirmationDeleteDialog(false);
+        })
+    }
+
     return <div className="post-view-main-div">
         <Toast ref={toast}/>
+        <ConfirmationDeleteDialog header={`Usuwanie postu`} info={"Czy na pewno chcesz usunąć wybrany post?"}
+                                  showDialog={showConfirmationDeleteDialog}
+                                  closeDialog={() => setShowConfirmationDeleteDialog(false)}
+                                  confirmDelete={confirmDeletePost}/>
         <div className="post-view-header-div">
             <div>
                 <div className="flex">
@@ -93,18 +118,28 @@ const PostView: React.VFC<PostViewProps> = ({post}) => {
                     {vehicleTemplate(postState.vehicleModel, "5px")}
                 </div>
             </div>
-            <div className="type-arrow-div">
-                <Button className="arrow-button" tooltip="Podbij" tooltipOptions={{position: "left"}}
-                        onClick={() => boostPost(true)}
-                        disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}>
-                    <Image src="/arrow-up.svg" alt="up" width={20} height={40}/>
-                </Button>
-                <p className="appearance-number-p">{postState.appearanceNumber}</p>
-                <Button className="arrow-button" style={{marginTop: "0"}} tooltip="Anuluj"
-                        disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}
-                        tooltipOptions={{position: "left"}} onClick={() => boostPost(false)}>
-                    <Image src="/arrow-down.svg" alt="up" width={20} height={40}/>
-                </Button>
+            <div className="right-post-view-header-div">
+                {token && userId !== null && postState.userDTO.id === userId.slice(1, userId.length - 1) &&
+                    <Button icon="pi pi-pen-to-square" onClick={() => console.log("click")}
+                            className="post-view-action-button edit-post-button"
+                            tooltip="Edytuj post" tooltipOptions={{position: "bottom"}}/>}
+                {token && userId !== null && postState.userDTO.id === userId.slice(1, userId.length - 1) &&
+                    <Button icon="pi pi-times-circle" onClick={() => setShowConfirmationDeleteDialog(true)}
+                            className="post-view-action-button delete-post-button"
+                            tooltip="Usuń post" tooltipOptions={{position: "bottom"}}/>}
+                <div className="type-arrow-div">
+                    <Button className="arrow-button" tooltip="Podbij" tooltipOptions={{position: "left"}}
+                            onClick={() => boostPost(true)}
+                            disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}>
+                        <Image src="/arrow-up.svg" alt="up" width={20} height={40}/>
+                    </Button>
+                    <p className="appearance-number-p">{postState.appearanceNumber}</p>
+                    <Button className="arrow-button" style={{marginTop: "0"}} tooltip="Anuluj"
+                            disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}
+                            tooltipOptions={{position: "left"}} onClick={() => boostPost(false)}>
+                        <Image src="/arrow-down.svg" alt="up" width={20} height={40}/>
+                    </Button>
+                </div>
             </div>
         </div>
 

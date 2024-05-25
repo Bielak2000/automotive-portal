@@ -2,6 +2,7 @@ package org.ap.automotiveportalbackend.posts.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.posts.Post;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -97,6 +99,21 @@ public class PostService {
     public PostDTO getPostById(UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException(String.format("Post %s not found", postId.toString())));
         return toPostDTO(post);
+    }
+
+    @Transactional
+    public void deletePostById(UUID postId, UUID userId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if (post.isPresent()) {
+            if (post.get().getUser().getId().toString().equals(userId.toString())) {
+                appearanceService.deleteAllAppearanceByPostId(postId);
+                postRepository.deleteById(postId);
+            } else {
+                throw new BadRequestException(String.format("User %s isn't owner of %s post", userId.toString(), postId.toString()));
+            }
+        } else {
+            throw new BadRequestException(String.format("Post %s not exist", postId.toString()));
+        }
     }
 
     private List<PostDTO> checkUserIdIsCurrentAndFilter(List<Post> posts, PostPageDTO postPageDTO) {

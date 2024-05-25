@@ -130,3 +130,28 @@
     padding: 0;
     margin: 0 15px 0 0;
 }
+
+.post-view-action-button {
+    background: none;
+    border: none;
+    height: 30px;
+    width: 20px;
+}
+
+.post-view-action-button:focus {
+    box-shadow: none;
+}
+
+.edit-post-button {
+    color: #2196f3;
+    margin-right: 5px;
+}
+
+.delete-post-button {
+    color: red;
+    margin-right: 10px;
+}
+
+.right-post-view-header-div {
+    display: flex;
+}

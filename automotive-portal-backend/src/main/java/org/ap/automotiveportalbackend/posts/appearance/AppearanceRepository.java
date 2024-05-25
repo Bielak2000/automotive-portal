@@ -8,4 +8,6 @@ public interface AppearanceRepository extends JpaRepository<Appearance, UUID> {
 
     public void deleteByAppearanceUserIdAndAppearancePostId(UUID userId, UUID postId);
 
+    public void deleteAllByAppearancePostId(UUID postId);
+
 }

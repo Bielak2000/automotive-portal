@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -96,18 +97,6 @@ public class PostController {
         return postService.getPostById(postId);
     }
 
-//    @GetMapping("/brand")
-//    public List<PostDTO> getAllPostByVehicleBrand(@RequestBody @Valid RequestPostVehicleBrandDTO requestPostVehicleBrandDTO) {
-//        log.info("Get all posts by brand ...");
-//        return postService.getAllPostsByVehicleBrand(requestPostVehicleBrandDTO.brand());
-//    }
-//
-//    @GetMapping("/model")
-//    public List<PostDTO> getAllPostByVehicleModel(@RequestBody @Valid RequestPostVehicleModelDTO requestPostVehicleModelDTO) {
-//        log.info("Get all posts by model ...");
-//        return postService.getAllPostsByVehicleModel(requestPostVehicleModelDTO.model());
-//    }
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void createPost(@RequestPart @Valid PostFormDTO postFormDTO,
                            @RequestPart(value = "images", required = false) MultipartFile[] images) {
@@ -122,6 +111,12 @@ public class PostController {
         }
         postService.createPost(postFormDTO, username, images1, postId);
         log.info("Created new post by {} with {} images", username, images == null ? "0" : images.length);
+    }
+
+    @DeleteMapping("/{userId}/{postId}")
+    public void deletePost(@PathVariable("userId") UUID userId, @PathVariable("postId") UUID postId) {
+        postService.deletePostById(postId, userId);
+        log.info("Deleted post {}", postId.toString());
     }
 
 }

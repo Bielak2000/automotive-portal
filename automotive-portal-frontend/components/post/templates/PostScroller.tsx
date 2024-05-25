@@ -3,6 +3,7 @@ import {PostDTO} from "../types";
 import {getPageablePosts} from "../../../lib/api/post";
 import PostView from "../molecules/PostView";
 import {UserDTO} from "../../common/types";
+import {Toast} from "primereact/toast";
 
 interface PostScrollerProps {
     user?: UserDTO;
@@ -26,6 +27,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
                                                         selectedVehicleModel,
                                                         setSearchPosts
                                                     }) => {
+    const toast = useRef<Toast>(null);
     const [posts, setPosts] = useState<PostDTO[]>([]);
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -166,7 +168,6 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
         if (oldPageValue.current !== page || requireRequest) {
             setLoading(true);
             const designatedPage = requireRequest ? 0 : page;
-            console.log("REQUEST: " + designatedPage)
             loadPosts(designatedPage).then((newPosts) => {
                 setRefVisible(false);
                 if (newPosts.length === 0) {
@@ -192,14 +193,29 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
         }
     }
 
+    const onDeletedPost = (index: number) => {
+        setPosts(posts.filter((el, index1) => index1 != index));
+        const post = document.getElementById(`post-${index}`);
+        if (post) {
+            post.remove();
+        }
+        toast.current?.show({
+            severity: "success",
+            summary: "Post został usunięty",
+            detail: "Wybrany post został usunięty z systemu.",
+            life: 5000
+        })
+    }
+
     return <div className="post-scroller-main-div">
-        {posts.map(((post, index) => <div key={index.toString()} ref={(el) => {
+        <Toast ref={toast}/>
+        {posts.map(((post, index) => <div id={`post-${index}`} key={index.toString()} ref={(el) => {
             if (index === posts.length - 1) {
                 loadMoreRef.current = el;
                 setRefVisible(!!el);
             }
         }}>
-            <PostView post={post}/>
+            <PostView post={post} index={index} onDeletedPost={onDeletedPost}/>
         </div>))}
         {emptyValue()}
         {loading && <p>Loading...</p>}

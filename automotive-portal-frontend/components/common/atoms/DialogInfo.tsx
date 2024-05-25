@@ -24,7 +24,6 @@ const DialogInfo: React.FC<DialogInfoProps> = ({header, info, showDialog, closeD
     return <Dialog visible={showDialog} closable={false} onHide={closeDialog}
                    className="dialog dialog-info"
                    header={headerTemplate} headerClassName="dialogHeader">
-
         <p style={{fontSize: "18px"}}>{info}</p>
         <div className="dialog-info-button">
             <Button label="OK" onClick={closeDialog} style={{width: "90px"}}/>

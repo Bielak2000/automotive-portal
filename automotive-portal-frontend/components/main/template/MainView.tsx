@@ -61,7 +61,7 @@ const MainView: React.FC<MainViewProps> = ({
                     <InputText value={searchValue} onChange={(val) => setSearchValue(val.target.value)}
                                className="search-input" placeholder="Szukaj"/>
                     <Button icon="pi pi-search" onClick={() => setSearchPosts(true)} className="search-button"
-                            tooltip="wyszukaj"/>
+                            tooltip="Wyszukaj"/>
                     {!showLeftPanel &&
                         <Button icon="pi pi-filter" onClick={() => setShowLeftPanel(true)} className="search-button"
                                 tooltip="Pokaż filtry"/>}

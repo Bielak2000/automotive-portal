@@ -21,4 +21,9 @@ public class AppearanceService {
     public void deleteAppearancePost(UUID userId, UUID postId) {
         appearanceRepository.deleteByAppearanceUserIdAndAppearancePostId(userId, postId);
     }
+
+    @Transactional
+    public void deleteAllAppearanceByPostId(UUID postId) {
+        appearanceRepository.deleteAllByAppearancePostId(postId);
+    }
 }
