@@ -77,3 +77,28 @@ export function deletePostById(userId: string, postId: string) {
         return catchErrors(error);
     })
 }
+
+export function updatePost(postFormDTO: PostFormDTO, files: File[], postId: string) {
+    const token = getTokenFromCookies();
+    const formData = new FormData();
+    files.forEach((file, index) => {
+        formData.append(`images`, file);
+    });
+    formData.append('postFormDTO', new Blob([JSON.stringify(postFormDTO)], {
+        type: "application/json"
+    }));
+    return fetch(process.env.NEXT_PUBLIC_API_URL! + `/api/posts/${postId}`, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+            "Authorization": "Bearer " + token
+        },
+    }).then(res => {
+            if (!res.ok || res.status !== 200) {
+                throw {type: 'WRONG_RESPONSE', status: res.status};
+            } else {
+                return res;
+            }
+        }
+    )
+}

@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface ImageRepository extends JpaRepository<Image, UUID> {
     public List<Image> findAllByPost(Post post);
+    public void deleteAllByPost(Post post);
 }

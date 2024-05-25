@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.images.Image;
+import org.ap.automotiveportalbackend.images.service.ImageService;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostRepository;
 import org.ap.automotiveportalbackend.posts.appearance.service.AppearanceService;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final AppearanceService appearanceService;
+    private final ImageService imageService;
 
     // TODO: function require refactoring
     @Transactional(readOnly = true)
@@ -41,21 +44,21 @@ public class PostService {
         if (postPageDTO.searchValue() != null) {
             if (postPageDTO.sortByAppearanceNumber()) {
                 log.info("Get all posts from {} page with {} records by searchValue and sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDescCreatedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDescModifiedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
                 return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             } else {
                 log.info("Get all posts from {} page with {} records by searchValue", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByModifiedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
                 return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             }
         } else {
             if (postPageDTO.sortByAppearanceNumber()) {
                 log.info("Get all posts from {} page with {} records sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByAppearanceNumberDescCreatedAtDesc(pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByAppearanceNumberDescModifiedAtDesc(pageable), postPageDTO);
                 return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             } else {
                 log.info("Get all posts from {} page with {} records", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByCreatedAtDesc(pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByModifiedAtDesc(pageable), postPageDTO);
                 return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             }
         }
@@ -82,6 +85,26 @@ public class PostService {
     }
 
     @Transactional
+    public void updatePost(PostFormDTO postFormDTO, List<Image> images, Post post) {
+        for (Image currentImage : post.getImages()) {
+            boolean remove = true;
+            for (Image image : images) {
+                if (image.getUrl().equals(currentImage.getUrl())) {
+                    remove = false;
+                }
+            }
+            if (remove) {
+                imageService.deleteImageById(currentImage.getId());
+            }
+        }
+        post.update(postFormDTO, images);
+        for (Image image : images) {
+            image.setPost(post);
+        }
+        postRepository.save(post);
+    }
+
+    @Transactional
     public void boostPost(BoostPostDTO boostPostDTO) {
         Post post = postRepository.findById(boostPostDTO.postId()).orElseThrow(() -> new NotFoundException(String.format("Post %s not found", boostPostDTO.postId().toString())));
         if (boostPostDTO.boost()) {
@@ -101,12 +124,18 @@ public class PostService {
         return toPostDTO(post);
     }
 
+    @Transactional(readOnly = true)
+    public Post getPostEntityById(UUID postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(String.format("Post %s not found", postId.toString())));
+    }
+
     @Transactional
-    public void deletePostById(UUID postId, UUID userId) {
+    public void deletePostById(UUID postId, UUID userId) throws IOException {
         Optional<Post> post = postRepository.findById(postId);
         if (post.isPresent()) {
             if (post.get().getUser().getId().toString().equals(userId.toString())) {
                 appearanceService.deleteAllAppearanceByPostId(postId);
+                imageService.removeImages(post.get().getImages().stream().map(Image::getUrl).collect(Collectors.toList()), post.get());
                 postRepository.deleteById(postId);
             } else {
                 throw new BadRequestException(String.format("User %s isn't owner of %s post", userId.toString(), postId.toString()));
@@ -138,7 +167,7 @@ public class PostService {
         }
     }
 
-    private PostDTO toPostDTO(Post post) {
+    public PostDTO toPostDTO(Post post) {
         List<String> images = new ArrayList<>();
         for (Image image : post.getImages()) {
             images.add(image.getUrl());

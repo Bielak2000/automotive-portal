@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ap.automotiveportalbackend.common.BaseEntity;
 import org.ap.automotiveportalbackend.posts.Post;
-import org.ap.automotiveportalbackend.users.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 

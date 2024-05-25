@@ -14,8 +14,8 @@ public class ImageConfiguration {
     private String uploadDirectory;
 
     @Bean
-    public ImageService imageService(ImageRepository imageRepository, PostService postService) {
-        return new ImageService(uploadDirectory, imageRepository, postService);
+    public ImageService imageService(ImageRepository imageRepository) {
+        return new ImageService(uploadDirectory, imageRepository);
     }
 
 }

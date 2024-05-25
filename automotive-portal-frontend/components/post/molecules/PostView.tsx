@@ -7,20 +7,24 @@ import React, {useRef, useState} from "react";
 import {Toast} from "primereact/toast";
 import {boostPostApi, deletePostById, getPostById} from "../../../lib/api/post";
 import ConfirmationDeleteDialog from "../../common/organisms/ConfirmationDeleteDialog";
+import AddPostDialog from "../templates/AddPostDialog";
+import {UserDTO} from "../../common/types";
 
 interface PostViewProps {
     post: PostDTO;
     index: number;
+    user?: UserDTO;
 
     onDeletedPost: (index: number) => void;
 }
 
-const PostView: React.VFC<PostViewProps> = ({post, index, onDeletedPost}) => {
+const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) => {
     const token = getTokenFromCookies();
     const userId = getUserIdFromLocalStorage();
     const toast = useRef<Toast>(null);
     const [postState, setPostState] = useState<PostDTO>(post);
     const [showConfirmationDeleteDialog, setShowConfirmationDeleteDialog] = useState<boolean>(false);
+    const [showEditPostDialog, setShowEditPostDialog] = useState<boolean>(false);
 
     const itemTemplate = (item: string) => {
         return <img src={`http://localhost:8080/api/posts/${postState.postId}/${item}`} alt="image"
@@ -87,6 +91,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, onDeletedPost}) => {
     const confirmDeletePost = () => {
         deletePostById(userId!.slice(1, userId!.length - 1), postState.postId).then((response) => {
             if (response.status === 200) {
+                setShowConfirmationDeleteDialog(false);
                 onDeletedPost(index);
             } else {
                 toast.current?.show({
@@ -96,11 +101,13 @@ const PostView: React.VFC<PostViewProps> = ({post, index, onDeletedPost}) => {
                     life: 5000
                 })
             }
-            setShowConfirmationDeleteDialog(false);
         })
     }
 
     return <div className="post-view-main-div">
+        {user && <AddPostDialog showDialog={showEditPostDialog} user={user} editPost={true}
+                                setShowDialog={setShowEditPostDialog}
+                                post={post}/>}
         <Toast ref={toast}/>
         <ConfirmationDeleteDialog header={`Usuwanie postu`} info={"Czy na pewno chcesz usunąć wybrany post?"}
                                   showDialog={showConfirmationDeleteDialog}
@@ -109,7 +116,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, onDeletedPost}) => {
         <div className="post-view-header-div">
             <div>
                 <div className="flex">
-                    <p className="post-type-p">{postState.createdAt.toString()},</p>
+                    <p className="post-type-p">{postState.modifiedAt.toString()},</p>
                     <p className="post-type-p" style={{marginLeft: "5px"}}>{typeTranslate(postState.postType)}</p>
                 </div>
                 <div className="post-view-header-div-content">
@@ -120,7 +127,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, onDeletedPost}) => {
             </div>
             <div className="right-post-view-header-div">
                 {token && userId !== null && postState.userDTO.id === userId.slice(1, userId.length - 1) &&
-                    <Button icon="pi pi-pen-to-square" onClick={() => console.log("click")}
+                    <Button icon="pi pi-pen-to-square" onClick={() => setShowEditPostDialog(true)}
                             className="post-view-action-button edit-post-button"
                             tooltip="Edytuj post" tooltipOptions={{position: "bottom"}}/>}
                 {token && userId !== null && postState.userDTO.id === userId.slice(1, userId.length - 1) &&

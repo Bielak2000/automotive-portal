@@ -3,6 +3,7 @@ package org.ap.automotiveportalbackend.common;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -17,6 +18,7 @@ public abstract class BaseEntity {
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
+    @Setter
     private LocalDateTime modifiedAt;
     private boolean deleted;
 

@@ -1,0 +1,1 @@
+ALTER TABLE ap.images ALTER COLUMN url TYPE varchar(1000);

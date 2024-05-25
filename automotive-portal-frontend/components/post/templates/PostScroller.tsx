@@ -38,8 +38,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     const oldPageValue = useRef<number>(-1);
     const [firstSortValue, setFirstSortValue] = useState<boolean>(true);
     const [firstMyPosts, setFirstMyPosts] = useState<boolean>(true);
-    const [firstFilterVehicleBrand, setFirstVehicleBrand] = useState<boolean>(true);
-    const [firstFilterVehicleModel, setFirstVehicleModel] = useState<boolean>(true);
+    const [firstFilterVehicle, setFirstVehicle] = useState<boolean>(true);
 
     const loadPosts = async (requirePage: number) => {
         const newPosts = await getPageablePosts({
@@ -127,34 +126,19 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     }, [showMyPosts]);
 
     useEffect(() => {
-        if (!firstFilterVehicleBrand) {
+        if (!firstFilterVehicle) {
             prepareDataWhenChangeFilersSortingSearching();
         }
-    }, [firstFilterVehicleBrand]);
+    }, [firstFilterVehicle]);
 
     useEffect(() => {
-        if (selectedVehicleBrand !== null) {
-            setFirstVehicleBrand(false);
+        if (selectedVehicleBrand !== null || selectedVehicleModel !== null) {
+            setFirstVehicle(false);
         }
-        if (!firstFilterVehicleBrand) {
+        if (!firstFilterVehicle) {
             prepareDataWhenChangeFilersSortingSearching();
         }
-    }, [selectedVehicleBrand]);
-
-    useEffect(() => {
-        if (!firstFilterVehicleModel) {
-            prepareDataWhenChangeFilersSortingSearching();
-        }
-    }, [firstFilterVehicleModel]);
-
-    useEffect(() => {
-        if (selectedVehicleModel !== null) {
-            setFirstVehicleModel(false);
-        }
-        if (!firstFilterVehicleModel) {
-            prepareDataWhenChangeFilersSortingSearching();
-        }
-    }, [selectedVehicleModel]);
+    }, [selectedVehicleBrand, selectedVehicleModel]);
 
     const prepareDataWhenChangeFilersSortingSearching = () => {
         setPosts([]);
@@ -194,17 +178,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     }
 
     const onDeletedPost = (index: number) => {
-        setPosts(posts.filter((el, index1) => index1 != index));
-        const post = document.getElementById(`post-${index}`);
-        if (post) {
-            post.remove();
-        }
-        toast.current?.show({
-            severity: "success",
-            summary: "Post został usunięty",
-            detail: "Wybrany post został usunięty z systemu.",
-            life: 5000
-        })
+        window.location.replace("/?state=postdeleted");
     }
 
     return <div className="post-scroller-main-div">
@@ -215,7 +189,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
                 setRefVisible(!!el);
             }
         }}>
-            <PostView post={post} index={index} onDeletedPost={onDeletedPost}/>
+            <PostView post={post} index={index} user={user} onDeletedPost={onDeletedPost}/>
         </div>))}
         {emptyValue()}
         {loading && <p>Loading...</p>}

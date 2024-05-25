@@ -39,6 +39,31 @@ const App: NextPage = () => {
                 detail: "Twój token wygasł, zaloguj się ponownie.",
                 life: 8000
             })
+            window.history.replaceState(null, "", "/")
+        } else if(router.query.state === "postdeleted") {
+            toast.current?.show({
+                severity: "success",
+                summary: "Post został usunięty",
+                detail: "Wybrany post został usunięty z systemu.",
+                life: 5000
+            })
+            window.history.replaceState(null, "", "/")
+        } else if(router.query.state === "addedpost") {
+            toast.current?.show({
+                severity: "success",
+                summary: "Post został dodany",
+                detail: "Stworzony post został dodany i opublikowany.",
+                life: 5000
+            })
+            window.history.replaceState(null, "", "/")
+        } else if(router.query.state === "postupdated") {
+            toast.current?.show({
+                severity: "success",
+                summary: "Zedytowano post",
+                detail: "Post został zmieniony i opublikowany.",
+                life: 5000
+            })
+            window.history.replaceState(null, "", "/")
         }
     }, [router.query]);
 

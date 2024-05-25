@@ -1,16 +1,18 @@
 package org.ap.automotiveportalbackend.images.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.images.ImageRepository;
 import org.ap.automotiveportalbackend.images.dto.ImageDTO;
 import org.ap.automotiveportalbackend.posts.Post;
-import org.ap.automotiveportalbackend.posts.service.PostService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,11 +22,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
+@Slf4j
 public class ImageService {
 
     private final String uploadDirectory;
     private final ImageRepository imageRepository;
-    private final PostService postService;
 
     @Transactional(readOnly = true)
     public List<ImageDTO> getAllImageByPost(Post post) {
@@ -53,6 +55,23 @@ public class ImageService {
             default:
                 return MediaType.IMAGE_PNG;
         }
+    }
+
+    @Transactional
+    public void removeImages(List<String> imagesToRemove, Post post) throws IOException {
+        List<File> filesToRemove = imagesToRemove.stream().map((img) -> new File(String.valueOf(createPathToImage(post.getId().toString(), img)))).toList();
+        List<Image> images = imageRepository.findAllByPost(post);
+        for (File file : filesToRemove) {
+            file.delete();
+        }
+        if (images.size() == filesToRemove.size()) {
+            FileUtils.deleteDirectory(new File(uploadDirectory + post.getId().toString()));
+        }
+        log.info("Dleted {} files", filesToRemove.size());
+    }
+
+    public void deleteImageById(UUID id) {
+        imageRepository.deleteById(id);
     }
 
     private String saveImageFile(String postId, String imageId, MultipartFile imageFile) throws IOException {

@@ -54,7 +54,7 @@ const MainView: React.FC<MainViewProps> = ({
 
     return <div className="main-div">
         <Toast ref={toast}/>
-        {user && <AddPostDialog showDialog={showAddPostDialog} user={user} setShowDialog={setShowAddPostDialog}/>}
+        {user && <AddPostDialog showDialog={showAddPostDialog} user={user} editPost={false} setShowDialog={setShowAddPostDialog}/>}
         <div className="main-content-div">
             <div className="main-view-menu">
                 <div className="flex">

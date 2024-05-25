@@ -108,7 +108,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 <div className="left-panel-checkbox-div">
                     <Checkbox onChange={e => setSortPostsByAppearanceNumber(e.checked ? e.checked : false)}
                               checked={sortPostsByAppearanceNumber}></Checkbox>
-                    <p style={{marginLeft: "10px"}}>sortuj po liczbie podbić</p>
+                    <p style={{marginLeft: "10px"}}>sortuj po liczbie wystąpień</p>
                 </div>
                 {user && <div className="left-panel-checkbox-div">
                     <Checkbox onChange={e => setShowMyPosts(e.checked ? e.checked : false)}

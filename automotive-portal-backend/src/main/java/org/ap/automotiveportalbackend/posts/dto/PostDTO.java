@@ -21,7 +21,7 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                       @NotNull(message = "PostType can't be null") PostType postType,
                       @Nullable String vehicleModel,
                       @NotNull(message = "AppearanceNumber can't be null") Integer appearanceNumber,
-                      @NotNull @JsonFormat(pattern = "HH:mm dd-MM-yyyy") LocalDateTime createdAt,
+                      @NotNull @JsonFormat(pattern = "HH:mm dd-MM-yyyy") LocalDateTime modifiedAt,
                       @NotNull(message = "User can't be null") UserDTO userDTO,
                       List<String> appearanceUserIds,
                       @Nullable List<String> images) {
@@ -34,7 +34,7 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                 .vehicleBrand(post.getVehicleBrand())
                 .vehicleModel(post.getVehicleModel())
                 .appearanceNumber(post.getAppearanceNumber())
-                .createdAt(post.getCreatedAt())
+                .modifiedAt(post.getModifiedAt())
                 .userDTO(UserDTO.create(post.getUser()))
                 .appearanceUserIds(
                         post.getBoostingUsers().stream().map(user -> user.getId().toString()).collect(Collectors.toList()))

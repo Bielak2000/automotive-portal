@@ -21,6 +21,7 @@ import org.ap.automotiveportalbackend.users.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +62,16 @@ public class Post extends BaseEntity {
         this.vehicleModel = postFormDTO.vehicleModel();
         this.user = user;
         this.boostingUsers = new HashSet<>();
+    }
+
+    public void update(PostFormDTO postFormDTO, List<Image> images) {
+        this.images = images;
+        this.title = postFormDTO.title();
+        this.content = postFormDTO.content();
+        this.postType = postFormDTO.postType();
+        this.vehicleBrand = postFormDTO.vehicleBrand();
+        this.vehicleModel = postFormDTO.vehicleModel();
+        this.setModifiedAt(LocalDateTime.now());
     }
 
     public void addAppearanceNumber() {

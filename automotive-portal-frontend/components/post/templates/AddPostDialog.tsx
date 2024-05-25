@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Dialog} from "primereact/dialog";
 import {useFormik} from "formik";
-import {PostDataValidation, PostFormDTO} from "../types";
+import {PostDataValidation, PostDTO, PostFormDTO} from "../types";
 import {Button} from "primereact/button";
 import {Toast} from "primereact/toast";
 import {InputTextField} from "../../common/atoms/InputTextField";
@@ -17,16 +17,19 @@ import {
 import {Tooltip} from "primereact/tooltip";
 import {ProgressBar} from "primereact/progressbar";
 import {InputTextarea} from "primereact/inputtextarea";
-import {addPostWithImages} from "../../../lib/api/post";
+import {addPostWithImages, updatePost} from "../../../lib/api/post";
+import axios from "axios";
 
 type AddPostDialogProps = {
     showDialog: boolean;
     user: UserDTO;
+    editPost: boolean;
+    post?: PostDTO
 
     setShowDialog: (val: boolean) => void;
 }
 
-const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowDialog}) => {
+const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost, post, setShowDialog}) => {
     const toast = useRef<Toast>(null);
     const fileUploadRef = useRef<FileUpload>(null);
     const [imagesNumber, setImagesNumber] = useState<number>(0);
@@ -38,9 +41,17 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
     const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([]);
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
-    const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null)
+    const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
+    const [files, setFiles] = useState([]);
+    const oldValue = post;
     const formik = useFormik<PostFormDTO>({
-        initialValues: {
+        initialValues: editPost ? {
+            title: post!.title,
+            content: post!.content,
+            vehicleBrand: post!.vehicleBrand,
+            postType: post!.postType,
+            vehicleModel: post!.vehicleModel
+        } : {
             title: "",
             content: "",
             vehicleBrand: "",
@@ -57,7 +68,20 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
                 }
             })
             if (correctFilesType) {
-                addPost(data);
+                if (editPost) {
+                    if (checkNewValue(data)) {
+                        saveEditedPost(data);
+                    } else {
+                        toast.current?.show({
+                            severity: "warn",
+                            summary: "Brak zmian",
+                            detail: "Nie wprowadzono żadnych zmian. Pamiętaj, że nowe zdjęcie musi mieć inną nazwę niż dotychczas.",
+                            life: 8000
+                        });
+                    }
+                } else {
+                    addPost(data);
+                }
             } else {
                 toast.current?.show({
                     severity: "error",
@@ -72,10 +96,55 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     useEffect(() => {
         if (showDialog) {
             getBrands(toast, setVehicleBrandValues);
-            setSelectedVehicleBrand(user.vehicleBrand ? {name: user.vehicleBrand, code: user.vehicleBrand} : null);
-            setSelectedVehicleModel(user.vehicleModel ? {name: user.vehicleModel, code: user.vehicleModel} : null);
+            if (!editPost) {
+                setSelectedVehicleBrand(user.vehicleBrand ? {name: user.vehicleBrand, code: user.vehicleBrand} : null);
+                setSelectedVehicleModel(user.vehicleModel ? {name: user.vehicleModel, code: user.vehicleModel} : null);
+            } else {
+                setSelectedPostType(postTypeValues.find(value => value.code === post!.postType));
+                setSelectedVehicleBrand({name: post!.vehicleBrand, code: post!.vehicleBrand});
+                setSelectedVehicleModel(post!.vehicleModel ? {
+                    name: post!.vehicleModel,
+                    code: post!.vehicleModel
+                } : null);
+                const fetchImages = async () => {
+                    try {
+                        if (post!.images !== null && post!.images.length !== 0) {
+                            const responses = await Promise.all([
+                                post!.images[0] ? axios.get(`http://localhost:8080/api/posts/${post!.postId}/${post!.images[0]}`, {responseType: 'arraybuffer'}) : null,
+                                post!.images[1] ? axios.get(`http://localhost:8080/api/posts/${post!.postId}/${post!.images[1]}`, {responseType: 'arraybuffer'}) : null
+                            ]);
+                            const filesTemp = await Promise.all(responses.map(async (response, index) => {
+                                if (response !== null) {
+                                    const base64Image = Buffer.from(response.data, 'binary').toString('base64');
+                                    const mimeType = response.headers['content-type'];
+                                    const dataUrl = `data:${mimeType};base64,${base64Image}`;
+                                    const blob = await fetch(dataUrl).then(res => res.blob());
+                                    const file = new File([blob], `${post!.images[index].split("_")[1]}`, {type: mimeType});
+                                    // @ts-ignore
+                                    file.objectURL = URL.createObjectURL(file);
+                                    return file;
+                                }
+                            }));
+                            const files1 = filesTemp.filter((file) => file !== undefined && file !== null);
+                            // @ts-ignore
+                            setFiles(files1);
+                        }
+
+                    } catch (error) {
+                        console.error('Error fetching the images', error);
+                    }
+                };
+                fetchImages();
+            }
         }
     }, [showDialog]);
+
+    useEffect(() => {
+        if (files.length > 0 && fileUploadRef.current) {
+            fileUploadRef.current.setFiles(files);
+        }
+        setImagesNumber(files.length);
+    }, [files]);
 
     useEffect(() => {
         if (showDialog && selectedVehicleBrand !== null) {
@@ -104,6 +173,25 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
         }
     }, [imagesNumber]);
 
+    const checkNewValue = (data: PostFormDTO) => {
+        const descriptionChanges = data.postType !== oldValue!.postType || data.title !== oldValue!.title ||
+            data.content !== oldValue!.content || data.vehicleBrand !== oldValue!.vehicleBrand || data.vehicleModel !== oldValue!.vehicleModel;
+        let imageChanges = false;
+        if (files.length !== fileUploadRef.current!.getFiles().length) {
+            imageChanges = true;
+        } else {
+            fileUploadRef.current!.getFiles().forEach((file) => {
+                files.forEach((oldFile) => {
+                    // @ts-ignore
+                    if (oldFile.name !== file.name) {
+                        imageChanges = true;
+                    }
+                })
+            })
+        }
+        return descriptionChanges || imageChanges;
+    }
+
     const loadModels = () => {
         formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
         if (!selectedVehicleBrand) {
@@ -126,13 +214,24 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
                     life: 5000
                 });
             } else {
-                toast.current?.show({
-                    severity: "success",
-                    summary: "Dodano post",
-                    detail: "Post został zapisany i opublikowany.",
-                    life: 5000
-                })
                 cancel();
+                window.location.replace("/?state=addedpost");
+            }
+        })
+    }
+
+    const saveEditedPost = (data: PostFormDTO) => {
+        updatePost(data, fileUploadRef.current!.getFiles(), post!.postId).then((response) => {
+            if (response.status === 401) {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Błędne dane uwierzytelniające",
+                    detail: "Wprowadzony login lub hasło są nieprawidłowe.",
+                    life: 5000
+                });
+            } else {
+                cancel();
+                window.location.replace("/?state=postupdated");
             }
         })
     }
@@ -207,7 +306,6 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
                     <img alt={file.name} role="presentation" src={file.objectURL} width={100}/>
                     <span className="flex flex-column text-left ml-3">
                         {file.name}
-                        <small>{new Date().toLocaleDateString()}</small>
                     </span>
                 </div>
                 <Button type="button" icon="pi pi-times"
