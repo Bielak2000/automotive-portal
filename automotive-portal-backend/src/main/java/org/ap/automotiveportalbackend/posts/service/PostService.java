@@ -34,9 +34,17 @@ public class PostService {
     public List<PostDTO> getAllPostsByPageAndSearch(PostPageDTO postPageDTO) {
         Pageable pageable = PageRequest.of(postPageDTO.page(), postPageDTO.size());
         if (postPageDTO.searchValue() != null) {
-            return postRepository.findAllByTitleContainingOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            if(postPageDTO.sortByAppearanceNumber()) {
+                return postRepository.findAllByTitleContainingOrderByAppearanceNumberDesc(postPageDTO.searchValue(), pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            } else {
+                return postRepository.findAllByTitleContainingOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            }
         } else {
-            return postRepository.findByOrderByCreatedAtDesc(pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            if(postPageDTO.sortByAppearanceNumber()) {
+                return postRepository.findByOrderByAppearanceNumberDesc(pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            } else {
+                return postRepository.findByOrderByCreatedAtDesc(pageable).stream().map(this::toPostDTO).collect(Collectors.toList());
+            }
         }
     }
 

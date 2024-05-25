@@ -5,5 +5,5 @@ import jakarta.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public record PostPageDTO(@NotNull @Min(0) Integer page, @NotNull @Min(1) Integer size, @Nullable String searchValue) {
+public record PostPageDTO(@NotNull @Min(0) Integer page, @NotNull @Min(1) Integer size, @Nullable String searchValue, @NotNull Boolean sortByAppearanceNumber) {
 }

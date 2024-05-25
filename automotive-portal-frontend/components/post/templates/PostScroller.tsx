@@ -6,11 +6,17 @@ import PostView from "../molecules/PostView";
 interface PostScrollerProps {
     searchValue: string;
     searchPosts: boolean;
+    sortPostsByAppearanceNumber: boolean;
 
     setSearchPosts: (val: boolean) => void;
 }
 
-const PostScroller: React.VFC<PostScrollerProps> = ({searchPosts, searchValue, setSearchPosts}) => {
+const PostScroller: React.VFC<PostScrollerProps> = ({
+                                                        searchPosts,
+                                                        searchValue,
+                                                        sortPostsByAppearanceNumber,
+                                                        setSearchPosts
+                                                    }) => {
     const [posts, setPosts] = useState<PostDTO[]>([]);
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -19,12 +25,14 @@ const PostScroller: React.VFC<PostScrollerProps> = ({searchPosts, searchValue, s
     const [refVisible, setRefVisible] = useState(false);
     const [disabledLoadNewPost, setDisabledLoadNewPost] = useState<boolean>(false);
     const oldPageValue = useRef<number>(-1);
+    const [firstSortValue, setFirstSortValue] = useState<boolean>(true);
 
     const loadPosts = async (requirePage: number) => {
         const newPosts = await getPageablePosts({
             page: requirePage,
             size: 5,
-            searchValue: searchValue === "" ? null : searchValue
+            searchValue: searchValue === "" ? null : searchValue,
+            sortByAppearanceNumber: sortPostsByAppearanceNumber
         }, searchValue);
         return newPosts.data;
     };
@@ -67,18 +75,38 @@ const PostScroller: React.VFC<PostScrollerProps> = ({searchPosts, searchValue, s
 
     useEffect(() => {
         if (searchPosts) {
-            setPosts([]);
-            oldPageValue.current = -1;
-            setPage(0);
-            execAndHandlerLoadPosts(true);
-            setSearchPosts(false);
+            prepareDataWhenChangeFilersSortingSearching();
         }
     }, [searchPosts]);
+
+    useEffect(() => {
+        if (!firstSortValue) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [firstSortValue]);
+
+    useEffect(() => {
+        if (sortPostsByAppearanceNumber) {
+            setFirstSortValue(false);
+        }
+        if (!firstSortValue) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [sortPostsByAppearanceNumber]);
+
+    const prepareDataWhenChangeFilersSortingSearching = () => {
+        setPosts([]);
+        oldPageValue.current = -1;
+        setPage(0);
+        execAndHandlerLoadPosts(true);
+        setSearchPosts(false);
+    }
 
     const execAndHandlerLoadPosts = (requireRequest: boolean) => {
         if (oldPageValue.current !== page || requireRequest) {
             setLoading(true);
             const designatedPage = requireRequest ? 0 : page;
+            console.log("REQUEST: " + designatedPage)
             loadPosts(designatedPage).then((newPosts) => {
                 setRefVisible(false);
                 if (newPosts.length === 0) {

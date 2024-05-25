@@ -15,9 +15,10 @@ const App: NextPage = () => {
     const [showRightPanel, setShowRightPanel] = useState<boolean>(false);
     const [showLeftPanel, setShowLeftPanel] = useState<boolean>(false);
     const [isNotification, setIsNotification] = useState<boolean>(false);
+    const [sortPostsByAppearanceNumber, setSortPostsByAppearanceNumber] = useState<boolean>(false);
 
     useEffect(() => {
-        if(isNotification) {
+        if (isNotification) {
             toast.current?.show({
                 severity: "success",
                 summary: "Nowe powiadomienia",
@@ -28,7 +29,7 @@ const App: NextPage = () => {
     }, [isNotification]);
 
     useEffect(() => {
-        if(router.query.state === "tokenexpiration") {
+        if (router.query.state === "tokenexpiration") {
             toast.current?.show({
                 severity: "warn",
                 summary: "Zostałeś wylogowany",
@@ -41,8 +42,10 @@ const App: NextPage = () => {
     return <Layout title="Tablica" showComponents={true} className="main-app-content-div-start-web" user={user}
                    setUser={setUser}>
         <Toast ref={toast}/>
-        <LeftPanel user={user} showLeftPanel={showLeftPanel} setShowLeftPanel={setShowLeftPanel}/>
-        <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification} user={user}
+        <LeftPanel user={user} showLeftPanel={showLeftPanel} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
+                   setShowLeftPanel={setShowLeftPanel} setSortPostsByAppearanceNumber={setSortPostsByAppearanceNumber}/>
+        <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification}
+                  user={user} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
                   setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel}/>
         <RightPanel showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel}/>
     </Layout>

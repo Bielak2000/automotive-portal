@@ -16,6 +16,19 @@
     text-align: center;
 }
 
+.left-panel-content-panel-div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.left-panel-checkbox-div {
+    display: flex;
+    align-items: center;
+}
+
 @media screen and (max-width: 1089px) {
     .left-panel-main-div {
         width: 100svw;

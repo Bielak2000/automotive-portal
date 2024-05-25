@@ -12,6 +12,7 @@ interface MainViewProps {
     showLeftPanel: boolean;
     isNotification: boolean;
     user?: UserDTO;
+    sortPostsByAppearanceNumber: boolean;
 
     setShowRightPanel: (val: boolean) => void;
     setShowLeftPanel: (val: boolean) => void;
@@ -22,6 +23,7 @@ const MainView: React.FC<MainViewProps> = ({
                                                showLeftPanel,
                                                isNotification,
                                                user,
+                                               sortPostsByAppearanceNumber,
                                                setShowRightPanel,
                                                setShowLeftPanel
                                            }) => {
@@ -68,7 +70,8 @@ const MainView: React.FC<MainViewProps> = ({
                 </div>
             </div>
             <div className="main-view-data-scroller-div">
-                <PostScroller searchPosts={searchPosts} searchValue={searchValue} setSearchPosts={setSearchPosts}/>
+                <PostScroller searchPosts={searchPosts} searchValue={searchValue} setSearchPosts={setSearchPosts}
+                              sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}/>
             </div>
         </div>
     </div>
