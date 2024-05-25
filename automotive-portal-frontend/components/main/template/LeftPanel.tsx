@@ -52,7 +52,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({user, showLeftPanel, setShowLeftPa
     return <div id="left-panel" className="left-panel-main-div">
         <div className="left-panel-filter-div">
             <div className="panel-header left-panel">
-                <h2>Filtruj</h2>
+                <h2>Filtry</h2>
                 {fullPanel && <Button icon="pi pi-times" className="close-right-panel-button" tooltip="zamknij"
                                            onClick={() => setShowLeftPanel(false)}
                                            tooltipOptions={{position: "left"}}/>}

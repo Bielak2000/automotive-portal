@@ -92,11 +92,12 @@ const PostView: React.VFC<PostViewProps> = ({post}) => {
             </div>
             <div className="type-arrow-div">
                 <Button className="arrow-button" tooltip="Podbij" tooltipOptions={{position: "left"}}
-                        onClick={() => boostPost(true)}>
+                        onClick={() => boostPost(true)} disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}>
                     <Image src="/arrow-up.svg" alt="up" width={20} height={40}/>
                 </Button>
                 <p className="appearance-number-p">{postState.appearanceNumber}</p>
                 <Button className="arrow-button" style={{marginTop: "0"}} tooltip="Anuluj"
+                        disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}
                         tooltipOptions={{position: "left"}} onClick={() => boostPost(false)}>
                     <Image src="/arrow-down.svg" alt="up" width={20} height={40}/>
                 </Button>

@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
-public record UserDTO(@NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createdAt,
+public record UserDTO(@NotNull UUID id,
+                      @NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createdAt,
                       @NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime lastActivityAt,
                       @NotEmpty(message = "Name can't be empty") String name,
                       @NotEmpty(message = "Surname can't be empty") String surname,
@@ -21,6 +22,7 @@ public record UserDTO(@NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") Loca
                       @Nullable String vehicleModel) {
     public static UserDTO create(User user) {
         return UserDTO.builder()
+                .id(user.getId())
                 .createdAt(user.getCreatedAt())
                 .lastActivityAt(user.getLastActivityAt())
                 .name(user.getName())
