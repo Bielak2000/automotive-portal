@@ -7,15 +7,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PostRepository extends JpaRepository<Post, UUID> {
-    public List<Post> findAllByVehicleBrandOrderByCreatedAt(String brand);
-
-    public List<Post> findAllByVehicleModelOrderByCreatedAt(String model);
-
     public List<Post> findByOrderByCreatedAtDesc(Pageable pageable);
 
     public List<Post> findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(String content, Pageable pageable);
 
-    public List<Post> findByOrderByAppearanceNumberDesc(Pageable pageable);
+    public List<Post> findByOrderByAppearanceNumberDescCreatedAtDesc(Pageable pageable);
 
-    public List<Post> findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDesc(String content, Pageable pageable);
+    public List<Post> findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDescCreatedAtDesc(String content, Pageable pageable);
 }

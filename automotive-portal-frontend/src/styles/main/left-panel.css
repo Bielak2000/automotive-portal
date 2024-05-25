@@ -30,6 +30,12 @@
     height: 30px;
 }
 
+.left-panel-dropdowns-div {
+    width: 100%;
+    margin-top: 30px;
+    text-align: left;
+}
+
 @media screen and (max-width: 1089px) {
     .left-panel-main-div {
         width: 100svw;

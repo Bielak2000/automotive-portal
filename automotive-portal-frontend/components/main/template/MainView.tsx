@@ -14,6 +14,8 @@ interface MainViewProps {
     user?: UserDTO;
     sortPostsByAppearanceNumber: boolean;
     showMyPosts: boolean;
+    selectedVehicleBrand: string | null;
+    selectedVehicleModel: string | null;
 
     setShowRightPanel: (val: boolean) => void;
     setShowLeftPanel: (val: boolean) => void;
@@ -26,6 +28,8 @@ const MainView: React.FC<MainViewProps> = ({
                                                user,
                                                sortPostsByAppearanceNumber,
                                                showMyPosts,
+                                               selectedVehicleBrand,
+                                               selectedVehicleModel,
                                                setShowRightPanel,
                                                setShowLeftPanel
                                            }) => {
@@ -74,7 +78,8 @@ const MainView: React.FC<MainViewProps> = ({
             <div className="main-view-data-scroller-div">
                 <PostScroller user={user} searchPosts={searchPosts} searchValue={searchValue}
                               sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
-                              showMyPosts={showMyPosts}
+                              showMyPosts={showMyPosts} selectedVehicleBrand={selectedVehicleBrand}
+                              selectedVehicleModel={selectedVehicleModel}
                               setSearchPosts={setSearchPosts}/>
             </div>
         </div>

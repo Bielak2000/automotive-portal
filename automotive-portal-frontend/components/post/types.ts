@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import {LoginData} from "../user/login/types";
 import {UserDTO} from "../common/types";
+import {date} from "yup";
 
 export interface PostFormDTO {
     title: string;
@@ -21,6 +22,7 @@ export interface PostDTO {
     appearanceUserIds: string[];
     userDTO: UserDTO;
     images: string[];
+    createdAt: Date;
 }
 
 export interface PostPageDTO {
@@ -29,6 +31,8 @@ export interface PostPageDTO {
     searchValue: string | null;
     sortByAppearanceNumber: boolean;
     userId: string | null;
+    vehicleBrand: string | null;
+    vehicleModel: string | null;
 }
 
 export const PostDataValidation: Yup.SchemaOf<PostFormDTO> = Yup.object().shape({

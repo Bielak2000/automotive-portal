@@ -1,17 +1,24 @@
-import React, {useEffect, useState} from "react";
-import {UserDTO} from "../../common/types";
+import React, {useEffect, useRef, useState} from "react";
+import {DropDownType, UserDTO} from "../../common/types";
 import {Button} from "primereact/button";
 import {Checkbox} from "primereact/checkbox";
+import DropDownField from "../../common/atoms/DropDownField";
+import {getBrands, getModels} from "../../common/organisms/VehicleFunctions";
+import {Toast} from "primereact/toast";
 
 interface LeftPanelProps {
     user?: UserDTO;
     showLeftPanel: boolean;
     sortPostsByAppearanceNumber: boolean;
     showMyPosts: boolean;
+    selectedVehicleBrand: DropDownType | null;
+    selectedVehicleModel: DropDownType | null;
 
     setShowLeftPanel: (val: boolean) => void;
     setSortPostsByAppearanceNumber: (val: boolean) => void;
     setShowMyPosts: (val: boolean) => void;
+    setSelectedVehicleBrand: (val: DropDownType | null) => void;
+    setSelectedVehicleModel: (val: DropDownType | null) => void;
 }
 
 const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -19,11 +26,18 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                                                  showLeftPanel,
                                                  sortPostsByAppearanceNumber,
                                                  showMyPosts,
+                                                 selectedVehicleBrand,
+                                                 selectedVehicleModel,
                                                  setShowLeftPanel,
                                                  setSortPostsByAppearanceNumber,
-                                                 setShowMyPosts
+                                                 setShowMyPosts,
+                                                 setSelectedVehicleBrand,
+                                                 setSelectedVehicleModel
                                              }) => {
+    const toast = useRef<Toast>(null);
     const [fullPanel, setFullPanel] = useState<boolean>(false);
+    const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
+    const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([]);
 
     useEffect(() => {
         const firstMobileMediaQuery = window!.matchMedia('screen and (max-width: 1089px)');
@@ -61,7 +75,28 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
         }
     }, [showLeftPanel]);
 
+    useEffect(() => {
+        getBrands(toast, setVehicleBrandValues);
+    }, []);
+
+    useEffect(() => {
+        setSelectedVehicleBrand(user && user.vehicleBrand ? {name: user.vehicleBrand, code: user.vehicleBrand} : null);
+        setSelectedVehicleModel(user && user.vehicleModel ? {name: user.vehicleModel, code: user.vehicleModel} : null);
+    }, [user]);
+
+    useEffect(() => {
+        if (!selectedVehicleBrand) {
+            setVehicleModelValues([]);
+        } else {
+            getModels(toast, selectedVehicleBrand, setVehicleModelValues);
+            if (user && selectedVehicleBrand?.code !== user.vehicleBrand) {
+                setSelectedVehicleModel(null);
+            }
+        }
+    }, [selectedVehicleBrand]);
+
     return <div id="left-panel" className="left-panel-main-div">
+        <Toast ref={toast}/>
         <div className="left-panel-filter-div">
             <div className="panel-header left-panel">
                 <h2>Filtry</h2>
@@ -80,6 +115,17 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                               checked={showMyPosts}></Checkbox>
                     <p style={{marginLeft: "10px"}}>moje posty</p>
                 </div>}
+                <div className="left-panel-dropdowns-div">
+                    <DropDownField description="Wybierz pojazd" values={vehicleBrandValues}
+                                   className="left-panel-dropdown"
+                                   selectedValue={selectedVehicleBrand} filter={true}
+                                   setSelectedValue={(val) => setSelectedVehicleBrand(val)}/>
+                    <DropDownField description="Wybierz model" values={vehicleModelValues}
+                                   selectedValue={selectedVehicleModel} filter={true}
+                                   className="left-panel-dropdown"
+                                   setSelectedValue={(val) => setSelectedVehicleModel(val)}
+                                   disabled={!selectedVehicleBrand}/>
+                </div>
             </div>
         </div>
 

@@ -2,7 +2,7 @@ import {NextPage} from "next";
 import Layout from "../../components/common/templates/Layout";
 import LeftPanel from "../../components/main/template/LeftPanel";
 import React, {useEffect, useRef, useState} from "react";
-import {UserDTO} from "../../components/common/types";
+import {DropDownType, UserDTO} from "../../components/common/types";
 import MainView from "../../components/main/template/MainView";
 import RightPanel from "../../components/main/template/RightPanel";
 import {Toast} from "primereact/toast";
@@ -17,6 +17,8 @@ const App: NextPage = () => {
     const [isNotification, setIsNotification] = useState<boolean>(false);
     const [sortPostsByAppearanceNumber, setSortPostsByAppearanceNumber] = useState<boolean>(false);
     const [showMyPosts, setShowMyPosts] = useState<boolean>(false);
+    const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
+    const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
 
     useEffect(() => {
         if (isNotification) {
@@ -44,11 +46,15 @@ const App: NextPage = () => {
                    setUser={setUser}>
         <Toast ref={toast}/>
         <LeftPanel user={user} showLeftPanel={showLeftPanel} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
-                   showMyPosts={showMyPosts}
+                   showMyPosts={showMyPosts} selectedVehicleBrand={selectedVehicleBrand}
+                   selectedVehicleModel={selectedVehicleModel}
                    setShowLeftPanel={setShowLeftPanel} setSortPostsByAppearanceNumber={setSortPostsByAppearanceNumber}
-                   setShowMyPosts={setShowMyPosts}/>
+                   setShowMyPosts={setShowMyPosts} setSelectedVehicleBrand={setSelectedVehicleBrand}
+                   setSelectedVehicleModel={setSelectedVehicleModel}/>
         <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification}
                   user={user} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber} showMyPosts={showMyPosts}
+                  selectedVehicleBrand={selectedVehicleBrand != null ? selectedVehicleBrand.code : null}
+                  selectedVehicleModel={selectedVehicleModel != null ? selectedVehicleModel.code : null}
                   setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel}/>
         <RightPanel showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel}/>
     </Layout>

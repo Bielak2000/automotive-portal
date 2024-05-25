@@ -37,14 +37,8 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     const [selectedPostType, setSelectedPostType] = useState<DropDownType>();
     const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
     const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([]);
-    const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(user.vehicleBrand ? {
-        name: user.vehicleBrand,
-        code: user.vehicleBrand
-    } : null);
-    const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(user.vehicleModel ? {
-        name: user.vehicleModel,
-        code: user.vehicleModel
-    } : null)
+    const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
+    const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null)
     const formik = useFormik<PostFormDTO>({
         initialValues: {
             title: "",
@@ -57,7 +51,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
         validateOnChange: false,
         onSubmit: (data) => {
             let correctFilesType = true;
-            fileUploadRef.current.getFiles().forEach((file) => {
+            fileUploadRef.current!.getFiles().forEach((file) => {
                 if (file.type !== "image/png" && file.type !== "image/jpg" && file.type !== "image/jpeg") {
                     correctFilesType = false;
                 }
@@ -76,18 +70,16 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
     });
 
     useEffect(() => {
-        getBrands(toast, setVehicleBrandValues);
-    }, []);
+        if (showDialog) {
+            getBrands(toast, setVehicleBrandValues);
+            setSelectedVehicleBrand(user.vehicleBrand ? {name: user.vehicleBrand, code: user.vehicleBrand} : null);
+            setSelectedVehicleModel(user.vehicleModel ? {name: user.vehicleModel, code: user.vehicleModel} : null);
+        }
+    }, [showDialog]);
 
     useEffect(() => {
-        formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
-        if (!selectedVehicleBrand) {
-            setVehicleModelValues([]);
-        } else {
-            getModels(toast, selectedVehicleBrand, setVehicleModelValues);
-            if (selectedVehicleBrand?.code !== user.vehicleBrand) {
-                setSelectedVehicleModel(null);
-            }
+        if (showDialog && selectedVehicleBrand !== null) {
+            loadModels();
         }
     }, [selectedVehicleBrand]);
 
@@ -111,6 +103,18 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, setShowD
             fileUploadRef.current?.clear();
         }
     }, [imagesNumber]);
+
+    const loadModels = () => {
+        formik.setFieldValue('vehicleBrand', !selectedVehicleBrand ? null : selectedVehicleBrand.code);
+        if (!selectedVehicleBrand) {
+            setVehicleModelValues([]);
+        } else {
+            getModels(toast, selectedVehicleBrand, setVehicleModelValues);
+            if (selectedVehicleBrand?.code !== user.vehicleBrand) {
+                setSelectedVehicleModel(null);
+            }
+        }
+    }
 
     const addPost = (data: PostFormDTO) => {
         addPostWithImages(data, fileUploadRef.current!.getFiles()).then((response) => {

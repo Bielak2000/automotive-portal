@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {PostDTO} from "../types";
 import {getPageablePosts} from "../../../lib/api/post";
 import PostView from "../molecules/PostView";
-import {getUserIdFromLocalStorage} from "../../user/login/functions";
 import {UserDTO} from "../../common/types";
 
 interface PostScrollerProps {
@@ -11,6 +10,8 @@ interface PostScrollerProps {
     searchPosts: boolean;
     sortPostsByAppearanceNumber: boolean;
     showMyPosts: boolean;
+    selectedVehicleBrand: string | null;
+    selectedVehicleModel: string | null;
 
     setSearchPosts: (val: boolean) => void;
 }
@@ -21,6 +22,8 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
                                                         searchValue,
                                                         sortPostsByAppearanceNumber,
                                                         showMyPosts,
+                                                        selectedVehicleBrand,
+                                                        selectedVehicleModel,
                                                         setSearchPosts
                                                     }) => {
     const [posts, setPosts] = useState<PostDTO[]>([]);
@@ -33,6 +36,8 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     const oldPageValue = useRef<number>(-1);
     const [firstSortValue, setFirstSortValue] = useState<boolean>(true);
     const [firstMyPosts, setFirstMyPosts] = useState<boolean>(true);
+    const [firstFilterVehicleBrand, setFirstVehicleBrand] = useState<boolean>(true);
+    const [firstFilterVehicleModel, setFirstVehicleModel] = useState<boolean>(true);
 
     const loadPosts = async (requirePage: number) => {
         const newPosts = await getPageablePosts({
@@ -40,14 +45,12 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
             size: 5,
             searchValue: searchValue === "" ? null : searchValue,
             sortByAppearanceNumber: sortPostsByAppearanceNumber,
-            userId: showMyPosts ? (user ? user.id.slice(0, user.id.length) : null) : null
+            userId: showMyPosts ? (user ? user.id.slice(0, user.id.length) : null) : null,
+            vehicleBrand: selectedVehicleBrand,
+            vehicleModel: selectedVehicleModel
         });
         return newPosts.data;
     };
-
-    // useEffect(() => {
-    //     console.log(user.id.slice(1, user.id.length - 1))
-    // }, []);
 
     useEffect(() => {
         execAndHandlerLoadPosts(false);
@@ -120,6 +123,36 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
             prepareDataWhenChangeFilersSortingSearching();
         }
     }, [showMyPosts]);
+
+    useEffect(() => {
+        if (!firstFilterVehicleBrand) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [firstFilterVehicleBrand]);
+
+    useEffect(() => {
+        if (selectedVehicleBrand !== null) {
+            setFirstVehicleBrand(false);
+        }
+        if (!firstFilterVehicleBrand) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [selectedVehicleBrand]);
+
+    useEffect(() => {
+        if (!firstFilterVehicleModel) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [firstFilterVehicleModel]);
+
+    useEffect(() => {
+        if (selectedVehicleModel !== null) {
+            setFirstVehicleModel(false);
+        }
+        if (!firstFilterVehicleModel) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [selectedVehicleModel]);
 
     const prepareDataWhenChangeFilersSortingSearching = () => {
         setPosts([]);

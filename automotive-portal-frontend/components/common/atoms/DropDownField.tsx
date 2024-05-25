@@ -7,6 +7,7 @@ interface DropdownFieldProps {
     selectedValue: any;
     filter: boolean;
     divStyle?: any;
+    className?: string;
     spanErrorStyle?: any;
     disabled?: boolean;
     setSelectedValue: (val: any) => void;
@@ -21,6 +22,7 @@ const DropDownField = ({
                            filter,
                            divStyle,
                            spanErrorStyle,
+                           className,
                            disabled,
                            setSelectedValue,
                            optionTemplate,
@@ -28,8 +30,10 @@ const DropDownField = ({
                        }: DropdownFieldProps) => {
     return <div className="dropdown-field" style={divStyle}>
         <label style={spanErrorStyle ? spanErrorStyle.border !== "" ? {color: "red"} : {} : {}}>{description}</label>
-        <span className="p-float-label" style={spanErrorStyle ? spanErrorStyle : {marginBottom: "1rem", marginTop: "3px"}}>
+        <span className="p-float-label"
+              style={spanErrorStyle ? spanErrorStyle : {marginBottom: "1rem", marginTop: "3px"}}>
                 <Dropdown value={selectedValue} disabled={disabled ? disabled : false}
+                          className={className}
                           style={{width: "100%", borderRadius: "10px"}}
                           filter={filter} showClear
                           itemTemplate={optionTemplate ?? optionTemplate}

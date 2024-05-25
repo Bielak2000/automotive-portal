@@ -158,8 +158,9 @@ a {
     font-size: 18px;
 }
 
-.p-dropdown-panel.p-component.p-ripple-disabled.p-connected-overlay-enter-done {
+.p-dropdown-panel.p-component.p-ripple-disabled {
     border-radius: 10px;
+    width: 100px;
 }
 
 .p-dropdown-panel .p-dropdown-header {

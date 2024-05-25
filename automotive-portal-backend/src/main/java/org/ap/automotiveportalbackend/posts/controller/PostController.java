@@ -50,7 +50,7 @@ public class PostController {
 
     @PostMapping("/pageable")
     public List<PostDTO> getPosts(@RequestBody @Valid PostPageDTO postPageDTO) {
-        return postService.getAllPostsByPageAndSearch(postPageDTO);
+        return postService.getAllPostsByPageAndFilters(postPageDTO);
     }
 
     @GetMapping("/brands")

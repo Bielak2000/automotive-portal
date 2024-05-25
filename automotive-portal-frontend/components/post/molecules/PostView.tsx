@@ -83,16 +83,20 @@ const PostView: React.VFC<PostViewProps> = ({post}) => {
         <Toast ref={toast}/>
         <div className="post-view-header-div">
             <div>
+                <div className="flex">
+                    <p className="post-type-p">{postState.createdAt.toString()},</p>
+                    <p className="post-type-p" style={{marginLeft: "5px"}}>{typeTranslate(postState.postType)}</p>
+                </div>
                 <div className="post-view-header-div-content">
                     <p style={{marginRight: "10px"}}>{postState.userDTO.name} {postState.userDTO.surname}</p>
                     {vehicleTemplate(postState.vehicleBrand, "0")}
                     {vehicleTemplate(postState.vehicleModel, "5px")}
                 </div>
-                <p className="post-type-p">{typeTranslate(postState.postType)}</p>
             </div>
             <div className="type-arrow-div">
                 <Button className="arrow-button" tooltip="Podbij" tooltipOptions={{position: "left"}}
-                        onClick={() => boostPost(true)} disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}>
+                        onClick={() => boostPost(true)}
+                        disabled={userId !== null ? postState.userDTO.id === userId.slice(1, userId.length - 1) : false}>
                     <Image src="/arrow-up.svg" alt="up" width={20} height={40}/>
                 </Button>
                 <p className="appearance-number-p">{postState.appearanceNumber}</p>

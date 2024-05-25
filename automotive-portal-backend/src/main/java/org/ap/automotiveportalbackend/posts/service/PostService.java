@@ -34,23 +34,27 @@ public class PostService {
 
     // TODO: function require refactoring
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPostsByPageAndSearch(PostPageDTO postPageDTO) {
+    public List<PostDTO> getAllPostsByPageAndFilters(PostPageDTO postPageDTO) {
         Pageable pageable = PageRequest.of(postPageDTO.page(), postPageDTO.size());
         if (postPageDTO.searchValue() != null) {
             if (postPageDTO.sortByAppearanceNumber()) {
                 log.info("Get all posts from {} page with {} records by searchValue and sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
-                return checkUserIdIsCurrentAndSort(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDescCreatedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             } else {
                 log.info("Get all posts from {} page with {} records by searchValue", postPageDTO.page(), postPageDTO.size());
-                return checkUserIdIsCurrentAndSort(postRepository.findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             }
         } else {
             if (postPageDTO.sortByAppearanceNumber()) {
                 log.info("Get all posts from {} page with {} records sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
-                return checkUserIdIsCurrentAndSort(postRepository.findByOrderByAppearanceNumberDesc(pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByAppearanceNumberDescCreatedAtDesc(pageable), postPageDTO);
+                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             } else {
                 log.info("Get all posts from {} page with {} records", postPageDTO.page(), postPageDTO.size());
-                return checkUserIdIsCurrentAndSort(postRepository.findByOrderByCreatedAtDesc(pageable), postPageDTO);
+                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByCreatedAtDesc(pageable), postPageDTO);
+                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
             }
         }
     }
@@ -64,16 +68,6 @@ public class PostService {
     public List<VehicleModelDTO> getAllPostVehicleModels() {
         return postRepository.findAll().stream().map(p -> new VehicleModelDTO(p.getVehicleModel())).collect(Collectors.toList());
     }
-
-//    @Transactional(readOnly = true)
-//    public List<PostDTO> getAllPostsByVehicleBrand(String brand) {
-//        return postRepository.findAllByVehicleBrandOrderByCreatedAt(brand).stream().map(PostDTO::create).collect(Collectors.toList());
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<PostDTO> getAllPostsByVehicleModel(String model) {
-//        return postRepository.findAllByVehicleModelOrderByCreatedAt(model).stream().map(PostDTO::create).collect(Collectors.toList());
-//    }
 
     @Transactional
     public void createPost(PostFormDTO postFormDTO, String username, List<Image> images, UUID postId) {
@@ -105,12 +99,25 @@ public class PostService {
         return toPostDTO(post);
     }
 
-    private List<PostDTO> checkUserIdIsCurrentAndSort(List<Post> posts, PostPageDTO postPageDTO) {
+    private List<PostDTO> checkUserIdIsCurrentAndFilter(List<Post> posts, PostPageDTO postPageDTO) {
         if (postPageDTO.userId() != null) {
             log.info("Get posts for user with id {}", postPageDTO.userId());
             return posts.stream().filter(post -> post.getUser().getId().toString().equals(postPageDTO.userId())).map(this::toPostDTO).collect(Collectors.toList());
         } else {
             return posts.stream().map(this::toPostDTO).collect(Collectors.toList());
+        }
+    }
+
+    private List<PostDTO> checkVehicleFiltersAreCurrentAndFilter(List<PostDTO> posts, PostPageDTO postPageDTO) {
+        if (postPageDTO.vehicleBrand() != null) {
+            List<PostDTO> postsByVehicle = posts.stream().filter(post -> post.vehicleBrand().equals(postPageDTO.vehicleBrand())).toList();
+            if (postPageDTO.vehicleModel() != null) {
+                return postsByVehicle.stream().filter(post -> post.vehicleModel() != null && post.vehicleModel().equals(postPageDTO.vehicleModel())).collect(Collectors.toList());
+            } else {
+                return postsByVehicle;
+            }
+        } else {
+            return posts;
         }
     }
 
