@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public class JwtUtil {
 
-    @Value("${ac.token.expiration}")
+    @Value("${ap.token.expiration}")
     private long accessTokenValidity;
     private final JwtParser jwtParser;
     private final String SECRET_KEY = "8JHYTRE345321QAZXSWEDFGHJKLOP09876543ERTYUHG54DE36YHBVFRGIUJK123";

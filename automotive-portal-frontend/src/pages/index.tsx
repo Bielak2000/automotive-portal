@@ -64,6 +64,14 @@ const App: NextPage = () => {
                 life: 5000
             })
             window.history.replaceState(null, "", "/")
+        } else if(router.query.state === "addedcomment") {
+            toast.current?.show({
+                severity: "success",
+                summary: "Dodano komentarz",
+                detail: "Komentarz do postu został dodany.",
+                life: 5000
+            })
+            window.history.replaceState(null, "", "/")
         }
     }, [router.query]);
 

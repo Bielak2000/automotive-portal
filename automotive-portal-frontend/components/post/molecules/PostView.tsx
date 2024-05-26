@@ -3,12 +3,15 @@ import {Galleria} from "primereact/galleria";
 import {Button} from "primereact/button";
 import Image from "next/image";
 import {getTokenFromCookies, getUserIdFromLocalStorage} from "../../user/login/functions";
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Toast} from "primereact/toast";
 import {boostPostApi, deletePostById, getPostById} from "../../../lib/api/post";
 import ConfirmationDeleteDialog from "../../common/organisms/ConfirmationDeleteDialog";
 import AddPostDialog from "../templates/AddPostDialog";
 import {UserDTO} from "../../common/types";
+import {InputTextarea} from "primereact/inputtextarea";
+import {FileUpload} from "primereact/fileupload";
+import {addCommentApi} from "../../../lib/api/comment";
 
 interface PostViewProps {
     post: PostDTO;
@@ -25,6 +28,18 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
     const [postState, setPostState] = useState<PostDTO>(post);
     const [showConfirmationDeleteDialog, setShowConfirmationDeleteDialog] = useState<boolean>(false);
     const [showEditPostDialog, setShowEditPostDialog] = useState<boolean>(false);
+    const [commentContent, setCommentContent] = useState<string>("");
+    const fileUploadRef = useRef<FileUpload>(null);
+    const [isCommentAttachment, setIsCommentAttachment] = useState<boolean>(false);
+
+    // useEffect(() => {
+    //     console.log(fileUploadRef.current?.getFiles())
+    //     if(fileUploadRef.current?.getFiles() && fileUploadRef.current.getFiles().length !== 0) {
+    //         setIsCommentAttachment(true);
+    //     } else {
+    //         setIsCommentAttachment(false);
+    //     }
+    // }, [fileUploadRef.current?.getFiles()]);
 
     const itemTemplate = (item: string) => {
         return <img src={`http://localhost:8080/api/posts/${postState.postId}/${item}`} alt="image"
@@ -104,6 +119,63 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         })
     }
 
+    useEffect(() => {
+        console.log(commentContent)
+    }, [commentContent]);
+
+    const chooseOptions = {
+        icon: 'pi pi-link',
+        iconOnly: true,
+        className: 'p-button-rounded choose-attachment-comment'
+    };
+
+    const addComment = () => {
+        console.log(fileUploadRef.current?.getFiles());
+        if (commentContent !== "") {
+            if (fileUploadRef.current?.getFiles()) {
+                const files = fileUploadRef.current!.getFiles();
+                addCommentApi(
+                    {content: commentContent, userId: user!.id, postId: postState.postId},
+                    files.length > 0 ? files[0] : null).then((response) => {
+                    console.log(response)
+                    if (response.status === 401) {
+                        toast.current?.show({
+                            severity: "error",
+                            summary: "Błędne dane uwierzytelniające",
+                            detail: "Wprowadzony login lub hasło są nieprawidłowe.",
+                            life: 5000
+                        });
+                    } else {
+                        window.location.replace("/?state=addedcomment");
+                    }
+                })
+            } else {
+                toast.current?.show({
+                    severity: "warn",
+                    summary: "Błąd",
+                    detail: "Wystąpił nieoczekiwany błąd, spróbuj ponownie.",
+                    life: 5000
+                })
+            }
+        } else {
+            toast.current?.show({
+                severity: "warn",
+                summary: "Błędne dane",
+                detail: "Komentarz nie może być pusty.",
+                life: 5000
+            })
+        }
+    }
+
+    const clearAttachment = () => {
+        fileUploadRef.current?.setFiles([]);
+        setIsCommentAttachment(false);
+    }
+
+    const onSelect = () => {
+        setIsCommentAttachment(true);
+    }
+
     return <div className="post-view-main-div">
         {user && <AddPostDialog showDialog={showEditPostDialog} user={user} editPost={true}
                                 setShowDialog={setShowEditPostDialog}
@@ -149,13 +221,32 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
                 </div>
             </div>
         </div>
-
         <h2 className="margin-5">{postState.title}</h2>
         <span className="margin-5 post-content-span margin-top-10">{postState.content}</span>
         <div className="galleria-post-view-div">
             <Galleria value={postState.images} numVisible={1} style={{maxWidth: '99%'}}
                       item={itemTemplate} thumbnail={thumbnailTemplate}/>
         </div>
+        <div className="comments-main-div">
+            {postState.comments.length === 0 && <p className="empty-comments-p">brak komentarzy</p>}
+            {user && <div className="add-comment-div" style={commentContent === "" ? {height: "40px"} : {}}>
+                <InputTextarea className="content-area comment-area" variant="filled" value={commentContent}
+                               placeholder="Dodaj komentarz"
+                               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCommentContent(e.target.value)}
+                               rows={5} cols={5}/>
+                <FileUpload ref={fileUploadRef} mode="basic" name="demo[]" accept="image/*"
+                            maxFileSize={1000000} onSelect={onSelect}
+                            chooseOptions={chooseOptions}/>
+                {isCommentAttachment &&
+                    <Button icon="pi pi-times" onClick={clearAttachment} className="search-button comment-buttons"
+                            tooltipOptions={{position: "bottom"}}
+                            tooltip="Usuń załącznik"/>}
+                <Button icon="pi pi-plus" onClick={addComment} className="search-button comment-buttons"
+                        tooltipOptions={{position: "bottom"}}
+                        tooltip="Dodaj komentarz"/>
+            </div>}
+        </div>
+        {!user && <p className="add-comment-p">Komentarze mogą dodawać tylko użytkownicy zalogowani.</p>}
     </div>
 }
 

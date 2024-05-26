@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.ap.automotiveportalbackend.comments.Comment;
 import org.ap.automotiveportalbackend.common.BaseEntity;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.posts.dto.PostFormDTO;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +52,8 @@ public class Post extends BaseEntity {
     private List<Image> images;
     @ManyToMany(mappedBy = "boostedPosts")
     Set<User> boostingUsers;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     public Post(PostFormDTO postFormDTO, User user, List<Image> images, UUID postId) {
         super(postId);
@@ -62,6 +66,7 @@ public class Post extends BaseEntity {
         this.vehicleModel = postFormDTO.vehicleModel();
         this.user = user;
         this.boostingUsers = new HashSet<>();
+        this.comments = new ArrayList<>();
     }
 
     public void update(PostFormDTO postFormDTO, List<Image> images) {

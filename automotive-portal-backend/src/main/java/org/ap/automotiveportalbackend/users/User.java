@@ -3,6 +3,7 @@ package org.ap.automotiveportalbackend.users;
 
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.ap.automotiveportalbackend.comments.Comment;
 import org.ap.automotiveportalbackend.common.BaseEntity;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.users.dto.UserFormDTO;
@@ -59,6 +61,8 @@ public class User extends BaseEntity {
             joinColumns = @JoinColumn(name = "appearance_user_id"),
             inverseJoinColumns = @JoinColumn(name = "appearance_post_id"))
     Set<Post> boostedPosts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     public User(UserFormDTO userFormDTO, String password) {
         super(UUID.randomUUID());
@@ -73,6 +77,7 @@ public class User extends BaseEntity {
         this.vehicleModel = userFormDTO.vehicleModel();
         this.posts = new ArrayList<>();
         this.boostedPosts = new HashSet<>();
+        this.comments = new ArrayList<>();
     }
 
     public User(String email, String password) {

@@ -9,6 +9,20 @@ export interface PostFormDTO {
     vehicleModel?: string | null;
 }
 
+export interface CommentDTO {
+    content: string;
+    imageUrl: null;
+    userName: string;
+    userLastName: string;
+    createdAt: Date;
+}
+
+export interface CommentFormDTO {
+    content: string;
+    userId: string;
+    postId: string;
+}
+
 export interface PostDTO {
     postId: string;
     title: string;
@@ -21,6 +35,7 @@ export interface PostDTO {
     userDTO: UserDTO;
     images: string[];
     modifiedAt: Date;
+    comments: CommentDTO[];
 }
 
 export interface PostPageDTO {

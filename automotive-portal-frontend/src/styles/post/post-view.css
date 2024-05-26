@@ -155,3 +155,51 @@
 .right-post-view-header-div {
     display: flex;
 }
+
+.comments-main-div {
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.empty-comments-p {
+    text-align: center;
+    font-style: italic;
+}
+
+.add-comment-p {
+    margin-left: 10px;
+    font-style: italic;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.add-comment-div {
+    display: flex;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.comment-area {
+    height: 100%;
+}
+
+.comment-buttons {
+    height: 35px;
+    margin-left: 5px;
+}
+
+.choose-attachment-comment {
+    display: flex;
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+    justify-content: center;
+    margin-left: 5px;
+}
+
+.p-button-rounded.choose-attachment-comment.p-button.p-component.p-fileupload-choose > .p-button-label.p-clickable {
+    display: none;
+}

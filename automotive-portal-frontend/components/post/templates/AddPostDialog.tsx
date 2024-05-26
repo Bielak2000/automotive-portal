@@ -326,7 +326,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost
                     color: 'var(--surface-d)'
                 }}></i>
                 <span style={{fontSize: '1.2em', color: 'var(--text-color-secondary)'}} className="my-5">
-                    Przeciągnij i upuść tutaj zdjęcie
+                    Brak załączników
                 </span>
             </div>
         );

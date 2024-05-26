@@ -3,6 +3,7 @@ package org.ap.automotiveportalbackend.posts.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
+import org.ap.automotiveportalbackend.comments.dto.CommentDTO;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostType;
 import org.ap.automotiveportalbackend.users.dto.UserDTO;
@@ -24,6 +25,7 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                       @NotNull @JsonFormat(pattern = "HH:mm dd-MM-yyyy") LocalDateTime modifiedAt,
                       @NotNull(message = "User can't be null") UserDTO userDTO,
                       List<String> appearanceUserIds,
+                      List<CommentDTO> comments,
                       @Nullable List<String> images) {
     public static PostDTO create(Post post, List<String> images) {
         return PostDTO.builder()
@@ -39,6 +41,9 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                 .appearanceUserIds(
                         post.getBoostingUsers().stream().map(user -> user.getId().toString()).collect(Collectors.toList()))
                 .images(images)
+                .comments(post.getComments().stream().map(comment -> new CommentDTO(
+                                comment.getContent(), comment.getImageUrl(), comment.getUser().getName(), comment.getUser().getSurname(), comment.getCreatedAt()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
