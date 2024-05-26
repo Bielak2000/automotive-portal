@@ -63,13 +63,11 @@
     }
     .right-panel-content-div{
         padding-right: 60px;
-        padding-left: 40%;
     }
 }
 
 @media screen and (max-width: 1089px) {
     .right-panel-main-div {
-        /*width: 100svw;*/
         left: 0;
     }
 }
