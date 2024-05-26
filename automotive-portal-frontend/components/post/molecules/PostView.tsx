@@ -1,4 +1,4 @@
-import {PostDTO, typeTranslate} from "../types";
+import {CommentDTO, PostDTO, typeTranslate} from "../types";
 import {Galleria} from "primereact/galleria";
 import {Button} from "primereact/button";
 import Image from "next/image";
@@ -31,15 +31,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
     const [commentContent, setCommentContent] = useState<string>("");
     const fileUploadRef = useRef<FileUpload>(null);
     const [isCommentAttachment, setIsCommentAttachment] = useState<boolean>(false);
-
-    // useEffect(() => {
-    //     console.log(fileUploadRef.current?.getFiles())
-    //     if(fileUploadRef.current?.getFiles() && fileUploadRef.current.getFiles().length !== 0) {
-    //         setIsCommentAttachment(true);
-    //     } else {
-    //         setIsCommentAttachment(false);
-    //     }
-    // }, [fileUploadRef.current?.getFiles()]);
+    const [showAllComments, setShowAllComments] = useState<boolean>(false);
 
     const itemTemplate = (item: string) => {
         return <img src={`http://localhost:8080/api/posts/${postState.postId}/${item}`} alt="image"
@@ -176,6 +168,17 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         setIsCommentAttachment(true);
     }
 
+    const commentTemplate = (comment: CommentDTO) => {
+        console.log(`http://localhost:8080/api/comments/${comment.id}`)
+        return <>
+            <p className="post-type-p">{comment.createdAt.toString()}</p>
+            <p style={{marginTop: "5px", marginBottom: "5px"}}>{comment.userName} {comment.userLastName}</p>
+            <span className="margin-5 post-content-span">{comment.content}</span>
+            {comment.imageUrl !== null && <img src={`http://localhost:8080/api/comments/${comment.id}`} alt="image"
+                                               style={{width: '100%'}} onError={err=>console.log(err)}/>}
+        </>
+    }
+
     return <div className="post-view-main-div">
         {user && <AddPostDialog showDialog={showEditPostDialog} user={user} editPost={true}
                                 setShowDialog={setShowEditPostDialog}
@@ -229,6 +232,21 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         </div>
         <div className="comments-main-div">
             {postState.comments.length === 0 && <p className="empty-comments-p">brak komentarzy</p>}
+            {postState.comments.length > 1 && !showAllComments &&
+                <div className="show-all-comments-div"><Button label="Pokaż wszystkie komentarze"
+                                                               className="show-all-comments-button"
+                                                               onClick={() => setShowAllComments(true)}/></div>}
+            {postState.comments.length > 1 && showAllComments &&
+                <div className="show-all-comments-div"><Button label="Zwiń komentarze"
+                                                               className="show-all-comments-button"
+                                                               onClick={() => setShowAllComments(false)}/></div>}
+            {postState.comments.map((comment, index) => {
+                if (index === 0 || showAllComments) {
+                    return <div key={`${postState.postId}-comment-${index}`} className="comment-div">
+                        {commentTemplate(comment)}
+                    </div>
+                }
+            })}
             {user && <div className="add-comment-div" style={commentContent === "" ? {height: "40px"} : {}}>
                 <InputTextarea className="content-area comment-area" variant="filled" value={commentContent}
                                placeholder="Dodaj komentarz"

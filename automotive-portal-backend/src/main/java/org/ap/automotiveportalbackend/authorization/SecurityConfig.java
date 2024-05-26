@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**", "/api/users/register", "api/vehicle/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/posts/pageable").permitAll()
                 .requestMatchers("/api/**").hasRole(UserRole.USER_ROLE.getRole())

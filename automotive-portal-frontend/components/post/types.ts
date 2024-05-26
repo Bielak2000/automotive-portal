@@ -1,5 +1,6 @@
 import * as Yup from "yup";
 import {UserDTO} from "../common/types";
+import {UUID} from "node:crypto";
 
 export interface PostFormDTO {
     title: string;
@@ -10,6 +11,7 @@ export interface PostFormDTO {
 }
 
 export interface CommentDTO {
+    id: string;
     content: string;
     imageUrl: null;
     userName: string;

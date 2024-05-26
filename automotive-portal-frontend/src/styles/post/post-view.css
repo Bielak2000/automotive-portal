@@ -23,7 +23,7 @@
     background: #ffffff;
     width: 99%;
     border-radius: 10px;
-    min-height: 300px;
+    min-height: 240px;
     padding: 10px;
     margin-bottom: 15px;
 }
@@ -167,6 +167,30 @@
     font-style: italic;
 }
 
+.show-all-comments-div {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.show-all-comments-button {
+    background: none;
+    color: black;
+    padding: 0;
+    border: none;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.show-all-comments-button:hover {
+    background: none;
+    border: none;
+}
+
+.show-all-comments-button:focus {
+    box-shadow: none;
+}
+
 .add-comment-p {
     margin-left: 10px;
     font-style: italic;
@@ -202,4 +226,11 @@
 
 .p-button-rounded.choose-attachment-comment.p-button.p-component.p-fileupload-choose > .p-button-label.p-clickable {
     display: none;
+}
+
+.comment-div {
+    margin: 10px;
+    background: #bbbbbb;
+    border-radius: 10px;
+    padding: 5px;
 }

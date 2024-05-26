@@ -42,7 +42,7 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                         post.getBoostingUsers().stream().map(user -> user.getId().toString()).collect(Collectors.toList()))
                 .images(images)
                 .comments(post.getComments().stream().map(comment -> new CommentDTO(
-                                comment.getContent(), comment.getImageUrl(), comment.getUser().getName(), comment.getUser().getSurname(), comment.getCreatedAt()))
+                                comment.getId().toString(), comment.getContent(), comment.getImageUrl(), comment.getUser().getName(), comment.getUser().getSurname(), comment.getCreatedAt()))
                         .collect(Collectors.toList()))
                 .build();
     }
