@@ -50,15 +50,15 @@ public class CommentController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createPost(@RequestPart @Valid CommentFormDTO commentFormDTO,
+    public void createComment(@RequestPart @Valid CommentFormDTO commentFormDTO,
                            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         commentService.createComment(commentFormDTO, image);
         log.info("Created new comment with {} images to post {}", image == null ? "0" : "1", commentFormDTO.postId());
     }
 
     @DeleteMapping("/{userId}/{postId}/{commentId}")
-    public void deletePost(@PathVariable("commentId") UUID commentId, @PathVariable("userId") UUID userId, @PathVariable("postId") UUID postId) throws IOException {
-        commentService.deleteCommentById(commentId, userId, commentId);
+    public void deleteComment(@PathVariable("commentId") UUID commentId, @PathVariable("userId") UUID userId, @PathVariable("postId") UUID postId) throws IOException {
+        commentService.deleteCommentById(commentId, userId, postId);
         log.info("Deleted comment {}", commentId.toString());
     }
 

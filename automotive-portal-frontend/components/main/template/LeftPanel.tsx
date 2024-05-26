@@ -103,8 +103,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     }, [selectedVehicleBrand]);
 
     useEffect(() => {
-        console.log(selectedVehicleBrand)
-        console.log(selectedVehicleModel)
         if (!(getFiltersFromLocalStorage() !== null && selectedVehicleModel === null && selectedVehicleBrand === null)) {
             saveFiltersInLocalStorage({
                 vehicleBrand: selectedVehicleBrand,
@@ -116,9 +114,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     const setFiltersFromLocalStorage = () => {
         const filters = getFiltersFromLocalStorage();
         if (filters !== null) {
-            console.log("set")
-            console.log(filters.vehicleBrand);
-            console.log(filters.vehicleModel);
             setSelectedVehicleBrand(filters.vehicleBrand);
             setSelectedVehicleModel(filters.vehicleModel);
         }

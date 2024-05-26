@@ -5,7 +5,7 @@ import Image from "next/image";
 import {getTokenFromCookies, getUserIdFromLocalStorage} from "../../user/login/functions";
 import React, {useRef, useState} from "react";
 import {Toast} from "primereact/toast";
-import {boostPostApi, deletePostById, getPostById} from "../../../lib/api/post";
+import {boostPostApi, deleteCommentById, deletePostById, getPostById} from "../../../lib/api/post";
 import ConfirmationDeleteDialog from "../../common/organisms/ConfirmationDeleteDialog";
 import AddPostDialog from "../templates/AddPostDialog";
 import {UserDTO} from "../../common/types";
@@ -27,11 +27,13 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
     const toast = useRef<Toast>(null);
     const [postState, setPostState] = useState<PostDTO>(post);
     const [showConfirmationDeleteDialog, setShowConfirmationDeleteDialog] = useState<boolean>(false);
+    const [showConfirmationCommentDeleteDialog, setShowConfirmationCommentDeleteDialog] = useState<boolean>(false);
     const [showEditPostDialog, setShowEditPostDialog] = useState<boolean>(false);
     const [commentContent, setCommentContent] = useState<string>("");
     const fileUploadRef = useRef<FileUpload>(null);
     const [isCommentAttachment, setIsCommentAttachment] = useState<boolean>(false);
     const [showAllComments, setShowAllComments] = useState<boolean>(false);
+    const [selectedCommentToDelete, setSelectedCommentToDelete] = useState<CommentDTO>();
 
     const itemTemplate = (item: string) => {
         return <img src={`http://localhost:8080/api/posts/${postState.postId}/${item}`} alt="image"
@@ -111,6 +113,22 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         })
     }
 
+    const confirmDeleteComment = () => {
+        deleteCommentById(userId!.slice(1, userId!.length - 1), postState.postId, selectedCommentToDelete!.id).then((response) => {
+            if (response.status === 200) {
+                setShowConfirmationCommentDeleteDialog(false);
+                window.location.replace("/?state=commentdeleted");
+            } else {
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Wystąpił błąd",
+                    detail: "Wystąpił błąd w trakcie usuwania postu, spróbuj ponownie później.",
+                    life: 5000
+                })
+            }
+        })
+    }
+
     const chooseOptions = {
         icon: 'pi pi-link',
         iconOnly: true,
@@ -162,9 +180,20 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         setIsCommentAttachment(true);
     }
 
+    const deleteCommentAction = (comment: CommentDTO) => {
+        setSelectedCommentToDelete(comment);
+        setShowConfirmationCommentDeleteDialog(true);
+    }
+
     const commentTemplate = (comment: CommentDTO) => {
         return <>
-            <p className="post-type-p">{comment.createdAt.toString()}</p>
+            <div className="comment-header-div">
+                <p className="post-type-p">{comment.createdAt.toString()}</p>
+                {token && userId !== null && comment.userId === userId.slice(1, userId.length - 1) &&
+                    <Button icon="pi pi-times-circle" onClick={() => deleteCommentAction(comment)}
+                            className="post-view-action-button delete-post-button delete-comment-button"
+                            tooltip="Usuń komentarz" tooltipOptions={{position: "bottom"}}/>}
+            </div>
             <p style={{marginTop: "5px", marginBottom: "5px"}}>{comment.userName} {comment.userLastName}</p>
             <span className="margin-5 post-content-span">{comment.content}</span>
             {comment.imageUrl !== null && <img src={`http://localhost:8080/api/comments/${comment.id}`} alt="image"
@@ -177,6 +206,10 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
                                 setShowDialog={setShowEditPostDialog}
                                 post={post}/>}
         <Toast ref={toast}/>
+        <ConfirmationDeleteDialog header={`Usuwanie komentarza`} info={"Czy na pewno chcesz usunąć wybrany komentarz?"}
+                                  showDialog={showConfirmationCommentDeleteDialog}
+                                  closeDialog={() => setShowConfirmationCommentDeleteDialog(false)}
+                                  confirmDelete={confirmDeleteComment}/>
         <ConfirmationDeleteDialog header={`Usuwanie postu`} info={"Czy na pewno chcesz usunąć wybrany post?"}
                                   showDialog={showConfirmationDeleteDialog}
                                   closeDialog={() => setShowConfirmationDeleteDialog(false)}

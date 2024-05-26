@@ -78,6 +78,21 @@ export function deletePostById(userId: string, postId: string) {
     })
 }
 
+export function deleteCommentById(userId: string, postId: string, commentId: string) {
+    const token = getTokenFromCookies();
+    return axios({
+        url: process.env.NEXT_PUBLIC_API_URL + `/api/comments/${userId}/${postId}/${commentId}`,
+        method: "delete",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then((response) => {
+        return response;
+    }).catch((error) => {
+        return catchErrors(error);
+    })
+}
+
 export function updatePost(postFormDTO: PostFormDTO, files: File[], postId: string) {
     const token = getTokenFromCookies();
     const formData = new FormData();

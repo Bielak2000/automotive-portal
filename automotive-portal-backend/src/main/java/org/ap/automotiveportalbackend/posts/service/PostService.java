@@ -6,6 +6,8 @@ import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.images.service.ImageService;
+import org.ap.automotiveportalbackend.notification.NotificationRepository;
+import org.ap.automotiveportalbackend.notification.service.NotificationService;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostRepository;
 import org.ap.automotiveportalbackend.posts.appearance.service.AppearanceService;
@@ -36,6 +38,7 @@ public class PostService {
     private final UserService userService;
     private final AppearanceService appearanceService;
     private final ImageService imageService;
+    private final NotificationService notificationService;
 
     // TODO: function require refactoring
     @Transactional(readOnly = true)
@@ -136,6 +139,7 @@ public class PostService {
             if (post.get().getUser().getId().toString().equals(userId.toString())) {
                 appearanceService.deleteAllAppearanceByPostId(postId);
                 imageService.removeImages(post.get().getImages().stream().map(Image::getUrl).collect(Collectors.toList()), post.get());
+                notificationService.deleteAllNotificationByPostId(postId);
                 postRepository.deleteById(postId);
             } else {
                 throw new BadRequestException(String.format("User %s isn't owner of %s post", userId.toString(), postId.toString()));

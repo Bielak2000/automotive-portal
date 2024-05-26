@@ -234,3 +234,14 @@
     border-radius: 10px;
     padding: 5px;
 }
+
+.comment-header-div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete-comment-button {
+    height: 15px;
+    margin-right: 5px;
+}

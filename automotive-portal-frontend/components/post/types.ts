@@ -12,6 +12,7 @@ export interface PostFormDTO {
 
 export interface CommentDTO {
     id: string;
+    userId: string;
     content: string;
     imageUrl: null;
     userName: string;

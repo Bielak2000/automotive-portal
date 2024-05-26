@@ -26,4 +26,9 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
+    @Transactional
+    public void deleteAllNotificationByPostId(UUID postId) {
+        notificationRepository.deleteAllByPostId(postId);
+    }
+
 }
