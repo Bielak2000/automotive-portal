@@ -7,12 +7,14 @@ import org.ap.automotiveportalbackend.notification.NotificationRepository;
 import org.ap.automotiveportalbackend.users.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final Integer notificationDayArchiving;
 
     @Transactional
     public void createNotification(String content, UUID postId, User user, UUID commentId) {
@@ -34,6 +36,11 @@ public class NotificationService {
     @Transactional
     public void deleteAllNotificationByCommentId(UUID commentId) {
         notificationRepository.deleteAllByCommentId(commentId);
+    }
+
+    @Transactional
+    public int deleteOldNotifications() {
+        return notificationRepository.deleteAllByCreatedAtBefore(LocalDateTime.now().minusDays(notificationDayArchiving));
     }
 
 }
