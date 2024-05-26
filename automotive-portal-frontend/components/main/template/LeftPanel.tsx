@@ -5,6 +5,7 @@ import {Checkbox} from "primereact/checkbox";
 import DropDownField from "../../common/atoms/DropDownField";
 import {getBrands, getModels} from "../../common/organisms/VehicleFunctions";
 import {Toast} from "primereact/toast";
+import {getFiltersFromLocalStorage, saveFiltersInLocalStorage} from "../../user/login/functions";
 
 interface LeftPanelProps {
     user?: UserDTO;
@@ -57,6 +58,9 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 setFullPanel(false);
             }
         };
+
+        getBrands(toast, setVehicleBrandValues);
+        setFiltersFromLocalStorage();
     }, []);
 
     useEffect(() => {
@@ -76,12 +80,15 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     }, [showLeftPanel]);
 
     useEffect(() => {
-        getBrands(toast, setVehicleBrandValues);
-    }, []);
-
-    useEffect(() => {
-        setSelectedVehicleBrand(user && user.vehicleBrand ? {name: user.vehicleBrand, code: user.vehicleBrand} : null);
-        setSelectedVehicleModel(user && user.vehicleModel ? {name: user.vehicleModel, code: user.vehicleModel} : null);
+        const filters = getFiltersFromLocalStorage();
+        if (getFiltersFromLocalStorage() === null || (filters!.vehicleBrand === null && filters!.vehicleModel === null)) {
+            if (user && user.vehicleBrand) {
+                setSelectedVehicleBrand({name: user.vehicleBrand, code: user.vehicleBrand});
+            }
+            if (user && user.vehicleModel) {
+                setSelectedVehicleModel({name: user.vehicleModel, code: user.vehicleModel});
+            }
+        }
     }, [user]);
 
     useEffect(() => {
@@ -94,6 +101,28 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
             }
         }
     }, [selectedVehicleBrand]);
+
+    useEffect(() => {
+        console.log(selectedVehicleBrand)
+        console.log(selectedVehicleModel)
+        if (!(getFiltersFromLocalStorage() !== null && selectedVehicleModel === null && selectedVehicleBrand === null)) {
+            saveFiltersInLocalStorage({
+                vehicleBrand: selectedVehicleBrand,
+                vehicleModel: selectedVehicleModel
+            });
+        }
+    }, [selectedVehicleBrand, selectedVehicleModel])
+
+    const setFiltersFromLocalStorage = () => {
+        const filters = getFiltersFromLocalStorage();
+        if (filters !== null) {
+            console.log("set")
+            console.log(filters.vehicleBrand);
+            console.log(filters.vehicleModel);
+            setSelectedVehicleBrand(filters.vehicleBrand);
+            setSelectedVehicleModel(filters.vehicleModel);
+        }
+    }
 
     return <div id="left-panel" className="left-panel-main-div">
         <Toast ref={toast}/>

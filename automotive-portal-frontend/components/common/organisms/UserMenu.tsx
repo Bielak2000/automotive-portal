@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {
     getTokenFromCookies,
     getUserEmailFromLocalStorage,
+    removeFiltersFromLocalStorage,
     removeTokenFromCookies,
     removeUserEmailFromLocalStorage,
     removeUserIdFromLocalStorage
@@ -68,6 +69,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({user, setUser}) => {
                             removeTokenFromCookies();
                             removeUserEmailFromLocalStorage();
                             removeUserIdFromLocalStorage();
+                            removeFiltersFromLocalStorage();
                             window.location.reload();
                         }
                     })
