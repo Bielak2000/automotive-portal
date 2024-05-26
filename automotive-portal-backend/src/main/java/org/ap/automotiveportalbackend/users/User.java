@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ap.automotiveportalbackend.comments.Comment;
 import org.ap.automotiveportalbackend.common.BaseEntity;
+import org.ap.automotiveportalbackend.notification.Notification;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.users.dto.UserFormDTO;
 import org.ap.automotiveportalbackend.users.dto.UserUpdateDTO;
@@ -63,6 +64,8 @@ public class User extends BaseEntity {
     Set<Post> boostedPosts;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Notification> notifications;
 
     public User(UserFormDTO userFormDTO, String password) {
         super(UUID.randomUUID());
@@ -78,6 +81,7 @@ public class User extends BaseEntity {
         this.posts = new ArrayList<>();
         this.boostedPosts = new HashSet<>();
         this.comments = new ArrayList<>();
+        this.notifications = new ArrayList<>();
     }
 
     public User(String email, String password) {

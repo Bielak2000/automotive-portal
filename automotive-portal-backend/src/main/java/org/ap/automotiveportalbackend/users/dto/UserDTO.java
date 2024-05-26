@@ -3,12 +3,15 @@ package org.ap.automotiveportalbackend.users.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
+import org.ap.automotiveportalbackend.notification.dto.NotificationDTO;
 import org.ap.automotiveportalbackend.users.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Builder
 public record UserDTO(@NotNull UUID id,
@@ -18,6 +21,7 @@ public record UserDTO(@NotNull UUID id,
                       @NotEmpty(message = "Surname can't be empty") String surname,
                       @NotEmpty(message = "Email can't be emtpy") String email,
                       @Nullable String phoneNumber,
+                      List<NotificationDTO> notifications,
                       @Nullable String vehicleBrand,
                       @Nullable String vehicleModel) {
     public static UserDTO create(User user) {
@@ -31,6 +35,9 @@ public record UserDTO(@NotNull UUID id,
                 .phoneNumber(user.getPhoneNumber())
                 .vehicleBrand(user.getVehicleBrand())
                 .vehicleModel(user.getVehicleModel())
+                .notifications(user.getNotifications().stream().map(notification -> new NotificationDTO(notification.getId().toString(),
+                        notification.getContent(), notification.isRead(),
+                        notification.getPostId().toString())).collect(Collectors.toList()))
                 .build();
     }
 }

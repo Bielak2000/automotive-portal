@@ -6,6 +6,7 @@ import org.ap.automotiveportalbackend.comments.CommentRepository;
 import org.ap.automotiveportalbackend.comments.dto.CommentFormDTO;
 import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
+import org.ap.automotiveportalbackend.notification.service.NotificationService;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostRepository;
 import org.ap.automotiveportalbackend.users.User;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +29,8 @@ import static java.nio.file.Files.readAllBytes;
 @AllArgsConstructor
 public class CommentService {
 
+    private static final String NOTIFICATION_TEMPLATE = "Użytkownik %s %s dodał komentarz do twojego postu.";
+    private final NotificationService notificationService;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -45,6 +47,9 @@ public class CommentService {
             imageUrl = saveCommentImageFile(post.getId().toString(), commentId.toString(), imageFile);
         }
         Comment comment = new Comment(commentId, commentFormDTO.content(), imageUrl, post, user);
+        if (!commentFormDTO.userId().equals(post.getUser().getId())) {
+            notificationService.createNotification(String.format(NOTIFICATION_TEMPLATE, user.getName(), user.getSurname()), comment.getPost().getId(), post.getUser());
+        }
         commentRepository.save(comment);
     }
 

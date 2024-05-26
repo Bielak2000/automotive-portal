@@ -3,7 +3,7 @@ import {Galleria} from "primereact/galleria";
 import {Button} from "primereact/button";
 import Image from "next/image";
 import {getTokenFromCookies, getUserIdFromLocalStorage} from "../../user/login/functions";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Toast} from "primereact/toast";
 import {boostPostApi, deletePostById, getPostById} from "../../../lib/api/post";
 import ConfirmationDeleteDialog from "../../common/organisms/ConfirmationDeleteDialog";
@@ -111,10 +111,6 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         })
     }
 
-    useEffect(() => {
-        console.log(commentContent)
-    }, [commentContent]);
-
     const chooseOptions = {
         icon: 'pi pi-link',
         iconOnly: true,
@@ -122,14 +118,12 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
     };
 
     const addComment = () => {
-        console.log(fileUploadRef.current?.getFiles());
         if (commentContent !== "") {
             if (fileUploadRef.current?.getFiles()) {
                 const files = fileUploadRef.current!.getFiles();
                 addCommentApi(
                     {content: commentContent, userId: user!.id, postId: postState.postId},
                     files.length > 0 ? files[0] : null).then((response) => {
-                    console.log(response)
                     if (response.status === 401) {
                         toast.current?.show({
                             severity: "error",
@@ -169,13 +163,12 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
     }
 
     const commentTemplate = (comment: CommentDTO) => {
-        console.log(`http://localhost:8080/api/comments/${comment.id}`)
         return <>
             <p className="post-type-p">{comment.createdAt.toString()}</p>
             <p style={{marginTop: "5px", marginBottom: "5px"}}>{comment.userName} {comment.userLastName}</p>
             <span className="margin-5 post-content-span">{comment.content}</span>
             {comment.imageUrl !== null && <img src={`http://localhost:8080/api/comments/${comment.id}`} alt="image"
-                                               style={{width: '100%'}} onError={err=>console.log(err)}/>}
+                                               style={{width: '100%'}}/>}
         </>
     }
 

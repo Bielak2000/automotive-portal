@@ -1,0 +1,1 @@
+ALTER TABLE ap.notification add column read boolean not null;

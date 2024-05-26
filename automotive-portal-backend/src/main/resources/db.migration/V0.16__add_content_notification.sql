@@ -1,0 +1,1 @@
+ALTER TABLE ap.notification add column content varchar(500) not null;
