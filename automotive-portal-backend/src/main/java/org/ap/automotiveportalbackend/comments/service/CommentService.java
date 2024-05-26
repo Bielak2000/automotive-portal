@@ -48,7 +48,7 @@ public class CommentService {
         }
         Comment comment = new Comment(commentId, commentFormDTO.content(), imageUrl, post, user);
         if (!commentFormDTO.userId().equals(post.getUser().getId())) {
-            notificationService.createNotification(String.format(NOTIFICATION_TEMPLATE, user.getName(), user.getSurname()), comment.getPost().getId(), post.getUser());
+            notificationService.createNotification(String.format(NOTIFICATION_TEMPLATE, user.getName(), user.getSurname()), comment.getPost().getId(), post.getUser(), commentId);
         }
         commentRepository.save(comment);
     }
@@ -59,6 +59,7 @@ public class CommentService {
         if (comment.isPresent()) {
             if (comment.get().getUser().getId().toString().equals(userId.toString())) {
                 deleteCommentImage(postId.toString(), comment.get().getId().toString(), comment.get().getImageUrl());
+                notificationService.deleteAllNotificationByCommentId(commentId);
                 commentRepository.deleteById(commentId);
             } else {
                 throw new BadRequestException(String.format("User %s isn't owner of %s comment", userId.toString(), commentId.toString()));

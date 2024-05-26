@@ -6,4 +6,5 @@ import java.util.UUID;
 
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
     public void deleteAllByPostId(UUID postId);
+    public void deleteAllByCommentId(UUID commentId);
 }

@@ -40,16 +40,18 @@ public class Notification {
     @Setter
     private boolean read;
     private UUID postId;
+    private UUID commentId;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Notification(String content, UUID postId, User user) {
+    public Notification(String content, UUID postId, User user, UUID commentId) {
         this.id = UUID.randomUUID();
         this.createdAt = LocalDateTime.now();
         this.deleted = false;
         this.content = content;
         this.postId = postId;
+        this.commentId = commentId;
         this.user = user;
         this.read = false;
     }

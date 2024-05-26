@@ -1,0 +1,1 @@
+ALTER TABLE ap.notification add COLUMN comment_id uuid;

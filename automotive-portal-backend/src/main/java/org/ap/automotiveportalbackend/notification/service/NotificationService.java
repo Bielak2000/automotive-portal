@@ -15,8 +15,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     @Transactional
-    public void createNotification(String content, UUID postId, User user) {
-        notificationRepository.save(new Notification(content, postId, user));
+    public void createNotification(String content, UUID postId, User user, UUID commentId) {
+        notificationRepository.save(new Notification(content, postId, user, commentId));
     }
 
     @Transactional
@@ -29,6 +29,11 @@ public class NotificationService {
     @Transactional
     public void deleteAllNotificationByPostId(UUID postId) {
         notificationRepository.deleteAllByPostId(postId);
+    }
+
+    @Transactional
+    public void deleteAllNotificationByCommentId(UUID commentId) {
+        notificationRepository.deleteAllByCommentId(commentId);
     }
 
 }
