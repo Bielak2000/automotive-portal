@@ -3,6 +3,7 @@ package org.ap.automotiveportalbackend.posts.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
+import org.ap.automotiveportalbackend.comments.Comment;
 import org.ap.automotiveportalbackend.comments.dto.CommentDTO;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostType;
@@ -11,6 +12,7 @@ import org.ap.automotiveportalbackend.users.dto.UserDTO;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public record PostDTO(@NotEmpty(message = "Id can't be emtpy") String postId,
                       List<CommentDTO> comments,
                       @Nullable List<String> images) {
     public static PostDTO create(Post post, List<String> images) {
+        post.getComments().sort(Comparator.comparing(Comment::getCreatedAt).reversed());
         return PostDTO.builder()
                 .postId(post.getId().toString())
                 .title(post.getTitle())

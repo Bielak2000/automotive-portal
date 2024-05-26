@@ -1,3 +1,11 @@
+export interface NotificationDTO {
+    id: string;
+    content: string;
+    read: boolean;
+    postId: string;
+    createdAt: Date;
+}
+
 export type UserDTO = {
     id: string;
     name: string;
@@ -8,6 +16,7 @@ export type UserDTO = {
     lastActivityAt: Date;
     vehicleBrand: string | null;
     vehicleModel: string | null;
+    notifications: NotificationDTO[];
 }
 
 export interface DropDownType {

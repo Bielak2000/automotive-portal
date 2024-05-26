@@ -176,7 +176,7 @@
 .show-all-comments-button {
     background: none;
     color: black;
-    padding: 0;
+    padding: 3px;
     border: none;
     font-size: 14px;
     font-style: italic;

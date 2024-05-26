@@ -18,7 +18,7 @@ interface PostViewProps {
     index: number;
     user?: UserDTO;
 
-    onDeletedPost: (index: number) => void;
+    onDeletedPost?: (index: number) => void;
 }
 
 const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) => {
@@ -99,7 +99,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         deletePostById(userId!.slice(1, userId!.length - 1), postState.postId).then((response) => {
             if (response.status === 200) {
                 setShowConfirmationDeleteDialog(false);
-                onDeletedPost(index);
+                onDeletedPost!(index);
             } else {
                 toast.current?.show({
                     severity: "error",

@@ -27,9 +27,34 @@
     border: none;
 }
 
+.notification-main-div {
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.notification-single-div {
+    margin-bottom: 10px;
+    background: #e0e0e0;
+    color: black;
+    border-radius: 10px;
+    text-align: left;
+    padding: 10px;
+}
+
+.notification-content-p {
+    margin-top: 8px;
+    margin-bottom: 5px;
+    text-align: justify;
+}
+
+.move-to-post-div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 @media screen and (max-width: 1380px) {
     .right-panel-main-div {
-        /*width: calc(100svw - 300px);*/
         position: absolute;
         left: 300px;
     }

@@ -37,6 +37,7 @@ public class Notification {
     @CreatedDate
     private LocalDateTime createdAt;
     private boolean deleted;
+    @Setter
     private boolean read;
     private UUID postId;
     @ManyToOne

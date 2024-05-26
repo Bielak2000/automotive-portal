@@ -3,12 +3,14 @@ package org.ap.automotiveportalbackend.users.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
+import org.ap.automotiveportalbackend.notification.Notification;
 import org.ap.automotiveportalbackend.notification.dto.NotificationDTO;
 import org.ap.automotiveportalbackend.users.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ public record UserDTO(@NotNull UUID id,
                       @Nullable String vehicleBrand,
                       @Nullable String vehicleModel) {
     public static UserDTO create(User user) {
+        user.getNotifications().sort(Comparator.comparing(Notification::getCreatedAt).reversed());
         return UserDTO.builder()
                 .id(user.getId())
                 .createdAt(user.getCreatedAt())
@@ -37,7 +40,7 @@ public record UserDTO(@NotNull UUID id,
                 .vehicleModel(user.getVehicleModel())
                 .notifications(user.getNotifications().stream().map(notification -> new NotificationDTO(notification.getId().toString(),
                         notification.getContent(), notification.isRead(),
-                        notification.getPostId().toString())).collect(Collectors.toList()))
+                        notification.getPostId().toString(), notification.getCreatedAt())).collect(Collectors.toList()))
                 .build();
     }
 }

@@ -89,7 +89,7 @@ const App: NextPage = () => {
                   selectedVehicleBrand={selectedVehicleBrand != null ? selectedVehicleBrand.code : null}
                   selectedVehicleModel={selectedVehicleModel != null ? selectedVehicleModel.code : null}
                   setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel}/>
-        <RightPanel showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel}/>
+        {user && <RightPanel showRightPanel={showRightPanel} user={user} setShowRightPanel={setShowRightPanel}/>}
     </Layout>
 }
 
