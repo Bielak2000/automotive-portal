@@ -16,9 +16,11 @@ interface MainViewProps {
     showMyPosts: boolean;
     selectedVehicleBrand: string | null;
     selectedVehicleModel: string | null;
+    requireRefreshPost: boolean;
 
     setShowRightPanel: (val: boolean) => void;
     setShowLeftPanel: (val: boolean) => void;
+    setRequireRefreshPost: (val: boolean) => void;
 }
 
 const MainView: React.FC<MainViewProps> = ({
@@ -28,10 +30,12 @@ const MainView: React.FC<MainViewProps> = ({
                                                user,
                                                sortPostsByAppearanceNumber,
                                                showMyPosts,
+                                               requireRefreshPost,
                                                selectedVehicleBrand,
                                                selectedVehicleModel,
                                                setShowRightPanel,
-                                               setShowLeftPanel
+                                               setShowLeftPanel,
+                                               setRequireRefreshPost
                                            }) => {
     const toast = useRef<Toast>(null);
     const token = getTokenFromCookies();
@@ -54,7 +58,8 @@ const MainView: React.FC<MainViewProps> = ({
 
     return <div className="main-div">
         <Toast ref={toast}/>
-        {user && <AddPostDialog showDialog={showAddPostDialog} user={user} editPost={false} setShowDialog={setShowAddPostDialog}/>}
+        {user && <AddPostDialog showDialog={showAddPostDialog} user={user} editPost={false}
+                                setShowDialog={setShowAddPostDialog} setRequireRefreshPost={setRequireRefreshPost}/>}
         <div className="main-content-div">
             <div className="main-view-menu">
                 <div className="flex">
@@ -79,8 +84,8 @@ const MainView: React.FC<MainViewProps> = ({
                 <PostScroller user={user} searchPosts={searchPosts} searchValue={searchValue}
                               sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
                               showMyPosts={showMyPosts} selectedVehicleBrand={selectedVehicleBrand}
-                              selectedVehicleModel={selectedVehicleModel}
-                              setSearchPosts={setSearchPosts}/>
+                              selectedVehicleModel={selectedVehicleModel} requireRefreshPost={requireRefreshPost}
+                              setSearchPosts={setSearchPosts} setRequireRefreshPost={setRequireRefreshPost}/>
             </div>
         </div>
     </div>

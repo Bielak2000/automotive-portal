@@ -19,6 +19,7 @@ const App: NextPage = () => {
     const [showMyPosts, setShowMyPosts] = useState<boolean>(false);
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
     const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
+    const [requireRefreshPost, setRequireRefreshPost] = useState<boolean>(false);
 
     useEffect(() => {
         if (isNotification) {
@@ -48,38 +49,6 @@ const App: NextPage = () => {
                 life: 5000
             })
             window.history.replaceState(null, "", "/")
-        } else if(router.query.state === "addedpost") {
-            toast.current?.show({
-                severity: "success",
-                summary: "Post został dodany",
-                detail: "Stworzony post został dodany i opublikowany.",
-                life: 5000
-            })
-            window.history.replaceState(null, "", "/")
-        } else if(router.query.state === "postupdated") {
-            toast.current?.show({
-                severity: "success",
-                summary: "Zedytowano post",
-                detail: "Post został zmieniony i opublikowany.",
-                life: 5000
-            })
-            window.history.replaceState(null, "", "/")
-        } else if(router.query.state === "addedcomment") {
-            toast.current?.show({
-                severity: "success",
-                summary: "Dodano komentarz",
-                detail: "Komentarz do postu został dodany.",
-                life: 5000
-            })
-            window.history.replaceState(null, "", "/")
-        } else if(router.query.state === "commentdeleted") {
-            toast.current?.show({
-                severity: "success",
-                summary: "Usunięto komentarz",
-                detail: "Komentarz został usunięty.",
-                life: 5000
-            })
-            window.history.replaceState(null, "", "/")
         }
     }, [router.query]);
 
@@ -94,10 +63,11 @@ const App: NextPage = () => {
                    setSelectedVehicleModel={setSelectedVehicleModel}/>
         <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification}
                   user={user} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber} showMyPosts={showMyPosts}
+                  requireRefreshPost={requireRefreshPost}
                   selectedVehicleBrand={selectedVehicleBrand != null ? selectedVehicleBrand.code : null}
                   selectedVehicleModel={selectedVehicleModel != null ? selectedVehicleModel.code : null}
-                  setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel}/>
-        {user && <RightPanel showRightPanel={showRightPanel} user={user} setShowRightPanel={setShowRightPanel}/>}
+                  setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel} setRequireRefreshPost={setRequireRefreshPost}/>
+        {user && <RightPanel showRightPanel={showRightPanel} user={user} setShowRightPanel={setShowRightPanel} setUser={setUser}/>}
     </Layout>
 }
 

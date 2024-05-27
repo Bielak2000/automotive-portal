@@ -27,9 +27,10 @@ type AddPostDialogProps = {
     post?: PostDTO
 
     setShowDialog: (val: boolean) => void;
+    setRequireRefreshPost: (val: boolean) => void;
 }
 
-const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost, post, setShowDialog}) => {
+const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost, post, setShowDialog, setRequireRefreshPost}) => {
     const toast = useRef<Toast>(null);
     const fileUploadRef = useRef<FileUpload>(null);
     const [imagesNumber, setImagesNumber] = useState<number>(0);
@@ -214,8 +215,14 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost
                     life: 5000
                 });
             } else {
+                toast.current?.show({
+                    severity: "success",
+                    summary: "Post został dodany",
+                    detail: "Stworzony post został dodany i opublikowany.",
+                    life: 5000
+                });
+                setRequireRefreshPost(true);
                 cancel();
-                window.location.replace("/?state=addedpost");
             }
         })
     }
@@ -230,8 +237,14 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost
                     life: 5000
                 });
             } else {
+                toast.current?.show({
+                    severity: "success",
+                    summary: "Zedytowano post",
+                    detail: "Post został zmieniony i opublikowany.",
+                    life: 5000
+                });
+                setRequireRefreshPost(true);
                 cancel();
-                window.location.replace("/?state=postupdated");
             }
         })
     }

@@ -19,9 +19,10 @@ interface PostViewProps {
     user?: UserDTO;
 
     onDeletedPost?: (index: number) => void;
+    setRequireRefreshPost?: (val: boolean) => void;
 }
 
-const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) => {
+const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost, setRequireRefreshPost}) => {
     const token = getTokenFromCookies();
     const userId = getUserIdFromLocalStorage();
     const toast = useRef<Toast>(null);
@@ -74,9 +75,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
             } else {
                 if (postState.appearanceUserIds.includes(formattedUserId)) {
                     boostPostApi({userId: formattedUserId, postId: postState.postId, boost: boost}).then(() => {
-                        getPostById(postState.postId).then((response) => {
-                            setPostState(response.data);
-                        })
+                        updatePost();
                     })
                 } else {
                     toast.current?.show({
@@ -113,11 +112,23 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
         })
     }
 
+    const updatePost = () => {
+        getPostById(postState.postId).then((response) => {
+            setPostState(response.data);
+        });
+    }
+
     const confirmDeleteComment = () => {
         deleteCommentById(userId!.slice(1, userId!.length - 1), postState.postId, selectedCommentToDelete!.id).then((response) => {
             if (response.status === 200) {
                 setShowConfirmationCommentDeleteDialog(false);
-                window.location.replace("/?state=commentdeleted");
+                updatePost();
+                toast.current?.show({
+                    severity: "success",
+                    summary: "Usunięto komentarz",
+                    detail: "Komentarz został usunięty.",
+                    life: 5000
+                })
             } else {
                 toast.current?.show({
                     severity: "error",
@@ -150,7 +161,14 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
                             life: 5000
                         });
                     } else {
-                        window.location.replace("/?state=addedcomment");
+                        toast.current?.show({
+                            severity: "success",
+                            summary: "Dodano komentarz",
+                            detail: "Komentarz do postu został dodany.",
+                            life: 5000
+                        });
+                        updatePost();
+                        setCommentContent("");
                     }
                 })
             } else {
@@ -204,6 +222,7 @@ const PostView: React.VFC<PostViewProps> = ({post, index, user, onDeletedPost}) 
     return <div className="post-view-main-div">
         {user && <AddPostDialog showDialog={showEditPostDialog} user={user} editPost={true}
                                 setShowDialog={setShowEditPostDialog}
+                                setRequireRefreshPost={setRequireRefreshPost!}
                                 post={post}/>}
         <Toast ref={toast}/>
         <ConfirmationDeleteDialog header={`Usuwanie komentarza`} info={"Czy na pewno chcesz usunąć wybrany komentarz?"}

@@ -3,15 +3,19 @@ import {Button} from "primereact/button";
 import {NotificationDTO, UserDTO} from "../../common/types";
 import {assignateNotificationRead} from "../../../lib/api/notification";
 import PostDialog from "../../post/molecules/PostDialog";
+import {getUserByEmail} from "../../../lib/api/user";
+import {getTokenFromCookies} from "../../user/login/functions";
 
 interface RightPanelProps {
     showRightPanel: boolean;
     user: UserDTO;
 
     setShowRightPanel: (val: boolean) => void;
+    setUser: (val: UserDTO) => void;
 }
 
-const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, user, setShowRightPanel}) => {
+const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, user, setShowRightPanel, setUser}) => {
+    const token = getTokenFromCookies();
     const [fullPanel, setFullPanel] = useState<boolean>(false);
     const [showCloseButton, setShowCloseButton] = useState<boolean>(false);
     const [showPostDialog, setShowPostDialog] = useState<boolean>(false);
@@ -46,6 +50,11 @@ const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, user, setShowRig
                 setFullPanel(false);
             }
         };
+
+        setInterval(()=>{
+            downloadNewNotifications();
+        }, 60 * 1000)
+
     }, []);
 
     useEffect(() => {
@@ -78,7 +87,10 @@ const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, user, setShowRig
     const notificationTemplate = (key: number, notification: NotificationDTO) => {
         return <div key={key} className="notification-single-div"
                     style={!notification.read ? {background: "#bbbbbb"} : {}}>
-            <p className="post-type-p" style={{fontSize: "14px"}}>{notification.createdAt.toString()}</p>
+            <div style={{display: "flex", justifyContent: "space-between"}}>
+                <p className="post-type-p" style={{fontSize: "14px"}}>{notification.createdAt.toString()}</p>
+                {!notification.read && <p style={{color: "#2196f3", margin: "0", fontStyle: "italic", fontSize: "12px"}}>NOWE</p>}
+            </div>
             <p className="notification-content-p">{notification.content}</p>
             <div className="move-to-post-div"><Button label="przejdź do postu"
                                                       className="show-all-comments-button"
@@ -89,13 +101,24 @@ const RightPanel: React.FC<RightPanelProps> = ({showRightPanel, user, setShowRig
     const onClosePostDialog = () => {
         setShowPostDialog(false);
         if (!selectedNotification?.read) {
-            window.location.reload();
+            downloadNewNotifications();
+        }
+    }
+
+    const downloadNewNotifications = () => {
+        if (token !== undefined) {
+            getUserByEmail(token).then(response => {
+                if (response.status === 200 && setUser) {
+                    setUser(response.data);
+                }
+            })
         }
     }
 
     return <div id="right-panel" className="right-panel-main-div">
-        {selectedNotification && <PostDialog postId={selectedNotification!.postId} showDialog={showPostDialog} user={user}
-                    closeDialog={onClosePostDialog}/>}
+        {selectedNotification &&
+            <PostDialog postId={selectedNotification!.postId} showDialog={showPostDialog} user={user}
+                        closeDialog={onClosePostDialog}/>}
         <div className="right-panel-content-div">
             <div className="panel-header right-panel">
                 <h2>Powiadomienia</h2>

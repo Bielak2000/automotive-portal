@@ -13,19 +13,23 @@ interface PostScrollerProps {
     showMyPosts: boolean;
     selectedVehicleBrand: string | null;
     selectedVehicleModel: string | null;
+    requireRefreshPost: boolean;
 
     setSearchPosts: (val: boolean) => void;
+    setRequireRefreshPost: (val: boolean) => void;
 }
 
 const PostScroller: React.VFC<PostScrollerProps> = ({
                                                         user,
                                                         searchPosts,
+                                                        requireRefreshPost,
                                                         searchValue,
                                                         sortPostsByAppearanceNumber,
                                                         showMyPosts,
                                                         selectedVehicleBrand,
                                                         selectedVehicleModel,
-                                                        setSearchPosts
+                                                        setSearchPosts,
+                                                        setRequireRefreshPost
                                                     }) => {
     const toast = useRef<Toast>(null);
     const [posts, setPosts] = useState<PostDTO[]>([]);
@@ -140,6 +144,13 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
         }
     }, [selectedVehicleBrand, selectedVehicleModel]);
 
+    useEffect(() => {
+        if (requireRefreshPost) {
+            prepareDataWhenChangeFilersSortingSearching();
+            setRequireRefreshPost(false);
+        }
+    }, [requireRefreshPost]);
+
     const prepareDataWhenChangeFilersSortingSearching = () => {
         setPosts([]);
         oldPageValue.current = -1;
@@ -178,7 +189,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     }
 
     const onDeletedPost = (index: number) => {
-        window.location.replace("/?state=postdeleted");
+        setRequireRefreshPost(true);
     }
 
     return <div className="post-scroller-main-div">
@@ -189,7 +200,8 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
                 setRefVisible(!!el);
             }
         }}>
-            <PostView post={post} index={index} user={user} onDeletedPost={onDeletedPost}/>
+            <PostView post={post} index={index} user={user} onDeletedPost={onDeletedPost}
+                      setRequireRefreshPost={setRequireRefreshPost}/>
         </div>))}
         {emptyValue()}
         {loading && <p>Loading...</p>}
