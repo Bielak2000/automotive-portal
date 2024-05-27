@@ -23,3 +23,8 @@ export interface DropDownType {
     name: string;
     code: string;
 }
+
+export const postTypes: DropDownType[] = [{
+    name: "usterka",
+    code: "FAULT"
+}, {name: "kupie", code: "BUY"}, {name: "sprzedam", code: "SELL"}, {name: "ogólny", code: "QUESTION"}];

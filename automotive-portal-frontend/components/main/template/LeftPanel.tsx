@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {DropDownType, UserDTO} from "../../common/types";
+import {DropDownType, postTypes, UserDTO} from "../../common/types";
 import {Button} from "primereact/button";
 import {Checkbox} from "primereact/checkbox";
 import DropDownField from "../../common/atoms/DropDownField";
@@ -14,12 +14,14 @@ interface LeftPanelProps {
     showMyPosts: boolean;
     selectedVehicleBrand: DropDownType | null;
     selectedVehicleModel: DropDownType | null;
+    selectedPostType: DropDownType | null;
 
     setShowLeftPanel: (val: boolean) => void;
     setSortPostsByAppearanceNumber: (val: boolean) => void;
     setShowMyPosts: (val: boolean) => void;
     setSelectedVehicleBrand: (val: DropDownType | null) => void;
     setSelectedVehicleModel: (val: DropDownType | null) => void;
+    setSelectedPostType: (val: DropDownType | null) => void;
 }
 
 const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -29,11 +31,13 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                                                  showMyPosts,
                                                  selectedVehicleBrand,
                                                  selectedVehicleModel,
+                                                 selectedPostType,
                                                  setShowLeftPanel,
                                                  setSortPostsByAppearanceNumber,
                                                  setShowMyPosts,
                                                  setSelectedVehicleBrand,
-                                                 setSelectedVehicleModel
+                                                 setSelectedVehicleModel,
+                                                 setSelectedPostType
                                              }) => {
     const toast = useRef<Toast>(null);
     const [fullPanel, setFullPanel] = useState<boolean>(false);
@@ -81,7 +85,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
 
     useEffect(() => {
         const filters = getFiltersFromLocalStorage();
-        if (getFiltersFromLocalStorage() === null || (filters!.vehicleBrand === null && filters!.vehicleModel === null)) {
+        if (filters === null || (filters!.vehicleBrand === null && filters!.vehicleModel === null)) {
             if (user && user.vehicleBrand) {
                 setSelectedVehicleBrand({name: user.vehicleBrand, code: user.vehicleBrand});
             }
@@ -106,16 +110,18 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
         if (!(getFiltersFromLocalStorage() !== null && selectedVehicleModel === null && selectedVehicleBrand === null)) {
             saveFiltersInLocalStorage({
                 vehicleBrand: selectedVehicleBrand,
-                vehicleModel: selectedVehicleModel
+                vehicleModel: selectedVehicleModel,
+                postType: selectedPostType
             });
         }
-    }, [selectedVehicleBrand, selectedVehicleModel])
+    }, [selectedVehicleBrand, selectedVehicleModel, selectedPostType])
 
     const setFiltersFromLocalStorage = () => {
         const filters = getFiltersFromLocalStorage();
         if (filters !== null) {
             setSelectedVehicleBrand(filters.vehicleBrand);
             setSelectedVehicleModel(filters.vehicleModel);
+            setSelectedPostType(filters.postType);
         }
     }
 
@@ -140,6 +146,10 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                     <p style={{marginLeft: "10px"}}>moje posty</p>
                 </div>}
                 <div className="left-panel-dropdowns-div">
+                    <DropDownField description="Wybierz typ postu" values={postTypes}
+                                   className="left-panel-dropdown" filter={false}
+                                   selectedValue={selectedPostType}
+                                   setSelectedValue={(val) => setSelectedPostType(val ? val : null)}/>
                     <DropDownField description="Wybierz pojazd" values={vehicleBrandValues}
                                    className="left-panel-dropdown"
                                    selectedValue={selectedVehicleBrand} filter={true}

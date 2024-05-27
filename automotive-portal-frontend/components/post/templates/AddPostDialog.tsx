@@ -6,7 +6,7 @@ import {Button} from "primereact/button";
 import {Toast} from "primereact/toast";
 import {InputTextField} from "../../common/atoms/InputTextField";
 import DropDownField from "../../common/atoms/DropDownField";
-import {DropDownType, UserDTO} from "../../common/types";
+import {DropDownType, postTypes, UserDTO} from "../../common/types";
 import {getBrands, getModels} from "../../common/organisms/VehicleFunctions";
 import {
     FileUpload,
@@ -30,14 +30,17 @@ type AddPostDialogProps = {
     setRequireRefreshPost: (val: boolean) => void;
 }
 
-const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost, post, setShowDialog, setRequireRefreshPost}) => {
+const AddPostDialog: React.FC<AddPostDialogProps> = ({
+                                                         showDialog,
+                                                         user,
+                                                         editPost,
+                                                         post,
+                                                         setShowDialog,
+                                                         setRequireRefreshPost
+                                                     }) => {
     const toast = useRef<Toast>(null);
     const fileUploadRef = useRef<FileUpload>(null);
     const [imagesNumber, setImagesNumber] = useState<number>(0);
-    const postTypeValues: DropDownType[] = [{
-        name: "usterka",
-        code: "FAULT"
-    }, {name: "kupie", code: "BUY"}, {name: "sprzedam", code: "SELL"}, {name: "ogólny", code: "QUESTION"}];
     const [selectedPostType, setSelectedPostType] = useState<DropDownType>();
     const [vehicleBrandValues, setVehicleBrandValues] = useState<DropDownType[]>([]);
     const [vehicleModelValues, setVehicleModelValues] = useState<DropDownType[]>([]);
@@ -101,7 +104,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost
                 setSelectedVehicleBrand(user.vehicleBrand ? {name: user.vehicleBrand, code: user.vehicleBrand} : null);
                 setSelectedVehicleModel(user.vehicleModel ? {name: user.vehicleModel, code: user.vehicleModel} : null);
             } else {
-                setSelectedPostType(postTypeValues.find(value => value.code === post!.postType));
+                setSelectedPostType(postTypes.find(value => value.code === post!.postType));
                 setSelectedVehicleBrand({name: post!.vehicleBrand, code: post!.vehicleBrand});
                 setSelectedVehicleModel(post!.vehicleModel ? {
                     name: post!.vehicleModel,
@@ -365,7 +368,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({showDialog, user, editPost
                 header={"Nowy post"} headerClassName="dialogHeader">
             <form onSubmit={formik.handleSubmit}>
                 <div>
-                    <DropDownField description="Typ postu*" values={postTypeValues}
+                    <DropDownField description="Typ postu*" values={postTypes}
                                    spanErrorStyle={{
                                        marginTop: "3px",
                                        border: formik.errors['postType'] ? "1px solid red" : "",

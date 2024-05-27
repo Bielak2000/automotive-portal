@@ -13,6 +13,7 @@ interface PostScrollerProps {
     showMyPosts: boolean;
     selectedVehicleBrand: string | null;
     selectedVehicleModel: string | null;
+    selectedPostType: string | null;
     requireRefreshPost: boolean;
 
     setSearchPosts: (val: boolean) => void;
@@ -28,6 +29,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
                                                         showMyPosts,
                                                         selectedVehicleBrand,
                                                         selectedVehicleModel,
+                                                        selectedPostType,
                                                         setSearchPosts,
                                                         setRequireRefreshPost
                                                     }) => {
@@ -43,6 +45,7 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
     const [firstSortValue, setFirstSortValue] = useState<boolean>(true);
     const [firstMyPosts, setFirstMyPosts] = useState<boolean>(true);
     const [firstFilterVehicle, setFirstVehicle] = useState<boolean>(true);
+    const [firstFilterPostType, setFirstFilterPostType] = useState<boolean>(true);
 
     const loadPosts = async (requirePage: number) => {
         const newPosts = await getPageablePosts({
@@ -52,7 +55,8 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
             sortByAppearanceNumber: sortPostsByAppearanceNumber,
             userId: showMyPosts ? (user ? user.id.slice(0, user.id.length) : null) : null,
             vehicleBrand: selectedVehicleBrand,
-            vehicleModel: selectedVehicleModel
+            vehicleModel: selectedVehicleModel,
+            postType: selectedPostType
         });
         return newPosts.data;
     };
@@ -150,6 +154,21 @@ const PostScroller: React.VFC<PostScrollerProps> = ({
             setRequireRefreshPost(false);
         }
     }, [requireRefreshPost]);
+
+    useEffect(() => {
+        if (!firstFilterPostType) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [firstFilterPostType]);
+
+    useEffect(() => {
+        if (selectedPostType !== null) {
+            setFirstFilterPostType(false);
+        }
+        if (!firstFilterPostType) {
+            prepareDataWhenChangeFilersSortingSearching();
+        }
+    }, [selectedPostType]);
 
     const prepareDataWhenChangeFilersSortingSearching = () => {
         setPosts([]);

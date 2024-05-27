@@ -16,6 +16,7 @@ interface MainViewProps {
     showMyPosts: boolean;
     selectedVehicleBrand: string | null;
     selectedVehicleModel: string | null;
+    selectedPostType: string | null;
     requireRefreshPost: boolean;
 
     setShowRightPanel: (val: boolean) => void;
@@ -33,6 +34,7 @@ const MainView: React.FC<MainViewProps> = ({
                                                requireRefreshPost,
                                                selectedVehicleBrand,
                                                selectedVehicleModel,
+                                               selectedPostType,
                                                setShowRightPanel,
                                                setShowLeftPanel,
                                                setRequireRefreshPost
@@ -84,7 +86,8 @@ const MainView: React.FC<MainViewProps> = ({
                 <PostScroller user={user} searchPosts={searchPosts} searchValue={searchValue}
                               sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
                               showMyPosts={showMyPosts} selectedVehicleBrand={selectedVehicleBrand}
-                              selectedVehicleModel={selectedVehicleModel} requireRefreshPost={requireRefreshPost}
+                              selectedVehicleModel={selectedVehicleModel} selectedPostType={selectedPostType}
+                              requireRefreshPost={requireRefreshPost}
                               setSearchPosts={setSearchPosts} setRequireRefreshPost={setRequireRefreshPost}/>
             </div>
         </div>

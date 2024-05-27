@@ -9,5 +9,6 @@ public record PostPageDTO(@NotNull @Min(0) Integer page, @NotNull @Min(1) Intege
                           @NotNull Boolean sortByAppearanceNumber,
                           @Nullable String userId,
                           @Nullable String vehicleBrand,
-                          @Nullable String vehicleModel) {
+                          @Nullable String vehicleModel,
+                          @Nullable String postType) {
 }

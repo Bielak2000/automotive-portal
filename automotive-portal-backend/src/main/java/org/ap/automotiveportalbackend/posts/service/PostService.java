@@ -6,10 +6,10 @@ import org.ap.automotiveportalbackend.common.exception.BadRequestException;
 import org.ap.automotiveportalbackend.common.exception.NotFoundException;
 import org.ap.automotiveportalbackend.images.Image;
 import org.ap.automotiveportalbackend.images.service.ImageService;
-import org.ap.automotiveportalbackend.notification.NotificationRepository;
 import org.ap.automotiveportalbackend.notification.service.NotificationService;
 import org.ap.automotiveportalbackend.posts.Post;
 import org.ap.automotiveportalbackend.posts.PostRepository;
+import org.ap.automotiveportalbackend.posts.PostType;
 import org.ap.automotiveportalbackend.posts.appearance.service.AppearanceService;
 import org.ap.automotiveportalbackend.posts.dto.BoostPostDTO;
 import org.ap.automotiveportalbackend.posts.dto.PostDTO;
@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,27 +45,161 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostDTO> getAllPostsByPageAndFilters(PostPageDTO postPageDTO) {
         Pageable pageable = PageRequest.of(postPageDTO.page(), postPageDTO.size());
+        List<PostDTO> findPosts;
         if (postPageDTO.searchValue() != null) {
-            if (postPageDTO.sortByAppearanceNumber()) {
-                log.info("Get all posts from {} page with {} records by searchValue and sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDescModifiedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
-                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
+//                log.info("Get all posts from {} page with {} records by searchValue and sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
+            if (postPageDTO.userId() != null) {
+                User user = userService.getUserById(UUID.fromString(postPageDTO.userId()));
+                if (postPageDTO.postType() != null) {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByUserAndTitleContainingIgnoreCaseAndPostTypeAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    user, postPageDTO.searchValue(), PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByUserAndTitleContainingIgnoreCaseAndPostTypeAndVehicleBrandOrderByModifiedAtDesc(
+                                    user, postPageDTO.searchValue(), PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByUserAndTitleContainingIgnoreCaseAndPostTypeOrderByModifiedAtDesc(
+                                user, postPageDTO.searchValue(), PostType.valueOf(postPageDTO.postType()), pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                } else {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByUserAndTitleContainingIgnoreCaseAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    user, postPageDTO.searchValue(), postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByUserAndTitleContainingIgnoreCaseAndVehicleBrandOrderByModifiedAtDesc(
+                                    user, postPageDTO.searchValue(), postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByUserAndTitleContainingIgnoreCaseOrderByModifiedAtDesc(
+                                user, postPageDTO.searchValue(), pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                }
             } else {
-                log.info("Get all posts from {} page with {} records by searchValue", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByModifiedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
-                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
+                if (postPageDTO.postType() != null) {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByTitleContainingIgnoreCaseAndPostTypeAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    postPageDTO.searchValue(), PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByTitleContainingIgnoreCaseAndPostTypeAndVehicleBrandOrderByModifiedAtDesc(
+                                    postPageDTO.searchValue(), PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByTitleContainingIgnoreCaseAndPostTypeOrderByModifiedAtDesc(
+                                postPageDTO.searchValue(), PostType.valueOf(postPageDTO.postType()), pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                } else {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByTitleContainingIgnoreCaseAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    postPageDTO.searchValue(), postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByTitleContainingIgnoreCaseAndVehicleBrandOrderByModifiedAtDesc(
+                                    postPageDTO.searchValue(), postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByTitleContainingIgnoreCaseOrderByModifiedAtDesc(
+                                postPageDTO.searchValue(), pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                }
             }
+//                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findAllByTitleContainingIgnoreCaseOrderByAppearanceNumberDescModifiedAtDesc(postPageDTO.searchValue(), pageable), postPageDTO);
+//                List<PostDTO> postDTOSFilterByPostType = checkPostTypeIsCurrentAndFilter(postDTOS, postPageDTO);
+//                return checkVehicleFiltersAreCurrentAndFilter(postDTOSFilterByPostType, postPageDTO);
         } else {
-            if (postPageDTO.sortByAppearanceNumber()) {
-                log.info("Get all posts from {} page with {} records sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByAppearanceNumberDescModifiedAtDesc(pageable), postPageDTO);
-                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
+
+
+            if (postPageDTO.userId() != null) {
+                User user = userService.getUserById(UUID.fromString(postPageDTO.userId()));
+                if (postPageDTO.postType() != null) {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByUserAndPostTypeAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    user, PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByUserAndPostTypeAndVehicleBrandOrderByModifiedAtDesc(
+                                    user, PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByUserAndPostTypeOrderByModifiedAtDesc(
+                                user, PostType.valueOf(postPageDTO.postType()), pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                } else {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByUserAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    user, postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByUserAndVehicleBrandOrderByModifiedAtDesc(
+                                    user, postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByUserOrderByModifiedAtDesc(
+                                user, pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                }
             } else {
-                log.info("Get all posts from {} page with {} records", postPageDTO.page(), postPageDTO.size());
-                List<PostDTO> postDTOS = checkUserIdIsCurrentAndFilter(postRepository.findByOrderByModifiedAtDesc(pageable), postPageDTO);
-                return checkVehicleFiltersAreCurrentAndFilter(postDTOS, postPageDTO);
+                if (postPageDTO.postType() != null) {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByPostTypeAndVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByPostTypeAndVehicleBrandOrderByModifiedAtDesc(
+                                    PostType.valueOf(postPageDTO.postType()), postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAllByPostTypeOrderByModifiedAtDesc(
+                                PostType.valueOf(postPageDTO.postType()), pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                    }
+                } else {
+                    if (postPageDTO.vehicleBrand() != null) {
+                        if (postPageDTO.vehicleModel() != null) {
+                            findPosts = postRepository.findAllByVehicleBrandAndVehicleModelOrderByModifiedAtDesc(
+                                    postPageDTO.vehicleBrand(), postPageDTO.vehicleModel(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        } else {
+                            findPosts = postRepository.findAllByVehicleBrandOrderByModifiedAtDesc(
+                                    postPageDTO.vehicleBrand(), pageable
+                            ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        }
+                    } else {
+                        findPosts = postRepository.findAll(
+                                pageable
+                        ).stream().map(this::toPostDTO).collect(Collectors.toList());
+                        findPosts.sort(Comparator.comparing(PostDTO::modifiedAt).reversed());
+                    }
+                }
             }
         }
+        if (postPageDTO.sortByAppearanceNumber()) {
+            findPosts.sort(Comparator.comparing(PostDTO::appearanceNumber).reversed());
+        }
+        return findPosts;
     }
 
     @Transactional(readOnly = true)
@@ -149,27 +284,39 @@ public class PostService {
         }
     }
 
-    private List<PostDTO> checkUserIdIsCurrentAndFilter(List<Post> posts, PostPageDTO postPageDTO) {
-        if (postPageDTO.userId() != null) {
-            log.info("Get posts for user with id {}", postPageDTO.userId());
-            return posts.stream().filter(post -> post.getUser().getId().toString().equals(postPageDTO.userId())).map(this::toPostDTO).collect(Collectors.toList());
-        } else {
-            return posts.stream().map(this::toPostDTO).collect(Collectors.toList());
-        }
-    }
+//    private List<Post> sortByAppearanceNumber(List<Post> posts) {
+//        return posts.sort(Comparator.comparing(Post::getAppearanceNumber).reversed());
+//    }
 
-    private List<PostDTO> checkVehicleFiltersAreCurrentAndFilter(List<PostDTO> posts, PostPageDTO postPageDTO) {
-        if (postPageDTO.vehicleBrand() != null) {
-            List<PostDTO> postsByVehicle = posts.stream().filter(post -> post.vehicleBrand().equals(postPageDTO.vehicleBrand())).toList();
-            if (postPageDTO.vehicleModel() != null) {
-                return postsByVehicle.stream().filter(post -> post.vehicleModel() != null && post.vehicleModel().equals(postPageDTO.vehicleModel())).collect(Collectors.toList());
-            } else {
-                return postsByVehicle;
-            }
-        } else {
-            return posts;
-        }
-    }
+//    private List<PostDTO> checkUserIdIsCurrentAndFilter(List<Post> posts, PostPageDTO postPageDTO) {
+//        if (postPageDTO.userId() != null) {
+//            log.info("Get posts for user with id {}", postPageDTO.userId());
+//            return posts.stream().filter(post -> post.getUser().getId().toString().equals(postPageDTO.userId())).map(this::toPostDTO).collect(Collectors.toList());
+//        } else {
+//            return posts.stream().map(this::toPostDTO).collect(Collectors.toList());
+//        }
+//    }
+//
+//    private List<PostDTO> checkPostTypeIsCurrentAndFilter(List<PostDTO> posts, PostPageDTO postPageDTO) {
+//        if (postPageDTO.postType() != null) {
+//            return posts.stream().filter(post -> post.postType().name().equals(postPageDTO.postType())).collect(Collectors.toList());
+//        } else {
+//            return posts;
+//        }
+//    }
+//
+//    private List<PostDTO> checkVehicleFiltersAreCurrentAndFilter(List<PostDTO> posts, PostPageDTO postPageDTO) {
+//        if (postPageDTO.vehicleBrand() != null) {
+//            List<PostDTO> postsByVehicle = posts.stream().filter(post -> post.vehicleBrand().equals(postPageDTO.vehicleBrand())).toList();
+//            if (postPageDTO.vehicleModel() != null) {
+//                return postsByVehicle.stream().filter(post -> post.vehicleModel() != null && post.vehicleModel().equals(postPageDTO.vehicleModel())).collect(Collectors.toList());
+//            } else {
+//                return postsByVehicle;
+//            }
+//        } else {
+//            return posts;
+//        }
+//    }
 
     public PostDTO toPostDTO(Post post) {
         List<String> images = new ArrayList<>();

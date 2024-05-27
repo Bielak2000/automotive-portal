@@ -45,6 +45,7 @@ export const removeUserIdFromLocalStorage = () => {
 export interface FiltersLocalStorage {
     vehicleBrand: DropDownType | null;
     vehicleModel: DropDownType | null;
+    postType: DropDownType | null;
 }
 
 export function saveFiltersInLocalStorage(filers: FiltersLocalStorage) {

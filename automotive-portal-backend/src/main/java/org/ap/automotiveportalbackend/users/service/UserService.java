@@ -27,6 +27,10 @@ public class UserService {
         return userRepository.findAll().stream().map(UserDTO::create).collect(Collectors.toList());
     }
 
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId).orElseThrow(()->new NotFoundException(String.format("User %s not found", userId)));
+    }
+
     public void createUser(UserFormDTO userFormDTO) throws BadRequestException {
         if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {
             if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {

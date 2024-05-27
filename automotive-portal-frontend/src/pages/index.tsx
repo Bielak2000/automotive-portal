@@ -19,6 +19,7 @@ const App: NextPage = () => {
     const [showMyPosts, setShowMyPosts] = useState<boolean>(false);
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState<DropDownType | null>(null);
     const [selectedVehicleModel, setSelectedVehicleModel] = useState<DropDownType | null>(null);
+    const [selectedPostType, setSelectedPostType] = useState<DropDownType | null>(null);
     const [requireRefreshPost, setRequireRefreshPost] = useState<boolean>(false);
 
     useEffect(() => {
@@ -57,15 +58,16 @@ const App: NextPage = () => {
         <Toast ref={toast}/>
         <LeftPanel user={user} showLeftPanel={showLeftPanel} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber}
                    showMyPosts={showMyPosts} selectedVehicleBrand={selectedVehicleBrand}
-                   selectedVehicleModel={selectedVehicleModel}
+                   selectedVehicleModel={selectedVehicleModel} selectedPostType={selectedPostType}
                    setShowLeftPanel={setShowLeftPanel} setSortPostsByAppearanceNumber={setSortPostsByAppearanceNumber}
                    setShowMyPosts={setShowMyPosts} setSelectedVehicleBrand={setSelectedVehicleBrand}
-                   setSelectedVehicleModel={setSelectedVehicleModel}/>
+                   setSelectedVehicleModel={setSelectedVehicleModel} setSelectedPostType={setSelectedPostType}/>
         <MainView showRightPanel={showRightPanel} showLeftPanel={showLeftPanel} isNotification={isNotification}
                   user={user} sortPostsByAppearanceNumber={sortPostsByAppearanceNumber} showMyPosts={showMyPosts}
                   requireRefreshPost={requireRefreshPost}
                   selectedVehicleBrand={selectedVehicleBrand != null ? selectedVehicleBrand.code : null}
                   selectedVehicleModel={selectedVehicleModel != null ? selectedVehicleModel.code : null}
+                  selectedPostType={selectedPostType !== null ? selectedPostType.code : null}
                   setShowRightPanel={setShowRightPanel} setShowLeftPanel={setShowLeftPanel} setRequireRefreshPost={setRequireRefreshPost}/>
         {user && <RightPanel showRightPanel={showRightPanel} user={user} setShowRightPanel={setShowRightPanel} setUser={setUser}/>}
     </Layout>

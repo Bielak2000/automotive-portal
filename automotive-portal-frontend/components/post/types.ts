@@ -49,6 +49,7 @@ export interface PostPageDTO {
     userId: string | null;
     vehicleBrand: string | null;
     vehicleModel: string | null;
+    postType: string | null;
 }
 
 export const PostDataValidation: Yup.SchemaOf<PostFormDTO> = Yup.object().shape({
