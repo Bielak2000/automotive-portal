@@ -46,8 +46,8 @@ public class PostService {
     public List<PostDTO> getAllPostsByPageAndFilters(PostPageDTO postPageDTO) {
         Pageable pageable = PageRequest.of(postPageDTO.page(), postPageDTO.size());
         List<PostDTO> findPosts;
+        log.info("Get all posts from {} page with {} records", postPageDTO.page(), postPageDTO.size());
         if (postPageDTO.searchValue() != null) {
-//                log.info("Get all posts from {} page with {} records by searchValue and sorting by appearanceNumber", postPageDTO.page(), postPageDTO.size());
             if (postPageDTO.userId() != null) {
                 User user = userService.getUserById(UUID.fromString(postPageDTO.userId()));
                 if (postPageDTO.postType() != null) {
