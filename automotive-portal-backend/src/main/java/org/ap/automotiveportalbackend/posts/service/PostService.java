@@ -122,8 +122,6 @@ public class PostService {
 //                List<PostDTO> postDTOSFilterByPostType = checkPostTypeIsCurrentAndFilter(postDTOS, postPageDTO);
 //                return checkVehicleFiltersAreCurrentAndFilter(postDTOSFilterByPostType, postPageDTO);
         } else {
-
-
             if (postPageDTO.userId() != null) {
                 User user = userService.getUserById(UUID.fromString(postPageDTO.userId()));
                 if (postPageDTO.postType() != null) {

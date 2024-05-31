@@ -74,7 +74,7 @@ const MainView: React.FC<MainViewProps> = ({
                                 tooltip="Pokaż filtry"/>}
                 </div>
                 <div className="right-buttons">
-                    {!showRightPanel &&
+                    {!showRightPanel && user &&
                         <Button icon="pi pi-bell" onClick={() => setShowRightPanel(true)} style={{marginRight: "5px"}}
                                 tooltipOptions={{position: "left"}}
                                 className={isNotification ? "active-bell-button" : ""}
