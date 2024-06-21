@@ -98,6 +98,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     useEffect(() => {
         if (!selectedVehicleBrand) {
             setVehicleModelValues([]);
+            setSelectedVehicleModel(null);
         } else {
             getModels(toast, selectedVehicleBrand, setVehicleModelValues);
             if (user && selectedVehicleBrand?.code !== user.vehicleBrand) {
